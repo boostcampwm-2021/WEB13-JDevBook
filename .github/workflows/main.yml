@@ -24,14 +24,17 @@ jobs:
     steps:
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
+        env: 
+          PATH: "/root/.nvm/versions/node/v14.17.6/bin:$PATH"
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           #password: ${{ secrets.PASSWORD }}
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
-          envs: PATH="/root/.nvm/versions/node/v14.17.6/bin:$PATH"
+          envs: PATH
           script: |
+            PATH=$PATH
             cd WEB13-JDevBook && git pull origin release
             cd server && npm install && pm2 restart npm -- start
             cd ../client && npm install && npm run build
