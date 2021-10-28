@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es6", // js 산출물의 버전 , 앱 실행시킬 node 버전에 맞춰서 설정
+    "lib": ["esnext"], // 컴파일시 사용할 ECMAscript 라이브러리 버전
+    "sourceMap": true, //webpack처럼 ts에서 디버깅 할수있게 map 파일 만드는 옵션
+    "module": "commonjs",
+    "strict": true,
+    "experimentalDecorators": true, //decorator 사용
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true, //라이브러리 타입검사 꺼줌
+    "moduleResolution": "node", //node 스타일 모듈 해석
+    "baseUrl": "./src",
+    //"esModuleInterop": true, // require만 쓰는것 es6로 가져올수있게
+    // 비-상대주소 모듈 찾을때 node_modules 보다 먼저 src 찾게
+    // 비상대주소 : require('fs'), require('@services/a')
+    // 나중에 alias 할때 꼭 써줘야함
+    "strictPropertyInitialization": false
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
