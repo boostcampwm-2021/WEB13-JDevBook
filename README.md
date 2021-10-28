@@ -1,7 +1,7 @@
 # WEB13-JDevBook
 
 ## 배포주소
-
+- https://www.jdevbook.kro.kr/
 ## 📗 JDevBook 소개
 
 개발자들을 위한 SNS와 분야별로 문제를 풀 수 있는 서비스 입니다.
