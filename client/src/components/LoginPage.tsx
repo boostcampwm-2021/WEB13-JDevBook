@@ -13,14 +13,18 @@ const StyledImg = styled.img`
     height: auto;
 `;
 
-const Button = ({ children }: any) => {
-    return <StyledButton>{ children }</StyledButton>
-}
+// const Button = ({ children }: any) => {
+//     return <StyledButton>{ children }</StyledButton>
+// }
 
 const LoginPage = () => {
 
     const loginGithub = (e: any) => {
-        //fetch('/oauth')
+        fetch('/oauth/login')
+        .then(res => res.json())
+        .then(loginLink => {
+            window.location.href = loginLink;
+        })
     }
 
     useEffect(() => {
@@ -29,10 +33,10 @@ const LoginPage = () => {
 
     return (
         <div>
-            <Button onclick={loginGithub}>
+            <StyledButton onClick={loginGithub}>
                 <StyledImg src={githubLogo}/>
                 Login with Github
-            </Button>
+            </StyledButton>
         </div>
     )
 }
