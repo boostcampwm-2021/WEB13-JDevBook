@@ -68,22 +68,24 @@
 
 ```
 Web13-JDevBook
-  ├─client
-  │  ├─public
-  │  └─src
-  │      ├─components
-  │      ├─images
-  │      ├─pages
-  │      └─utils
-  └─server
-      └─src
-          ├─models
-          ├─routes
-          ├─service
-          └─sockets
+	├─client
+	│  ├─public
+	│  └─src
+	│      ├─components
+	│      ├─images
+	│      ├─pages
+	│      ├─utils
+	│      ├─api
+	│      └─recoil
+	└─server
+	    └─src
+	        ├─models
+							├─tables
+							├─index.ts
+	        ├─routes
+	        ├─config
+					├─service
+							├─interface.ts
+					├─sessions
+	        └─sockets
 ```
-
-## ERD
-
-![](https://i.imgur.com/hZk3wJb.png)
-
