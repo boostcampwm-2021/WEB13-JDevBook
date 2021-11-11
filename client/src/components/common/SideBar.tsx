@@ -1,5 +1,6 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
+
 import { SideBarProps } from 'utils/types';
 
 const SideBarContainer = styled.div<SideBarProps>`
@@ -12,7 +13,7 @@ const SideBarContainer = styled.div<SideBarProps>`
   flex-direction: column;
 `;
 
-const SideBar: React.FC<SideBarProps> = ({ isLeft, children }) => {
+const SideBar = ({ isLeft, children }: SideBarProps) => {
   return <SideBarContainer isLeft={isLeft}>{children}</SideBarContainer>;
 };
 

@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import Greeter from '../components/LoginPage/Greeter';
-import LoginBox from '../components/LoginPage/LoginBox';
-import Footer from '../components/LoginPage/Footer';
+
+import Greeter from 'components/LoginPage/Greeter';
+import LoginBox from 'components/LoginPage/LoginBox';
+import Footer from 'components/LoginPage/Footer';
 
 function LoginPage() {
   return (

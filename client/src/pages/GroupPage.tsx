@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import {
   Gnb,
   SideBar,
   InfoSideBar,
   ChatSideBar,
-  GroupSideBar
-} from '../components';
+  GroupSideBar,
+  InitUserData
+} from '../components/common';
 
 const GroupPageContainer = styled.div`
   display: flex;
@@ -20,6 +22,7 @@ const ContentsWrap = styled.div`
 const GroupPage = () => {
   return (
     <GroupPageContainer>
+      <InitUserData />
       <Gnb type="group" />
       <ContentsWrap>
         <SideBar isLeft={true}>

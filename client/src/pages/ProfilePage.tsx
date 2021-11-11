@@ -1,13 +1,15 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import styled from 'styled-components';
+
 import {
   Gnb,
   SideBar,
   InfoSideBar,
   ChatSideBar,
-  GroupSideBar
-} from '../components';
+  GroupSideBar,
+  InitUserData
+} from 'components/common';
 
 const ProfilePageContainer = styled.div`
   display: flex;
@@ -22,9 +24,12 @@ interface MatchParams {
   userID: string;
 }
 
-const ProfilePage: React.FC<RouteComponentProps<MatchParams>> = ({ match }) => {
+const ProfilePage: React.FC<RouteComponentProps<{ userId: string }>> = ({
+  match
+}) => {
   return (
     <ProfilePageContainer>
+      <InitUserData />
       <Gnb />
       <ContentsWrap>
         <SideBar isLeft={true}>

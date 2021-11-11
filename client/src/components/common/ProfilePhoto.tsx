@@ -1,16 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import defaultProfile from 'images/default-profile.jpg';
+
 import { ProfilePhotoProps } from 'utils/types';
+import palette from 'theme/palette';
+import { defaultProfile } from 'images';
 
 const StyledProfilePhoto = styled.img<ProfilePhotoProps>`
   width: ${(props) => props.size || '65px'};
   height: ${(props) => props.size || '65px'};
   border-radius: 50%;
-  border: 1px solid #bbbbbb;
 `;
 
-const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ src, size, children }) => {
+const ProfilePhoto = ({ src, size }: ProfilePhotoProps) => {
   return (
     <StyledProfilePhoto
       src={src || defaultProfile}

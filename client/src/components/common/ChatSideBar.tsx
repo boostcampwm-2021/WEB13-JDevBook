@@ -1,82 +1,190 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
-import { rightModalStates, userData } from 'recoil/modal';
-import socket from './Socket';
-import { RightModalProps, Message } from 'utils/types';
+import styled, { keyframes } from 'styled-components';
 
-const ChatSideBarContainer = styled.div<any>`
-  width: inherit;
-  height: inherit;
-  ${(props) => `background: ${setColor(props.flagObj)}`}
+import { useRecoilValue } from 'recoil';
+import { rightModalStates, userData, usersocket, chatWith } from 'recoil/store';
+
+import CurrentUser from './CurrentUser';
+import palette from 'theme/palette';
+import { iconSubmit } from 'images/icons';
+
+const Animation = keyframes`
+  0% { opacity: 0; transform: translateX(100px); filter: blur(10px); }
+  100% { opacity: 1; transform: translateX(0px); filter: blur(0px); }
 `;
 
-function setColor(props: RightModalProps) {
-  if (props.rightModalFlag) {
-    if (props.messageFlag) {
-      return `yellow`;
-    } else if (props.alarmFlag) {
-      return `green`;
-    } else if (props.selectorFlag) {
-      return `blue`;
-    }
-  } else {
-    return `white`;
+const ChatSideBarContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: inherit;
+  height: inherit;
+
+  animation-name: ${Animation};
+  animation-duration: 0.75s;
+
+  background-color: ${palette.white};
+  box-shadow: -5px 2px 5px 0px rgb(0 0 0 / 24%);
+`;
+
+const ChatTitle = styled.div`
+  text-align: center;
+  font-size: 14px;
+  color: ${palette.darkgray};
+
+  margin-bottom: 10px;
+`;
+
+const ChatList = styled.section`
+  flex: 1;
+  text-align: right;
+  width: 300px;
+  height: 277px;
+  bottom: 0;
+
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-bottom: 10px;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
-}
+`;
 
-const ChatSideBar: React.FC = () => {
-  const rightModalState = useRecoilValue(rightModalStates);
+const MessageWrap = styled.div<{ name: string; sender: string }>`
+  ${(props) =>
+    `text-align: ${props.name === props.sender ? 'right;' : 'left;'}`}
+  width: inherit;
+`;
 
+const MessageText = styled.div<{ name: string; sender: string }>`
+  display: inline-block;
+  height: auto;
+  border-radius: 10px;
+  word-break: break-word;
+
+  ${(props) => `color: ${props.name === props.sender ? 'white;' : 'black;'}`}
+  ${(props) =>
+    `background-color: ${
+      props.name === props.sender
+        ? `${palette.green};`
+        : `${palette.lightgray};`
+    }`}
+
+  margin-top: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+`;
+
+const ChatInputWrapper = styled.div`
+  align-items: center;
+  text-align: center;
+
+  margin-bottom: 16px;
+`;
+
+const ChatInput = styled.input`
+  height: 30px;
+
+  border: none;
+  border-radius: 15px;
+
+  background-color: rgb(240, 242, 245);
+  padding-left: 8px;
+`;
+
+const SubmitBtn = styled.button`
+  border: none;
+  background-color: ${palette.white};
+  transform: translateY(2px);
+  margin-left: 16px;
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+const ChatSideBar = () => {
   const [messageList, setMessageList] = useState<string[]>([]);
   const [value, setValue] = useState<string>('');
+
+  const rightModalState = useRecoilValue(rightModalStates);
+  const socket = useRecoilValue(usersocket);
   const userdata = useRecoilValue(userData);
-  // 테스트용. 나중에 클릭해서 상대방 이름 알도록 해야함
-  let receiver: string = 'defaultfail';
-  if (userdata.username === 'reservedgithubtest') receiver = 'kitaetest';
-  else if (userdata.username === 'kitaetest') receiver = 'reservedgithubtest';
+  const chatReceiver = useRecoilValue(chatWith);
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // sernder, receiver, message 보내고
-    // 서버에서 채팅 저장하고, 기존 메세지만 추가로 다시 받아
     socket.emit('send message', {
-      sender: userdata.username,
-      receiver: receiver,
+      sender: userdata.name,
+      receiver: chatReceiver,
       message: value
     });
   };
 
   useEffect(() => {
-    // 지금은 이름인데 idx로 해줘!!!!!!!!!!!!!!!!!!!!!!! 그래야 DB에서 편해져
-    // 처음에 이름 서버소켓에 등록해둬
-    // 위에서 메세지 보낼때 내이름, 상대방이름(아이디), 채팅 보내
-    // 서버에서 'send message'에서 자기 이름이 위 2개 이름중에 포함되면 진행
-    // 뭘 진행? 채팅 보낸거 DB에 저장. 그리고 emit('receive message')로 아래 진행
-    socket.on('receive message', (data: any) => {
-      const { sender, receiver, msg } = data;
-      if (sender === userdata.username || receiver === userdata.username)
-        setMessageList((messageList: any) => messageList.concat(msg)); // 도저히 모르겠음
-    });
-  }, [userdata]);
+    if (chatReceiver !== '') {
+      setMessageList([]);
+      socket.emit('send chat initial', {
+        sender: userdata.name,
+        receiver: chatReceiver
+      });
 
-  const chatList = messageList
-    .map(
-      (
-        msg // 도대체 뭐지
-      ) => (
-        <div className="message">
-          <p className="message-text">{msg}</p>
+      socket.on('get previous chats', (filteredMsgs: string[]) => {
+        setMessageList((messageList: string[]) =>
+          messageList.concat(filteredMsgs)
+        );
+        socket.off('get previous chats');
+      });
+
+      socket.off('send chat initial');
+
+      socket.off('receive message');
+      socket.on(
+        'receive message',
+        (data: { sender: string; receiver: string; msg: string }) => {
+          const { sender, receiver, msg } = data;
+          if (
+            sender === userdata.name ||
+            (receiver === userdata.name && sender === chatReceiver)
+          ) {
+            setMessageList((messageList: string[]) => messageList.concat(msg));
+          }
+
+          document.querySelector('.chat-list')?.scrollBy({
+            top: document.querySelector('.chat-list')?.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      );
+    }
+  }, [chatReceiver]);
+
+  const chatList = messageList.map((msg, idx) => (
+    <MessageWrap key={idx} name={msg.split(':')[0]} sender={userdata.name}>
+      <MessageText name={msg.split(':')[0]} sender={userdata.name}>
+        {msg}
+      </MessageText>
+    </MessageWrap>
+  ));
+
+  if (rightModalState.rightModalFlag && rightModalState.messageFlag) {
+    return (
+      <ChatSideBarContainer>
+        <CurrentUser />
+        <div>
+          <hr />
         </div>
-      )
-    )
-    .reverse();
-
-  return (
-    <ChatSideBarContainer flagObj={rightModalState}>
-      <div>
+        <ChatTitle>
+          {chatReceiver
+            ? chatReceiver + ' 에게 보내는 편지'
+            : '채팅할 상대 선택'}
+        </ChatTitle>
+        <ChatList className="chat-list">{chatList}</ChatList>
         <form
-          className="chat-form"
           onSubmit={(e: FormEvent<HTMLFormElement>) => {
             if (value) {
               submit(e);
@@ -86,23 +194,24 @@ const ChatSideBar: React.FC = () => {
             }
           }}
         >
-          <div className="chat-inputs">
-            <input
+          <ChatInputWrapper>
+            <ChatInput
               type="text"
               autoComplete="off"
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setValue(e.target.value)
               }
               value={value}
-              placeholder="메세지입력하기"
+              placeholder="Aa"
             />
-          </div>
-          <button type="submit">입력하기</button>
+            <SubmitBtn type="submit">
+              <img src={iconSubmit} alt="submit-button-image" />
+            </SubmitBtn>
+          </ChatInputWrapper>
         </form>
-        <section className="chat-list">{chatList}</section>
-      </div>
-    </ChatSideBarContainer>
-  );
+      </ChatSideBarContainer>
+    );
+  } else return null;
 };
 
 export default ChatSideBar;

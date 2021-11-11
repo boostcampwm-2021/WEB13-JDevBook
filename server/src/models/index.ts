@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize-typescript'
+import { Sequelize } from 'sequelize-typescript';
 const config = require('../config/dbconfig.json');
 
 const sequelize = new Sequelize({
@@ -7,7 +7,11 @@ const sequelize = new Sequelize({
   username: config.username,
   password: config.password,
   host: config.host,
-  models: [__dirname + '/tables']
+  models: [__dirname + '/tables'],
+  timezone: '+09:00',
+  dialectOptions: {
+    timezone: '+09:00'
+  }
 });
 
 export default sequelize;

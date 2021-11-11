@@ -1,13 +1,15 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import iconSearch from 'images/icon-search.svg';
-import defaultCover from 'images/default-profile.jpg';
+
+import palette from 'theme/palette';
+import { defaultCover } from 'images';
+import { iconSearch } from 'images/icons';
 
 const GroupSideBarContainer = styled.div`
   flex: 1;
   width: inherit;
-  background: white;
+  background: ${palette.white};
   display: flex;
   flex-direction: column;
   box-shadow: rgba(0, 0, 0, 0.24) 5px 5px 5px;
@@ -17,7 +19,7 @@ const SearchBarWrap = styled.div`
   height: 40px;
   margin: 30px 50px;
   display: flex;
-  background: #f0f2f5;
+  background: ${palette.lightgray};
   border-radius: 24px;
 
   img {
@@ -32,11 +34,7 @@ const SearchBarWrap = styled.div`
     background: none;
     border: none;
     font-size: 1rem;
-    font-family: 'Noto Sans KR';
-
-    &::placeholder {
-      font-size: 1rem;
-    }
+    font-family: 'Spoqa Han Sans Neo';
   }
 `;
 
@@ -50,7 +48,7 @@ const GroupList = styled.ul`
 const GroupItem = styled(Link)`
   display: flex;
   text-decoration: none;
-  color: black;
+  color: ${palette.black};
   padding: 5px;
   margin: 0 0 20px 0;
   font-weight: bold;
@@ -64,7 +62,7 @@ const GroupItem = styled(Link)`
 
   &:hover {
     border-radius: 10px;
-    background: #f0f2f5;
+    background: ${palette.lightgray};
     transition: all 0.2s;
   }
 `;
@@ -85,31 +83,24 @@ const tempGroup = [
   }
 ];
 
-const GroupSideBar: React.FC = () => {
+const GroupSideBar = () => {
   const [group, setGroup] = useState<tempGroupType[]>(tempGroup);
 
-  const searchHandler = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setGroup(
-        tempGroup.filter((group) => group.groupName.includes(e.target.value))
-      );
-    },
-    []
-  );
+  const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGroup(
+      tempGroup.filter((group) => group.groupName.includes(e.target.value))
+    );
+  };
 
   return (
     <GroupSideBarContainer>
       <SearchBarWrap>
         <img src={iconSearch} alt="Search 아이콘" />
-        <input
-          type="text"
-          placeholder="search group"
-          onChange={searchHandler}
-        />
+        <input type="text" placeholder="그룹 검색" onChange={searchHandler} />
       </SearchBarWrap>
       <GroupList>
-        {group.map((group) => (
-          <GroupItem to="/group">
+        {group.map((group, idx) => (
+          <GroupItem key={idx} to="/group">
             <img src={group.imgSrc} alt="cover 아이콘" />
             <p>{group.groupName}</p>
           </GroupItem>

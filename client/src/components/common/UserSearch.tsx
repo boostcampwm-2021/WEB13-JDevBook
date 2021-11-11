@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import mainLogo from '../../images/main-logo.png';
 import styled, { css, keyframes } from 'styled-components';
-import iconSearch from '../../images/icon-search.svg';
+import { mainLogo } from 'images';
+import { iconSearch } from 'images/icons';
 import { MdArrowBack } from 'react-icons/md';
 import { useRecoilState } from 'recoil';
-import { modalVisibleStates } from '../../recoil/modal';
-import { UserCard } from 'components';
+import { modalVisibleStates } from 'recoil/store';
+
 import { SearchedUser } from 'utils/types';
-import getData from 'api/fetch';
+import palette from 'theme/palette';
+
+import { UserCard } from 'components/common';
+import fetchApi from 'api/fetch';
 
 const FlexBox = styled.div`
   display: flex;
@@ -20,7 +23,7 @@ const ModalHeader = styled(FlexBox)`
   justify-content: space-between;
 
   svg {
-    color: #656565;
+    color: ${palette.darkgray};
   }
   margin-right: 8px;
 `;
@@ -28,7 +31,7 @@ const ModalHeader = styled(FlexBox)`
 const UserSearchBarContainer = styled.div`
   width: 240px;
   height: 40px;
-  background: #f0f2f5;
+  background: ${palette.lightgray};
   border-radius: 24px;
   margin-left: 16px;
   display: flex;
@@ -92,7 +95,7 @@ const UserSearchModalContainer = styled.div`
   max-height: 600px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
     rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-  background: white;
+  background: ${palette.white};
   border-radius: 12px;
   position: fixed;
   top: 0;
@@ -113,7 +116,7 @@ const HoverRound = styled.div`
   align-items: center;
 
   &:hover {
-    background: #eeeeee;
+    background: ${palette.lightgray};
     border-radius: 100%;
   }
 `;
@@ -127,39 +130,37 @@ const SearchModalBody = styled.div`
 
   overflow-y: scroll;
 
-  /* Hide Scrollbar */
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 
-  /* Chrome Safari Opera */
   &::-webkit-scrollbar {
     display: none;
   }
 
   & > p {
     text-align: center;
-    color: #888888;
+    color: ${palette.darkgray};
   }
 `;
 
-const UserSearchBar: React.FC = () => {
+const UserSearchBar = () => {
   const [modalState, setModalState] = useRecoilState(modalVisibleStates);
   return (
     <>
       <Link to="/home">
-        <img src={mainLogo} />
+        <img src={mainLogo} alt="mainLogo" />
       </Link>
       <UserSearchBarContainer
         onClick={() => setModalState({ ...modalState, searchUser: true })}
       >
-        <img src={iconSearch} />
+        <img src={iconSearch} alt="iconSearch" />
         <input type="text" placeholder="Search User" readOnly />
       </UserSearchBarContainer>
     </>
   );
 };
 
-const UserSearchModal: React.FC = () => {
+const UserSearchModal = () => {
   const [modalState, setModalState] = useRecoilState(modalVisibleStates);
   const [input, setInput] = useState('');
   const [results, setResults] = useState<{
@@ -193,7 +194,7 @@ const UserSearchModal: React.FC = () => {
 
   useEffect(() => {
     const fetchJob = setTimeout(async () => {
-      const users = await getData.searchUsers(input);
+      const users = await fetchApi.searchUsers(input);
       setResults({ isProgress: false, users });
     }, 750);
 

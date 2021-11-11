@@ -1,17 +1,10 @@
 import React, { Dispatch } from 'react';
 import styled, { css } from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { modalVisibleStates, rightModalStates, userData } from 'recoil/modal';
-import { ReactComponent as GnbHome } from 'images/gnb-home.svg';
-import { ReactComponent as GnbGroup } from 'images/gnb-group.svg';
-import { ReactComponent as GnbHomeActive } from 'images/gnb-home-active.svg';
-import { ReactComponent as GnbGroupActive } from 'images/gnb-group-active.svg';
-import gnbMessage from 'images/gnb-message.svg';
-import gnbAlarm from 'images/gnb-alarm.svg';
-import gnbSelector from 'images/gnb-down-arrow.svg';
-import profileDefault from 'images/profile-default.png';
-import { UserSearchBar, UserSearchModal } from '..';
+import { modalVisibleStates, rightModalStates, userData } from 'recoil/store';
+import fetchApi from 'api/fetch';
+
 import {
   GnbProps,
   FlexProps,
@@ -19,6 +12,26 @@ import {
   IconProps,
   RightModalProps
 } from 'utils/types';
+import palette from 'theme/palette';
+import { defaultProfile } from 'images';
+import {
+  GnbHome,
+  GnbGroup,
+  GnbHomeActive,
+  GnbGroupActive,
+  gnbMessage,
+  gnbMessageActive,
+  gnbAlarm,
+  gnbAlarmActive,
+  gnbSelector,
+  gnbSelectorActive
+} from 'images/icons';
+
+import {
+  UserSearchBar,
+  UserSearchModal,
+  ProfilePhoto
+} from 'components/common';
 
 const GnbContainer = styled.div`
   width: 100%;
@@ -32,27 +45,15 @@ const GnbContainer = styled.div`
   padding-right: 16px;
   box-sizing: border-box;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-
+  background-color: ${palette.white};
   a {
     text-decoration: none;
   }
-
-  img {
-    width: 36px;
-    height: 36px;
-  }
-  z-index: 1;
 `;
 
 const FlexWrap = styled.div<FlexProps>`
   display: flex;
   align-items: center;
-
-  img {
-    width: 40px;
-    height: 40px;
-    vertical-align: bottom;
-  }
 
   & > *:not(:first-child) {
     margin-left: 8px;
@@ -81,7 +82,7 @@ const GnbTab = styled.div<TabProps>`
   transition: 0.1s ease-in;
 
   &:hover {
-    background: #f2f2f2;
+    background: ${palette.lightgray};
     border-radius: 8px;
   }
 
@@ -89,7 +90,7 @@ const GnbTab = styled.div<TabProps>`
     ${({ current }) =>
       current &&
       css`
-        fill: #87d474;
+        fill: ${palette.green};
       `}
   }
 `;
@@ -102,19 +103,12 @@ const ProfileWrap = styled.div`
   padding-right: 12px;
 
   &:hover {
-    background: #f0f2f5;
+    background: ${palette.lightgray};
     border-radius: 24px;
   }
 
-  img {
-    border: 1px solid #bbbbbb;
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-  }
-
   p {
-    color: black;
+    color: ${palette.black};
     margin-left: 8px;
     font-size: 1rem;
     font-weight: bold;
@@ -124,11 +118,12 @@ const ProfileWrap = styled.div`
 const IconWrap = styled.div<IconProps>`
   width: 40px;
   height: 40px;
-  background: #e4e6eb;
+  background: ${palette.lightgray};
   border-radius: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 
   &:after {
     content: '';
@@ -139,15 +134,16 @@ const IconWrap = styled.div<IconProps>`
   }
 
   &:hover {
-    background: #d8dadf;
+    background: ${palette.lightgray};
   }
 `;
 
-const Gnb: React.FC<GnbProps> = ({ type }) => {
+const Gnb = ({ type, rightModalType }: GnbProps) => {
   const modalState = useRecoilValue(modalVisibleStates);
-  const userdata = useRecoilValue(userData);
+  const [userdata, setUserdata] = useRecoilState(userData);
   const [rightModalState, setRightModalState] =
     useRecoilState(rightModalStates);
+  const history = useHistory();
 
   return (
     <GnbContainer>
@@ -169,27 +165,36 @@ const Gnb: React.FC<GnbProps> = ({ type }) => {
       <FlexWrap>
         <Link to="/profile/1">
           <ProfileWrap>
-            <img src={profileDefault} />
-            <p>{userdata.username}</p>
+            <ProfilePhoto size="28px" />
+            <p>{userdata.name}</p>
           </ProfileWrap>
         </Link>
         <IconWrap
-          img={gnbMessage}
+          img={rightModalState.messageFlag ? gnbMessageActive : gnbMessage}
           onClick={() =>
             ChangeFlag(rightModalState, setRightModalState, 'messageFlag')
           }
         />
         <IconWrap
-          img={gnbAlarm}
+          img={rightModalState.alarmFlag ? gnbAlarmActive : gnbAlarm}
           onClick={() =>
             ChangeFlag(rightModalState, setRightModalState, 'alarmFlag')
           }
         />
         <IconWrap
-          img={gnbSelector}
-          onClick={() =>
-            ChangeFlag(rightModalState, setRightModalState, 'selectorFlag')
-          }
+          img={rightModalState.selectorFlag ? gnbSelectorActive : gnbSelector}
+          onClick={async () => {
+            await fetchApi.logout();
+            setUserdata({
+              idx: -1,
+              name: '',
+              profile: '' as string,
+              cover: '' as string,
+              bio: '' as string,
+              login: false
+            });
+            history.push('/');
+          }}
         />
       </FlexWrap>
     </GnbContainer>

@@ -3,6 +3,10 @@
 # env(local-build)
 .env*
 
+# object storage client test
+**/objectstorage.json
+**/objectStorage.ts
+
 # dependencies
 /node_modules
 /.pnp

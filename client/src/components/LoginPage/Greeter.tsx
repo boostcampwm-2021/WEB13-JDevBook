@@ -1,32 +1,17 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
-
-const Greeter = () => {
-  const reactArray = 'JDevBook'.split('');
-
-  return (
-    <>
-      <Wrapper>
-        <SubTitle>우리들의 공간</SubTitle>
-        <Content>
-          {reactArray.map((item, index) => (
-            <span key={index}>{item}</span>
-          ))}
-        </Content>
-      </Wrapper>
-    </>
-  );
-};
+import palette from 'theme/palette';
 
 const Wrapper = styled.span`
   justify-content: center;
   align-items: center;
   text-align: center;
+
   font-size: 50px;
 `;
 
 const SubTitle = styled.div`
-  color: black;
+  color: ${palette.black};
 `;
 
 const Animation = keyframes`
@@ -39,7 +24,7 @@ const Animation = keyframes`
 const Content = styled.span`
   width: 50vw;
   font-size: 50px;
-  color: #53b23b;
+  color: ${palette.green};
   display: inline-block;
   span {
     display: inline-block;
@@ -62,5 +47,22 @@ function getAnimaDelay() {
   }
   return str;
 }
+
+const Greeter = () => {
+  const textArray = 'JDevBook'.split('');
+
+  return (
+    <>
+      <Wrapper>
+        <SubTitle>우리들의 공간</SubTitle>
+        <Content>
+          {textArray.map((item, index) => (
+            <span key={index}>{item}</span>
+          ))}
+        </Content>
+      </Wrapper>
+    </>
+  );
+};
 
 export default Greeter;

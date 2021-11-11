@@ -1,5 +1,12 @@
 import styled from 'styled-components';
 
+const Text = styled.div`
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+`;
+
 const Footer = () => {
   return (
     <Text>
@@ -7,12 +14,5 @@ const Footer = () => {
     </Text>
   );
 };
-
-const Text = styled.div`
-  position: absolute;
-  bottom: 15px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-`;
 
 export default Footer;

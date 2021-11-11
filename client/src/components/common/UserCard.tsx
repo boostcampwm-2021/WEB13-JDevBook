@@ -1,7 +1,10 @@
-import { ProfilePhoto } from 'components';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+
 import { SearchedUserProps } from 'utils/types';
+import palette from 'theme/palette';
+
+import { ProfilePhoto } from 'components/common';
 
 const CardWrap = styled.div`
   width: 100%;
@@ -13,12 +16,12 @@ const CardWrap = styled.div`
   p {
     margin-left: 16px;
     font-size: 0.95rem;
-    color: black;
+    color: ${palette.black};
     text-decoration: none;
   }
 
   &:hover {
-    background: #e3e4e5;
+    background: ${palette.lightgray};
     border-radius: 8px;
   }
 `;
@@ -30,7 +33,7 @@ const NavLink = styled(Link)`
   }
 `;
 
-const UserCard: React.FC<SearchedUserProps> = ({ user }) => {
+const UserCard = ({ user }: SearchedUserProps) => {
   return (
     <NavLink to={`/profile/${user.idx}`}>
       <CardWrap>

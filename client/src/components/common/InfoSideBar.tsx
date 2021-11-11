@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
-import { ProfilePhoto } from '..';
-import { userData } from 'recoil/modal';
-import { useRecoilState } from 'recoil';
-import getData from 'api/fetch';
-import socket from './Socket';
+import { userData } from 'recoil/store';
+import { useRecoilValue } from 'recoil';
+
+import palette from 'theme/palette';
+
+import { ProfilePhoto } from 'components/common';
 
 const InfoSideBarContainer = styled.div`
   height: 200px;
   width: inherit;
-  background: white;
+  background: ${palette.white};
   display: flex;
   flex-direction: column;
   box-shadow: rgba(0, 0, 0, 0.24) 5px 5px 5px;
@@ -22,7 +23,7 @@ const ProfileWrap = styled(Link)`
   justify-content: flex-start;
   margin: 35px 50px 0 50px;
   text-decoration: none;
-  color: black;
+  color: ${palette.black};
 
   p {
     font-size: large;
@@ -38,7 +39,7 @@ const SolvedTitle = styled.div`
 
 const SolvedBarGraph = styled.div`
   height: 25px;
-  background: #ccc;
+  background: ${palette.gray};
   border-radius: 40px;
   margin: 0 50px;
 `;
@@ -62,33 +63,25 @@ const InnerBarGraph = styled.span<{ solvedRate: number }>`
   height: 25px;
   line-height: 25px;
   text-align: right;
-  background: #87d474;
+  background: ${palette.green};
   border-radius: 40px;
   padding: 0 10px;
   box-sizing: border-box;
-  color: white;
+  color: ${palette.white};
   font-size: small;
   font-weight: 600;
   animation: ${(props) => GraphAnimation(props.solvedRate)} 1.5s 1;
 `;
 
-const InfoSideBar: React.FC = () => {
+const InfoSideBar = () => {
   const solvedRate = Number(((123 / 155) * 100).toFixed(1));
-  const [userdata, setUserdata] = useRecoilState(userData);
-  useEffect(() => {
-    async function fetchUserdata() {
-      const name: string = await getData.getusername();
-      setUserdata({ username: name });
-      socket.emit('name', name);
-    }
-    fetchUserdata();
-  }, []);
+  const userdata = useRecoilValue(userData);
 
   return (
     <InfoSideBarContainer>
       <ProfileWrap to="/profile/shin">
         <ProfilePhoto src="" />
-        <p>{userdata.username}</p>
+        <p>{userdata.name}</p>
       </ProfileWrap>
       <SolvedTitle>문제 푼 수</SolvedTitle>
       <SolvedBarGraph>

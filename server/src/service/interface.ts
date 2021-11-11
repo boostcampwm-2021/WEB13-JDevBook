@@ -99,3 +99,22 @@ export interface DBUserProblem extends DBCUD {
   problemidx: number;
   correct: boolean;
 }
+
+export interface PostUpdateData {
+  secret: number;
+  contents: string;
+  picture1: string | null;
+  picture2: string | null;
+  picture3: string | null;
+}
+
+export interface PostAddData extends PostUpdateData {
+  useridx: number;
+  likenum: number;
+}
+
+export interface CommentData {
+  postidx: number;
+  useridx: number;
+  comments: string;
+}
