@@ -10,16 +10,16 @@ import { AlertModal } from 'components/common';
 const GlobalStyle = createGlobalStyle`
   * {
     font-weight: bold;
-    font-family: 'Noto Sans KR';
+    font-family: 'Spoqa Han Sans Neo';
     ::placeholder,
     ::-webkit-input-placeholder {
       font-weight: bold;
-      font-family: 'Noto Sans KR';
+      font-family: 'Spoqa Han Sans Neo';
       color: ${palette.darkgray};
     }
     :-ms-input-placeholder {
       font-weight: bold;
-      font-family: 'Noto Sans KR';
+      font-family: 'Spoqa Han Sans Neo';
       color: ${palette.darkgray};
     }
   }
