@@ -18,6 +18,7 @@ import iconSearch from 'images/icons/icon-search.svg';
 import iconPhoto from 'images/icons/icon-photo.svg';
 import likeBadge from 'images/icons/icon-like-badge.svg';
 import iconSubmit from 'images/icons/icon-submit.svg';
+import iconSubmitActive from 'images/icons/icon-submit-active.svg';
 
 export {
   GnbGroup,
@@ -38,5 +39,6 @@ export {
   IconPublic,
   IconPrivate,
   iconSubmit,
+  iconSubmitActive,
   likeBadge
 };

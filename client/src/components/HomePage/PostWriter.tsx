@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { userData, modalVisibleStates } from 'recoil/store';
+import { userDataStates, modalStateStore } from 'recoil/store';
 import palette from 'theme/palette';
 import { iconPhoto } from 'images/icons';
 
@@ -41,6 +41,11 @@ const ModalCallBtn = styled.div`
 
   &:hover {
     cursor: pointer;
+    filter: brightness(95%);
+  }
+
+  &:active {
+    filter: brightness(90%);
   }
 `;
 
@@ -71,6 +76,10 @@ const StyledBtn = styled.div`
     transition: all 0.2s;
   }
 
+  &:active {
+    background-color: ${palette.gray};
+  }
+
   img {
     height: 30px;
     width: 30px;
@@ -84,15 +93,21 @@ const StyledBtn = styled.div`
 `;
 
 const PostWriter = () => {
-  const [modalState, setModalState] = useRecoilState(modalVisibleStates);
-  const userdata = useRecoilValue(userData);
+  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const userdata = useRecoilValue(userDataStates);
 
   const postWriterModalOn = (e: React.MouseEvent<HTMLDivElement>) => {
-    setModalState({ ...modalState, postWriter: true });
+    setModalState({
+      ...modalState,
+      post: { ...modalState.post, writer: true }
+    });
   };
 
   const withImgUploadModalOn = (e: React.MouseEvent<HTMLDivElement>) => {
-    setModalState({ ...modalState, postWriter: true, postInPhoto: true });
+    setModalState({
+      ...modalState,
+      post: { ...modalState.post, writer: true, inPhoto: true }
+    });
   };
 
   return (

@@ -9,6 +9,11 @@ import ProfilePhoto from 'components/common/ProfilePhoto';
 import { UserSearchBar, UserSearchModal } from 'components/common/UserSearch';
 import UserCard from 'components/common/UserCard';
 import InitUserData from 'components/common/InitUserData';
+import InitSocket from 'components/common/InitSocket';
+import AlertModal from 'components/common/AlertModal';
+import Skeleton from 'components/common/Skeleton';
+import LoadingModal from 'components/common/LoadingModal';
+import NewPostAlert from 'components/common/NewPostAlert';
 
 export {
   AlarmSideBar,
@@ -22,5 +27,10 @@ export {
   UserSearchBar,
   UserSearchModal,
   UserCard,
-  InitUserData
+  InitUserData,
+  InitSocket,
+  AlertModal,
+  Skeleton,
+  LoadingModal,
+  NewPostAlert
 };

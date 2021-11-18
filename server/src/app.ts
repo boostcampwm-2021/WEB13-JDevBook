@@ -19,7 +19,14 @@ const apiRouter = require('./routes/api');
 const debug = require('debug')('server:server');
 
 const app = express();
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'build')));
+
 const port = 4000;
+app.set('port', port);
 const FileStore = sessionFileStore(session);
 
 // app.use(
@@ -45,11 +52,13 @@ app.use(
       secure: false, //process.env.HTTPS_FALSE ? false : true,
       maxAge: 24000 * 60 * 60
     },
-    store: new FileStore({ path: path.resolve(__dirname, './sessions/') })
+    store: new FileStore({
+      path: path.resolve(__dirname, './sessions/'),
+      reapInterval: 24 * 60 * 60,
+      ttl: 24 * 60 * 60
+    })
   })
 );
-
-app.set('port', port);
 
 const server = createServer(app);
 socketIO(server);
@@ -57,12 +66,6 @@ socketIO(server);
 server.listen(port, () => {
   console.log(`✅ Server Listening on : http://localhost:${port}`);
 });
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'build')));
 
 app.use('/', indexRouter);
 app.use('/oauth', oauthRouter);

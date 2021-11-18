@@ -8,7 +8,8 @@ import {
   InfoSideBar,
   ChatSideBar,
   GroupSideBar,
-  InitUserData
+  InitUserData,
+  InitSocket
 } from 'components/common';
 
 const ProfilePageContainer = styled.div`
@@ -30,6 +31,7 @@ const ProfilePage: React.FC<RouteComponentProps<{ userId: string }>> = ({
   return (
     <ProfilePageContainer>
       <InitUserData />
+      <InitSocket />
       <Gnb />
       <ContentsWrap>
         <SideBar isLeft={true}>

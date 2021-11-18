@@ -1,8 +1,14 @@
 import React, { Dispatch } from 'react';
 import styled, { css } from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
-import { useRecoilValue, useRecoilState } from 'recoil';
-import { modalVisibleStates, rightModalStates, userData } from 'recoil/store';
+import { useRecoilValue, useRecoilState, useResetRecoilState } from 'recoil';
+import {
+  modalStateStore,
+  rightModalStates,
+  solvedProblemState,
+  userDataStates,
+  GroupNavState
+} from 'recoil/store';
 import fetchApi from 'api/fetch';
 
 import {
@@ -11,9 +17,8 @@ import {
   TabProps,
   IconProps,
   RightModalProps
-} from 'utils/types';
+} from 'types/GNB';
 import palette from 'theme/palette';
-import { defaultProfile } from 'images';
 import {
   GnbHome,
   GnbGroup,
@@ -82,8 +87,12 @@ const GnbTab = styled.div<TabProps>`
   transition: 0.1s ease-in;
 
   &:hover {
-    background: ${palette.lightgray};
+    background-color: ${palette.lightgray};
     border-radius: 8px;
+  }
+
+  &:active {
+    background-color: ${palette.gray};
   }
 
   svg path {
@@ -103,8 +112,12 @@ const ProfileWrap = styled.div`
   padding-right: 12px;
 
   &:hover {
-    background: ${palette.lightgray};
+    background-color: ${palette.lightgray};
     border-radius: 24px;
+  }
+
+  &:active {
+    background-color: ${palette.gray};
   }
 
   p {
@@ -134,15 +147,21 @@ const IconWrap = styled.div<IconProps>`
   }
 
   &:hover {
-    background: ${palette.lightgray};
+    background-color: ${palette.lightgray};
+  }
+
+  &:active {
+    background-color: ${palette.gray};
   }
 `;
 
 const Gnb = ({ type, rightModalType }: GnbProps) => {
-  const modalState = useRecoilValue(modalVisibleStates);
-  const [userdata, setUserdata] = useRecoilState(userData);
+  const modalState = useRecoilValue(modalStateStore);
+  const [userdata, setUserdata] = useRecoilState(userDataStates);
+  const resetSolvedProblemState = useResetRecoilState(solvedProblemState);
   const [rightModalState, setRightModalState] =
     useRecoilState(rightModalStates);
+  const [groupNavState, setGroupNavState] = useRecoilState(GroupNavState);
   const history = useHistory();
 
   return (
@@ -156,7 +175,7 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
             {type === 'home' ? <GnbHomeActive /> : <GnbHome />}
           </GnbTab>
         </Link>
-        <Link to="/group">
+        <Link to="/groupselect">
           <GnbTab current={type === 'group'}>
             {type === 'group' ? <GnbGroupActive /> : <GnbGroup />}
           </GnbTab>
@@ -171,9 +190,13 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
         </Link>
         <IconWrap
           img={rightModalState.messageFlag ? gnbMessageActive : gnbMessage}
-          onClick={() =>
-            ChangeFlag(rightModalState, setRightModalState, 'messageFlag')
-          }
+          onClick={() => {
+            ChangeFlag(rightModalState, setRightModalState, 'messageFlag');
+            setGroupNavState({
+              ...groupNavState,
+              groupChat: false
+            });
+          }}
         />
         <IconWrap
           img={rightModalState.alarmFlag ? gnbAlarmActive : gnbAlarm}
@@ -193,6 +216,7 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
               bio: '' as string,
               login: false
             });
+            resetSolvedProblemState();
             history.push('/');
           }}
         />

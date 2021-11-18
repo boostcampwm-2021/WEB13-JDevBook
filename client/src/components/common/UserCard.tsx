@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import { SearchedUserProps } from 'utils/types';
+import { SearchedUserProps } from 'types/GNB';
 import palette from 'theme/palette';
 
 import { ProfilePhoto } from 'components/common';

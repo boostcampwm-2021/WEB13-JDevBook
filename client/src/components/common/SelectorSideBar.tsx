@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import { rightModalStates, userData } from 'recoil/store';
+import { rightModalStates, userDataStates } from 'recoil/store';
 
 const SelectorSideBarContainer = styled.div<any>`
   width: inherit;

@@ -1,15 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import Router from './Router';
+import 'index.css';
+import App from 'App';
 import reportWebVitals from './reportWebVitals';
-import { RecoilRoot } from 'recoil';
 
-ReactDOM.render(
-  <RecoilRoot>
-    <Router />
-  </RecoilRoot>,
-  document.getElementById('root')
-);
+ReactDOM.render(<App />, document.getElementById('root'));
 
 reportWebVitals();

@@ -1,5 +1,8 @@
 import AWS from 'aws-sdk';
+import multer from 'multer';
+import multerS3 from 'multer-s3';
 import fs from 'fs';
+import { yyyymmdd } from './date';
 const storage = require('../config/objectstorage.json');
 
 //const endpoint: AWS.Endpoint = new AWS.Endpoint(storage.url);
@@ -18,7 +21,23 @@ const S3 = new AWS.S3({
   }
 });
 
-const objectStorage = {
+const storageS3 = multerS3({
+  s3: S3,
+  bucket: default_bucket,
+  contentType: multerS3.AUTO_CONTENT_TYPE,
+  acl: 'public-read',
+  key: (req, file, callback) => {
+    callback(
+      null,
+      `${req.session.username}/${yyyymmdd}/${Date.now()}_${file.originalname}`
+    );
+  },
+  serverSideEncryption: 'AES256'
+});
+
+export const upload = multer({ storage: storageS3 });
+
+export const objectStorage = {
   makeBucket: async (bucket_name: string) => {
     await S3.createBucket({
       Bucket: bucket_name,
@@ -93,8 +112,6 @@ const objectStorage = {
     }).promise();
   }
 };
-
-export default objectStorage;
 
 //(async () => await objectStorage.makeBucket('jdevbook2'))();
 //(async () => console.log(await objectStorage.getBucketlist()))();

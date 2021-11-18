@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IoClose } from 'react-icons/io5';
 
 import palette from 'theme/palette';
-import { modalVisibleStates, postWriterData } from 'recoil/store';
+import { modalStateStore } from 'recoil/store';
+import useClosePostModal from 'hooks/useClosePostModal';
 
 const ModalTitleWrap = styled.div`
   width: 100%;
@@ -37,29 +38,25 @@ const CloseBtn = styled.div`
 
   &:hover {
     cursor: pointer;
+    filter: brightness(95%);
+  }
+
+  &:active {
+    width: 35px;
+    height: 35px;
+    filter: brightness(90%);
   }
 `;
-
 const ModalTitle = () => {
-  const [modalState, setModalState] = useRecoilState(modalVisibleStates);
-  const [postData, setPostData] = useRecoilState(postWriterData);
-
-  const postWriterCancel = (e: React.MouseEvent<HTMLDivElement>) => {
-    setModalState({ ...modalState, postWriter: false, postInPhoto: false });
-    setPostData({
-      ...postData,
-      secret: false,
-      contents: '',
-      picture1: null,
-      picture2: null,
-      picture3: null
-    });
-  };
+  const modalState = useRecoilValue(modalStateStore);
+  const closeModal = useClosePostModal();
 
   return (
     <ModalTitleWrap>
-      <div>게시물 만들기</div>
-      <CloseBtn onClick={postWriterCancel}>
+      <div>
+        {modalState.post.isEnroll ? '게시물 만들기' : '게시물 수정하기'}
+      </div>
+      <CloseBtn onClick={() => closeModal()}>
         <IoClose size="28px" />
       </CloseBtn>
     </ModalTitleWrap>

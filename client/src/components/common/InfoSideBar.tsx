@@ -1,12 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
-import { userData } from 'recoil/store';
-import { useRecoilValue } from 'recoil';
-
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  solvedProblemState,
+  userDataStates,
+  rateState,
+  myJoinedGroupState
+} from 'recoil/store';
 import palette from 'theme/palette';
 
 import { ProfilePhoto } from 'components/common';
+import fetchApi from 'api/fetch';
 
 const InfoSideBarContainer = styled.div`
   height: 200px;
@@ -14,7 +19,7 @@ const InfoSideBarContainer = styled.div`
   background: ${palette.white};
   display: flex;
   flex-direction: column;
-  box-shadow: rgba(0, 0, 0, 0.24) 5px 5px 5px;
+  box-shadow: rgba(0, 0, 0, 0.24) 3px 3px 3px;
 `;
 
 const ProfileWrap = styled(Link)`
@@ -37,6 +42,15 @@ const SolvedTitle = styled.div`
   margin: 10px 50px;
 `;
 
+const NoGroup = styled.div`
+  margin: 0 50px;
+  color: ${palette.darkgray};
+
+  &:after {
+    content: '가입된 그룹이 없습니다';
+  }
+`;
+
 const SolvedBarGraph = styled.div`
   height: 25px;
   background: ${palette.gray};
@@ -44,20 +58,16 @@ const SolvedBarGraph = styled.div`
   margin: 0 50px;
 `;
 
-const GraphAnimation = (solvedRate: number) => keyframes`
+const GraphAnimation = (prevRate: number, solvedRate: number) => keyframes`
   0% {
-    width: 0;
-    color: rgba(255, 255, 255, 0);
-  }
-  50% {
-    color: rgba(255, 255, 255, 1);
+    width: ${prevRate}%;
   }
   100% {
     width: ${solvedRate}%;
   }
 `;
 
-const InnerBarGraph = styled.span<{ solvedRate: number }>`
+const InnerBarGraph = styled.span<{ prevRate: number; solvedRate: number }>`
   display: block;
   width: ${(props) => props.solvedRate}%;
   height: 25px;
@@ -70,23 +80,60 @@ const InnerBarGraph = styled.span<{ solvedRate: number }>`
   color: ${palette.white};
   font-size: small;
   font-weight: 600;
-  animation: ${(props) => GraphAnimation(props.solvedRate)} 1.5s 1;
+  animation: ${(props) => GraphAnimation(props.prevRate, props.solvedRate)} 1.5s
+    1;
 `;
 
 const InfoSideBar = () => {
-  const solvedRate = Number(((123 / 155) * 100).toFixed(1));
-  const userdata = useRecoilValue(userData);
+  const userdata = useRecoilValue(userDataStates);
+  const joinedGroups = useRecoilValue(myJoinedGroupState);
+  const solvedProblemCount = useRecoilValue(solvedProblemState).length;
+  const [rate, setRate] = useRecoilState(rateState);
+
+  const prevRateUpdate = (e: React.AnimationEvent) => {
+    setRate((prev) => ({ ...prev, prevRate: rate.solvedRate }));
+  };
+
+  const getSolvedRate = useCallback(() => {
+    return rate.problemCount === 0
+      ? 0
+      : Number(((solvedProblemCount / rate.problemCount) * 100).toFixed(1));
+  }, [solvedProblemCount, rate.problemCount]);
+
+  useEffect(() => {
+    const solvedRate = getSolvedRate();
+    setRate((prev) => ({ ...prev, solvedRate }));
+  }, [solvedProblemCount, rate.problemCount]);
+
+  useEffect(() => {
+    const initProblemCount = async () => {
+      const problems = await fetchApi.getProblems();
+      if (problems.length !== rate.problemCount) {
+        setRate((prev) => ({ ...prev, problemCount: problems.length }));
+      }
+    };
+    initProblemCount();
+  }, [joinedGroups]);
 
   return (
-    <InfoSideBarContainer>
+    <InfoSideBarContainer className="no-drag">
       <ProfileWrap to="/profile/shin">
         <ProfilePhoto src="" />
         <p>{userdata.name}</p>
       </ProfileWrap>
-      <SolvedTitle>문제 푼 수</SolvedTitle>
-      <SolvedBarGraph>
-        <InnerBarGraph solvedRate={solvedRate}>{solvedRate}%</InnerBarGraph>
-      </SolvedBarGraph>
+      <SolvedTitle>문제 정답률</SolvedTitle>
+      {joinedGroups && joinedGroups.length === 0 && <NoGroup />}
+      {joinedGroups && joinedGroups.length > 0 && (
+        <SolvedBarGraph>
+          <InnerBarGraph
+            prevRate={rate.prevRate}
+            solvedRate={rate.solvedRate}
+            onAnimationEnd={prevRateUpdate}
+          >
+            {rate.problemCount !== 0 && `${rate.solvedRate}%`}
+          </InnerBarGraph>
+        </SolvedBarGraph>
+      )}
     </InfoSideBarContainer>
   );
 };

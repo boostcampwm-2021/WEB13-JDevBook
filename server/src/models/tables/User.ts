@@ -22,7 +22,8 @@ import UserProblem from './UserProblem';
 @Table({
   tableName: 'users',
   timestamps: true,
-  paranoid: true
+  paranoid: true,
+  charset: 'utf8mb4'
 })
 export default class User extends Model<User> {
   @Column({
@@ -43,6 +44,9 @@ export default class User extends Model<User> {
 
   @Column({ type: DataType.STRING(100) })
   bio!: string;
+
+  @Column({ allowNull: false, defaultValue: false })
+  loginstate!: boolean;
 
   // @BelongsToMany(() => User, {through: () => Chat, foreignKey: 'senderidx'})
   // BTMChatsenderidx?: User[]

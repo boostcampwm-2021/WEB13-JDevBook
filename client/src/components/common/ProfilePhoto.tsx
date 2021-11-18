@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { ProfilePhotoProps } from 'utils/types';
-import palette from 'theme/palette';
+import { ProfilePhotoProps } from 'types/common';
 import { defaultProfile } from 'images';
 
 const StyledProfilePhoto = styled.img<ProfilePhotoProps>`
@@ -17,6 +16,7 @@ const ProfilePhoto = ({ src, size }: ProfilePhotoProps) => {
       src={src || defaultProfile}
       size={size}
       alt="프로필 사진"
+      className="no-drag"
     ></StyledProfilePhoto>
   );
 };

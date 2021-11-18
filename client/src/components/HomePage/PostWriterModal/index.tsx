@@ -1,22 +1,27 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import palette from 'theme/palette';
 import {
-  modalVisibleStates,
-  postWriterData,
-  userData,
-  postListStore
+  isImgUploadingState,
+  modalStateStore,
+  postListStore,
+  postModalDataStates,
+  alertState,
+  uploadImgList,
+  usersocketStates
 } from 'recoil/store';
 import fetchApi from 'api/fetch';
-import { PostData } from 'utils/types';
+import { PostAddData, PostUpdateData, PostData } from 'types/post';
 
 import ModalTitle from 'components/HomePage/PostWriterModal/ModalTitle';
 import PostInfo from 'components/HomePage/PostWriterModal/PostInfo';
 import ModalContents from 'components/HomePage/PostWriterModal/ModalContents';
 import AddContentsBar from 'components/HomePage/PostWriterModal/AddContentsBar';
 import ImgUploadModal from './ImgUploadModal';
+import useClosePostModal from 'hooks/useClosePostModal';
+import useAlertModal from 'hooks/useAlertModal';
 
 const PostWriterModalOverlay = styled.div<{ modalState: boolean }>`
   position: fixed;
@@ -41,7 +46,7 @@ const ModalAnimation = keyframes`
 
 const PostWriterModalInner = styled.div<{ modalState: boolean }>`
   position: fixed;
-  top: 160px;
+  top: 100px;
   width: 600px;
   box-sizing: border-box;
   padding: 20px;
@@ -49,16 +54,11 @@ const PostWriterModalInner = styled.div<{ modalState: boolean }>`
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 8px;
   background-color: ${palette.white};
-  animation: ${ModalAnimation} 0.5s 1;
+  animation: ${ModalAnimation} 0.2s 1;
 
   display: ${(props) => (props.modalState ? 'flex' : 'none')};
   flex-direction: column;
   align-items: center;
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 `;
 
 const Line = styled.div`
@@ -84,58 +84,119 @@ const PostBtn = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: ${palette.darkgreen};
-    transition: all 0.1s;
+    filter: brightness(95%);
+  }
+
+  &:active {
+    font-size: 15px;
+    filter: brightness(90%);
   }
 `;
 
 const PostWriterModal = () => {
-  const [modalState, setModalState] = useRecoilState(modalVisibleStates);
-  const [postData, setPostData] = useRecoilState(postWriterData);
+  const modalState = useRecoilValue(modalStateStore);
+  const postData = useRecoilValue(postModalDataStates);
+  const isImgUploading = useRecoilValue(isImgUploadingState);
   const [postList, setPostList] = useRecoilState(postListStore);
-  const userdata = useRecoilValue(userData);
+  const [alertModal, setAlertModal] = useRecoilState(alertState);
+  const imgList = useRecoilValue(uploadImgList);
+  const socket = useRecoilValue(usersocketStates);
+  const closePostModal = useClosePostModal();
+  const alertMessage = useAlertModal();
 
-  const postDataToAPI = async (e: React.MouseEvent<HTMLDivElement>) => {
-    if (postData.contents === '')
-      return alert('내용이 없습니다. 내용을 입력하세요.');
+  /**
+   * 등록 모달인지 수정 모달인지 알려주는 함수
+   * @returns true이면 등록, false이면 수정
+   */
+  const isEnrollMode = () => modalState.post.isEnroll;
+  const alertSuccess = () => {
+    alertMessage(
+      `게시글이 성공적으로 ${isEnrollMode() ? '게시' : '수정'}되었습니다!`
+    );
+  };
+  const alertFail = () => {
+    alertMessage(
+      `게시글이 알수없는 이유로 ${
+        isEnrollMode() ? '게시' : '수정'
+      }되지 않았습니다.`,
+      `${palette.alert}`
+    );
+  };
 
-    const { result, check } = await fetchApi.addPosts(postData);
+  const postDataToAPI = async () => {
+    if (isImgUploading > 0)
+      return alertMessage(
+        '이미지 업로드 중입니다. 잠시 후에 게시하세요',
+        palette.alert
+      );
 
+    if (postData.contents === '') {
+      return alertMessage(
+        '내용이 없습니다. 내용을 입력하세요.',
+        `${palette.alert}`
+      );
+    }
+
+    if (isImgUploading) {
+      return alertMessage(
+        '이미지 업로드 중입니다. 잠시 후에 게시하세요',
+        `${palette.alert}`
+      );
+    }
+
+    const { useridx, contents, secret, likenum } = { ...postData };
+    const picture1 = imgList[0] ?? null;
+    const picture2 = imgList[1] ?? null;
+    const picture3 = imgList[2] ?? null;
+
+    const requestData = isEnrollMode()
+      ? { useridx, contents, secret, picture1, picture2, picture3, likenum }
+      : { secret, contents, picture1, picture2, picture3 };
+
+    const { result, check } = isEnrollMode()
+      ? await fetchApi.addPosts(requestData as PostAddData)
+      : await fetchApi.updatePosts(postData.idx, requestData as PostUpdateData);
+
+    // 통신 결과 후처리 (분리하면 좋을듯?)
     if (check) {
-      alert('게시글이 성공적으로 게시되었습니다!');
-      setModalState({ ...modalState, postWriter: false, postInPhoto: false });
-      const newPostData: PostData = {
+      const newPostIfExists: PostData = isEnrollMode() && {
         ...result,
-        BTUseruseridx: {
-          bio: userdata.bio,
-          idx: userdata.idx,
-          nickname: userdata.name,
-          profile: userdata.profile
-        }
+        BTUseruseridx: { ...postData.BTUseruseridx }
       };
-      setPostList([newPostData, ...postList]);
-      setPostData({
-        ...postData,
-        secret: false,
-        contents: '',
-        picture1: null,
-        picture2: null,
-        picture3: null
-      });
-    } else alert('게시글이 알수없는 이유로 게시되지 않았습니다.');
+
+      const newPostList = isEnrollMode()
+        ? [newPostIfExists, ...postList]
+        : postList.map((post) =>
+            post.idx === postData.idx
+              ? ({ ...postData, picture1, picture2, picture3 } as PostData)
+              : post
+          );
+
+      if (isEnrollMode()) {
+        socket.emit('post_added');
+      }
+      alertSuccess();
+      setPostList(newPostList);
+      closePostModal();
+    } else {
+      alertFail();
+    }
   };
 
   return (
     <>
-      <PostWriterModalOverlay modalState={modalState.postWriter} />
-      <PostWriterModalInner modalState={modalState.postWriter}>
+      <PostWriterModalOverlay modalState={modalState.post.writer} />
+      <PostWriterModalInner
+        modalState={modalState.post.writer}
+        className="no-drag"
+      >
         <ModalTitle />
         <Line />
         <PostInfo />
         <ModalContents />
         <AddContentsBar />
         <PostBtn onClick={postDataToAPI}>
-          <div>게시</div>
+          <div>{isEnrollMode() ? '게시' : '수정'}</div>
         </PostBtn>
         <ImgUploadModal />
       </PostWriterModalInner>

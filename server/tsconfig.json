@@ -10,8 +10,7 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true, //라이브러리 타입검사 꺼줌
     "moduleResolution": "node", //node 스타일 모듈 해석
-    "baseUrl": "src",
-    //"esModuleInterop": true, // require만 쓰는것 es6로 가져올수있게
+    "baseUrl": "./src",
     // 비-상대주소 모듈 찾을때 node_modules 보다 먼저 src 찾게
     // 비상대주소 : require('fs'), require('@services/a')
     // 나중에 alias 할때 꼭 써줘야함

@@ -11,7 +11,8 @@ import User from './User';
 @Table({
   tableName: 'chats',
   timestamps: true,
-  paranoid: true
+  paranoid: true,
+  charset: 'utf8mb4'
 })
 export default class Chat extends Model<Chat> {
   @Column({

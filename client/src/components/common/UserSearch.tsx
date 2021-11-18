@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import styled, { css, keyframes } from 'styled-components';
-import { mainLogo } from 'images';
+import styled, { keyframes } from 'styled-components';
 import { iconSearch } from 'images/icons';
 import { MdArrowBack } from 'react-icons/md';
 import { useRecoilState } from 'recoil';
-import { modalVisibleStates } from 'recoil/store';
+import { modalStateStore } from 'recoil/store';
 
-import { SearchedUser } from 'utils/types';
+import { SearchedUser } from 'types/GNB';
 import palette from 'theme/palette';
+import fetchApi from 'api/fetch';
+import { mainLogo } from 'images';
 
 import { UserCard } from 'components/common';
-import fetchApi from 'api/fetch';
 
 const FlexBox = styled.div`
   display: flex;
@@ -26,6 +26,10 @@ const ModalHeader = styled(FlexBox)`
     color: ${palette.darkgray};
   }
   margin-right: 8px;
+`;
+
+const MainLogo = styled.img`
+  width: 40px;
 `;
 
 const UserSearchBarContainer = styled.div`
@@ -74,7 +78,7 @@ const SearchBarContainerModal = styled(UserSearchBarContainer)`
   width: 100%;
   animation: ${ExtendSearchBarAnimation} 0.5s ease-in-out;
 
-  &::before {
+  /* &::before {
     content: '';
     width: 22px;
     height: 22px;
@@ -87,7 +91,7 @@ const SearchBarContainerModal = styled(UserSearchBarContainer)`
     background-image: none;
     width: 0px;
     height: 0px;
-  }
+  } */
 `;
 
 const UserSearchModalContainer = styled.div`
@@ -111,9 +115,11 @@ const UserSearchModalContainer = styled.div`
 const HoverRound = styled.div`
   width: 36px;
   height: 36px;
+  min-width: 36px;
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 
   &:hover {
     background: ${palette.lightgray};
@@ -144,24 +150,24 @@ const SearchModalBody = styled.div`
 `;
 
 const UserSearchBar = () => {
-  const [modalState, setModalState] = useRecoilState(modalVisibleStates);
+  const [modalState, setModalState] = useRecoilState(modalStateStore);
   return (
     <>
       <Link to="/home">
-        <img src={mainLogo} alt="mainLogo" />
+        <MainLogo src={mainLogo} alt="mainLogo" />
       </Link>
       <UserSearchBarContainer
         onClick={() => setModalState({ ...modalState, searchUser: true })}
       >
         <img src={iconSearch} alt="iconSearch" />
-        <input type="text" placeholder="Search User" readOnly />
+        <input type="text" placeholder="사용자 검색" readOnly />
       </UserSearchBarContainer>
     </>
   );
 };
 
 const UserSearchModal = () => {
-  const [modalState, setModalState] = useRecoilState(modalVisibleStates);
+  const [modalState, setModalState] = useRecoilState(modalStateStore);
   const [input, setInput] = useState('');
   const [results, setResults] = useState<{
     isProgress: boolean;
@@ -215,7 +221,7 @@ const UserSearchModal = () => {
         <SearchBarContainerModal>
           <input
             type="text"
-            placeholder="Search User"
+            placeholder="사용자 검색"
             value={input}
             onChange={onChangeInput}
             ref={inputBox}
@@ -224,9 +230,9 @@ const UserSearchModal = () => {
       </ModalHeader>
       <SearchModalBody>
         {results.isProgress ? (
-          <p>Searching...</p>
+          <p>검색 중...</p>
         ) : results.users.length === 0 ? (
-          <p>No Result</p>
+          <p>결과 없음</p>
         ) : (
           results.users.map((result) => (
             <UserCard key={result.idx} user={result} />

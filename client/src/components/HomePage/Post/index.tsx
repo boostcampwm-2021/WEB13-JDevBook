@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { MdMoreHoriz } from 'react-icons/md';
 
 import { LikeIcon, LikeIconActive, CommentIcon } from 'images/icons';
-import { PostProps } from 'utils/types';
+import { PostData } from 'types/post';
 
 import palette from 'theme/palette';
+import style from 'theme/style';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { modalVisibleStates, userData, CommentState } from 'recoil/store';
+import { modalStateStore, userDataStates } from 'recoil/store';
 import Header from './Header';
 import OptionModal from './OptionModal';
 import Body from './Body';
@@ -39,7 +40,7 @@ const ButtonsWrap = styled.div`
   align-items: center;
 `;
 
-const Button = styled.div`
+const Button = styled.div<{ isLike?: boolean }>`
   flex: 1;
   margin: 0px 2px 4px;
   height: 36px;
@@ -47,11 +48,11 @@ const Button = styled.div`
   align-items: center;
   justify-content: center;
   transition: 0.1s ease-in-out;
-  cursor: pointer;
 
   p {
     margin-left: 8px;
-    color: #666666;
+    color: ${(props) =>
+      props.isLike ? `${palette.darkgreen}` : `${palette.darkgray}`};
   }
 
   svg {
@@ -60,13 +61,21 @@ const Button = styled.div`
   }
 
   path {
-    fill: #666666;
+    fill: ${(props) =>
+      props.isLike ? `${palette.darkgreen}` : `${palette.darkgray}`};
   }
 
   &:hover {
     cursor: pointer;
-    background: #f2f2f2;
+    background: ${palette.lightgray};
     border-radius: 4px;
+  }
+  &:active {
+    background-color: ${palette.gray};
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 `;
 
@@ -86,6 +95,10 @@ const IconHover = styled.div`
     background-color: ${palette.lightgray};
   }
 
+  &:active {
+    background-color: ${palette.gray};
+  }
+
   svg {
     font-size: 24px;
   }
@@ -99,9 +112,9 @@ const Divider = styled.div`
   margin-right: 16px;
 `;
 
-const Post = ({ post }: PostProps) => {
-  const [modalState, setModalState] = useRecoilState(modalVisibleStates);
-  const { idx: myIdx } = useRecoilValue(userData);
+const Post = ({ post }: { post: PostData }) => {
+  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const { idx: myIdx } = useRecoilValue(userDataStates);
   const [likeFlag, setLikeFlag] = useState<boolean>(false);
   const [likeNum, setLikeNum] = useState<number>(0);
   const [commentFlag, setCommentFlag] = useState<boolean>(false);
@@ -114,17 +127,18 @@ const Post = ({ post }: PostProps) => {
     picture1,
     picture2,
     picture3,
-    likenum,
     BTUseruseridx
   } = post;
   const { idx: postUserIdx, nickname, profile } = BTUseruseridx;
 
-  const likeToggle = (e: React.MouseEvent<HTMLDivElement>) => {
+  const likeToggle = async (e: React.MouseEvent<HTMLDivElement>) => {
     likeFlag
       ? fetchApi.updateLikeNum(postIdx, likeNum - 1)
       : fetchApi.updateLikeNum(postIdx, likeNum + 1);
+
     likeFlag ? setLikeNum(likeNum - 1) : setLikeNum(likeNum + 1);
     setLikeFlag(!likeFlag);
+    await fetchApi.addLikePost(myIdx, postIdx);
   };
 
   useEffect(() => {
@@ -136,12 +150,17 @@ const Post = ({ post }: PostProps) => {
     <PostContainer>
       {postUserIdx === myIdx && (
         <IconHover
-          onClick={() => setModalState({ ...modalState, postOption: postIdx })}
+          onClick={() =>
+            setModalState({
+              ...modalState,
+              post: { ...modalState.post, index: postIdx }
+            })
+          }
         >
           <MdMoreHoriz />
         </IconHover>
       )}
-      {modalState.postOption === postIdx && <OptionModal />}
+      {modalState.post.index === postIdx && <OptionModal post={post} />}
       <Header
         nickname={nickname}
         profile={profile}
@@ -161,8 +180,8 @@ const Post = ({ post }: PostProps) => {
       />
       <Divider />
       <ButtonsWrap>
-        <Button onClick={likeToggle}>
-          {likeFlag ? <LikeIconActive /> : <LikeIcon />}
+        <Button isLike={likeFlag} onClick={likeToggle}>
+          <LikeIcon />
           <p>좋아요</p>
         </Button>
         <Button

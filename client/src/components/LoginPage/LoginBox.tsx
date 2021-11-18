@@ -17,15 +17,14 @@ const Box = styled.div`
   height: 50%;
   background-color: ${palette.white};
   border-radius: 50px;
-  
+
   margin-right: 5vw;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
     rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 `;
 
-const MainLogoElement = styled.img.attrs({
-  src: `${mainLogo}`
-})`
+const MainLogo = styled.img`
+  width: 80px;
   margin-top: 50px;
 
   &:nth-child(1) {
@@ -40,9 +39,9 @@ const Text = styled.div`
 const LoginBox = (): JSX.Element => {
   //const history = useHistory();
   return (
-    <Box>
+    <Box className="no-drag">
       <div>
-        <MainLogoElement />
+        <MainLogo src={mainLogo} />
         <Text>개발자라면 Github 아이디는 가지고 계시죠?</Text>
         <GithubLoginButton
           onClick={

@@ -4,13 +4,16 @@ dotenv.config({ path: path.resolve(__dirname, '../config/.env.development') });
 import express, { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import dbManager from '../service/dbManager';
-import { DBUser, PostAddData, PostUpdateData } from 'service/interface';
-const githubOauth = require('../service/githubOauth');
+import {
+  DBUser,
+  PostAddData,
+  PostUpdateData,
+  CommentData
+} from '../types/interface';
+import { upload } from '../service/objectStorage';
 const oauth = require('../config/oauth.json');
 
 const router = express.Router();
-
-const clientURL: string = process.env.LOCAL_CLIENT ?? '/';
 
 router.get('/data', async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -18,7 +21,7 @@ router.get('/data', async (req: Request, res: Response, next: NextFunction) => {
       name: string;
     };
     if (name === req.session.username) {
-      const userdata: DBUser = await dbManager.getUserdata(name);
+      const userdata: DBUser = await dbManager.getUserData(name);
       res.json({
         data: userdata,
         error: false
@@ -105,7 +108,6 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const PostAddData: PostAddData = req.body;
-      console.log(`Insert ${JSON.stringify(PostAddData)}`);
       const postData = await dbManager.addPost(PostAddData);
       res.json({ result: postData, check: true });
     } catch (err) {
@@ -121,14 +123,11 @@ router.put(
     try {
       const postIdx = Number(req.params.postidx);
       const postUpdateData: PostUpdateData = req.body;
-      console.log(
-        `Update ${JSON.stringify(postUpdateData)} where idx=${postIdx}`
-      );
       await dbManager.updatePost(postUpdateData, postIdx);
-      res.json(true);
+      res.json({ check: true });
     } catch (err) {
       console.error(err);
-      res.json(false);
+      res.json({ check: false });
     }
   }
 );
@@ -137,9 +136,7 @@ router.delete(
   '/posts/:postidx',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log(req.params.postidx);
       const postIdx = Number(req.params.postidx);
-      console.log(`Delete idx=${postIdx}`);
       await dbManager.deletePost(postIdx);
       res.json(true);
     } catch (err) {
@@ -166,11 +163,8 @@ router.put(
   '/posts/like/:postidx',
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const postIdx = Number(req.params.postidx.slice(1));
+      const postIdx = Number(req.params.postidx);
       const { likeNum } = req.body;
-      console.log(
-        `Update likenum ${JSON.stringify(likeNum)} where idx=${postIdx}`
-      );
       await dbManager.updateLikeNum(postIdx, likeNum);
       res.json(true);
     } catch (err) {
@@ -180,10 +174,143 @@ router.put(
   }
 );
 
-router.post('/uploadimg', (req: Request, res: Response, next: NextFunction) => {
-  console.log('오냐고');
-  console.log(req.body);
-  res.end();
-});
+router.post(
+  '/likes/:useridx/:postidx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const useridx = Number(req.params.useridx);
+      const postidx = Number(req.params.postidx);
+      const result = await dbManager.toggleLikePosts(useridx, postidx);
+      res.json(result);
+    } catch (err) {
+      res.json(false);
+    }
+  }
+);
+
+router.post(
+  '/uploadimg',
+  upload.single('imgfile'), // multer-s3 location 추가됨
+  async (req: Request, res: Response, next: NextFunction) => {
+    const s3file = req.file;
+    if (s3file) res.json({ file: s3file, save: true });
+    else res.json({ save: false });
+    // type 생각하면 형식 똑같이 해야되나?
+  }
+);
+
+router.get(
+  '/comments/:postidx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const postidx = Number(req.params.postidx);
+      const result = await dbManager.getComments(postidx);
+      res.json(result);
+    } catch (err) {
+      console.error(err);
+      res.json(false);
+    }
+  }
+);
+
+router.get(
+  '/problems/:groupidx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groupIdx = Number(req.params.groupidx);
+      const problems = groupIdx ? await dbManager.getProblems([groupIdx]) : [];
+      res.json(problems);
+    } catch (err) {
+      console.error(err);
+      res.json([]);
+    }
+  }
+);
+
+router.get(
+  '/problems',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groups = await dbManager.getUserJoinedGroups(req.session.useridx);
+      const groupIndices = JSON.parse(JSON.stringify(groups)).map(
+        (item: any) => item.groupidx
+      );
+      const problems = await dbManager.getProblems(groupIndices);
+      res.json(problems);
+    } catch (err) {
+      console.error(err);
+      res.json([]);
+    }
+  }
+);
+
+router.post(
+  '/comments',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const addComment: CommentData = req.body;
+      const result = await dbManager.addComment(addComment);
+      res.json({ result: result, check: true });
+    } catch (err) {
+      console.error(err);
+      res.json({ check: false });
+    }
+  }
+);
+
+router.post(
+  '/problems/correct',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userIdx = req.session.useridx;
+      const { problemIdx } = req.body;
+      await dbManager.insertSolvedProblem(userIdx, Number(problemIdx));
+      res.json(true);
+    } catch (err) {
+      res.json(false);
+    }
+  }
+);
+
+router.get(
+  '/groups',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groupList = await dbManager.getGroupList();
+      res.json(groupList);
+    } catch (err) {
+      console.error(err);
+      res.json([]);
+    }
+  }
+);
+
+router.get(
+  '/groups/:groupidx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groupIdx: number = Number(req.params.groupidx);
+      const group = await dbManager.getGroup(groupIdx);
+      res.json(group);
+    } catch (err) {
+      console.error(err);
+      res.json([]);
+    }
+  }
+);
+
+router.post(
+  '/joingroup/:useridx/:postidx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const useridx = Number(req.params.useridx);
+      const postidx = Number(req.params.postidx);
+      const result = await dbManager.toggleUserGroup(useridx, postidx);
+      res.json(result);
+    } catch (err) {
+      res.json(false);
+    }
+  }
+);
 
 module.exports = router;

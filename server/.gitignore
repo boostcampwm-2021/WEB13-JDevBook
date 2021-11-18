@@ -7,6 +7,9 @@ src/sessions
 # local-build
 build/
 
+# uploads file
+**/uploads
+
 # erd
 **/erd-*
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
-import { userData, postWriterData } from 'recoil/store';
+import { userDataStates, postModalDataStates } from 'recoil/store';
 import palette from 'theme/palette';
 
 import { ProfilePhoto } from 'components/common';
@@ -33,12 +33,18 @@ const SecretSelector = styled.div`
 
   &:hover {
     cursor: pointer;
+    filter: brightness(95%);
+  }
+
+  &:active {
+    filter: brightness(90%);
+    font-size: 15px;
   }
 `;
 
 const PostInfo = () => {
-  const userdata = useRecoilValue(userData);
-  const [postData, setPostData] = useRecoilState(postWriterData);
+  const userdata = useRecoilValue(userDataStates);
+  const [postData, setPostData] = useRecoilState(postModalDataStates);
   const [secretStr, setSecretStr] = useState('');
 
   const secretToggleHandler = (e: React.MouseEvent<HTMLDivElement>) => {

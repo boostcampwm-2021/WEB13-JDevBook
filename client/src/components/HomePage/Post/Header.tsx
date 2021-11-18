@@ -2,10 +2,10 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 
 import { IconPublic, IconPrivate } from 'images/icons';
+import { PostHeaderProps } from 'types/post';
+import textUtil from 'utils/textUtil';
 
 import { ProfilePhoto } from 'components/common';
-import { PostHeaderProps } from 'utils/types';
-import textUtil from 'utils/textUtil';
 
 const HeaderContainer = styled.div`
   width: 100%;
