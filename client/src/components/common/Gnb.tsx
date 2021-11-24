@@ -1,16 +1,18 @@
-import React, { Dispatch } from 'react';
+import React, { Dispatch, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue, useRecoilState, useResetRecoilState } from 'recoil';
+
 import {
   modalStateStore,
   rightModalStates,
   solvedProblemState,
   userDataStates,
-  GroupNavState
+  GroupNavState,
+  alarmState,
+  usersocketStates
 } from 'recoil/store';
 import fetchApi from 'api/fetch';
-
 import {
   GnbProps,
   FlexProps,
@@ -28,8 +30,7 @@ import {
   gnbMessageActive,
   gnbAlarm,
   gnbAlarmActive,
-  gnbSelector,
-  gnbSelectorActive
+  gnbLogout
 } from 'images/icons';
 
 import {
@@ -37,11 +38,14 @@ import {
   UserSearchModal,
   ProfilePhoto
 } from 'components/common';
+import useResetProfile from 'hooks/useResetProfile';
 
 const GnbContainer = styled.div`
   width: 100%;
+  min-width: 720px;
   height: 56px;
-  position: fixed;
+  position: sticky;
+  top: 0;
   z-index: 1;
   display: flex;
   justify-content: space-between;
@@ -155,6 +159,22 @@ const IconWrap = styled.div<IconProps>`
   }
 `;
 
+const AlarmBadge = styled.div`
+  position: absolute;
+  top: 13px;
+  right: 71px;
+
+  width: 12px;
+  line-height: 12px;
+  border-radius: 100%;
+  text-align: center;
+
+  cursor: pointer;
+  background-color: red;
+  color: white;
+  font-size: 8px;
+`;
+
 const Gnb = ({ type, rightModalType }: GnbProps) => {
   const modalState = useRecoilValue(modalStateStore);
   const [userdata, setUserdata] = useRecoilState(userDataStates);
@@ -162,10 +182,28 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
   const [rightModalState, setRightModalState] =
     useRecoilState(rightModalStates);
   const [groupNavState, setGroupNavState] = useRecoilState(GroupNavState);
+  const [alarmNum, setAlarmNum] = useRecoilState(alarmState);
+  const socket = useRecoilValue(usersocketStates);
   const history = useHistory();
+  const resetProfile = useResetProfile();
+
+  const photoClickHandler = (e: React.MouseEvent) => {
+    resetProfile(userdata.name);
+  };
+
+  useEffect(() => {}, [alarmNum]);
+
+  socket.off('get alarm');
+  socket.on(
+    'get alarm',
+    (data: { sender: string; receiver: string; type: string }) => {
+      if (data.receiver === userdata.name && data.sender !== userdata.name)
+        setAlarmNum(alarmNum + 1);
+    }
+  );
 
   return (
-    <GnbContainer>
+    <GnbContainer className="no-drag">
       <FlexWrap>
         {modalState.searchUser ? <UserSearchModal /> : <UserSearchBar />}
       </FlexWrap>
@@ -182,9 +220,9 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
         </Link>
       </FlexWrap>
       <FlexWrap>
-        <Link to="/profile/1">
+        <Link to={`/profile/${userdata.name}`} onClick={photoClickHandler}>
           <ProfileWrap>
-            <ProfilePhoto size="28px" />
+            <ProfilePhoto userName={userdata.name} size="28px" />
             <p>{userdata.name}</p>
           </ProfileWrap>
         </Link>
@@ -200,13 +238,25 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
         />
         <IconWrap
           img={rightModalState.alarmFlag ? gnbAlarmActive : gnbAlarm}
-          onClick={() =>
-            ChangeFlag(rightModalState, setRightModalState, 'alarmFlag')
-          }
+          onClick={() => {
+            ChangeFlag(rightModalState, setRightModalState, 'alarmFlag');
+            setAlarmNum(0);
+            socket.emit('make alarms check', { receiver: userdata.name });
+          }}
         />
+        <AlarmBadge
+          onClick={() => {
+            ChangeFlag(rightModalState, setRightModalState, 'alarmFlag');
+            setAlarmNum(0);
+            socket.emit('make alarms check', { receiver: userdata.name });
+          }}
+        >
+          {alarmNum ? alarmNum : null}
+        </AlarmBadge>
         <IconWrap
-          img={rightModalState.selectorFlag ? gnbSelectorActive : gnbSelector}
+          img={gnbLogout}
           onClick={async () => {
+            ChangeFlag(rightModalState, setRightModalState, '');
             await fetchApi.logout();
             setUserdata({
               idx: -1,
@@ -217,6 +267,7 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
               login: false
             });
             resetSolvedProblemState();
+            socket.emit('disconnect notify');
             history.push('/');
           }}
         />

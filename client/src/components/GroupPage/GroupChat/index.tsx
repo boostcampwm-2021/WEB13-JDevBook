@@ -1,21 +1,19 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 
 import {
   GroupNavState,
-  rightModalStates,
   userDataStates,
-  usersocketStates
+  usersocketStates,
+  loginState
 } from 'recoil/store';
 
 import palette from 'theme/palette';
 import style from 'theme/style';
-import ProfilePhoto from 'components/common/ProfilePhoto';
+import { ClickableProfilePhoto } from 'components/common';
 import { iconSubmit, iconSubmitActive } from 'images/icons';
 import { IMessage, ISocketMessage, ISuccessiveMessage } from 'types/message';
-
-const ClickableProfileImage = styled(ProfilePhoto)``;
 
 const OpenChatAnimation = keyframes`
   0% { opacity: 0; transform: translateX(100px); }
@@ -28,11 +26,13 @@ const CloseChatAnimation = keyframes`
 `;
 
 const ChatSideBarContainer = styled.div<{ groupChatFlag: boolean }>`
-  position: aboslute;
+  position: fixed;
+  top: 56px;
+  right: 0;
   display: flex;
   flex-direction: column;
-  width: inherit;
-  height: ${(props) => (props.groupChatFlag ? `inherit` : `0px`)};
+  width: 340px;
+  height: calc(100% - 56px);
 
   visibility: ${(props) => (props.groupChatFlag ? `` : `hidden`)};
   transition: ${(props) => (props.groupChatFlag ? `` : `all .5s`)};
@@ -45,6 +45,7 @@ const ChatSideBarContainer = styled.div<{ groupChatFlag: boolean }>`
           ${CloseChatAnimation}
         `};
   animation-duration: 0.5s;
+  animation-fill-mode: forwards;
 
   background-color: ${palette.white};
   box-shadow: -5px 2px 5px 0px rgb(0 0 0 / 24%);
@@ -168,15 +169,48 @@ const CurrentUserBox = styled.div`
   align-items: center;
   height: 50px;
   border-radius: 10px;
-  margin-left: ${style.margin.small};
+`;
+
+const CurrentUserWrapper = styled.div`
+  width: inherit;
+  height: 200px;
+
+  overflow-x: hidden;
+  overflow-y: scroll;
+  overscroll-behavior: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+
+    margin-left: ${style.margin.small};
+    margin-right: ${style.margin.small};
+  }
+`;
+
+const LoginState = styled.div<{ user: string; loginStateArray: any }>`
+  width: 8px;
+  height: 8px;
+  border-radius: 100%;
+  margin-right: ${style.margin.small};
+  ${(props) =>
+    `background-color: ${
+      props.loginStateArray?.includes(props.user)
+        ? `${palette.green}`
+        : `${palette.darkgray}`
+    };`}
 `;
 
 const GroupChat = ({ groupIdx }: { groupIdx: number }) => {
-  const groupNavState = useRecoilValue(GroupNavState);
+  const [groupNavState, setGroupNavState] = useRecoilState(GroupNavState);
   const [messageList, setMessageList] = useState<string[]>([]);
   const [value, setValue] = useState<string>('');
-  const rightModalState = useRecoilValue(rightModalStates);
   const [allUsers, setAllUsers] = useState<string[]>([]);
+  const loginStateArray = useRecoilValue(loginState);
 
   const socket = useRecoilValue(usersocketStates);
   const currentUserName = useRecoilValue(userDataStates).name;
@@ -194,13 +228,13 @@ const GroupChat = ({ groupIdx }: { groupIdx: number }) => {
   };
 
   useEffect(() => {
-      socket.emit('enter group notify', {
-          groupidx: groupIdx
-      });
+    socket.emit('enter group notify', {
+      groupidx: groupIdx
+    });
+    socket.on('get group users', (data: string[]) => {
+      setAllUsers(data);
       socket.off('get group users');
-      socket.on('get group users', (data:string[]) => {
-        setAllUsers(data);
-      });
+    });
   }, []);
 
   useEffect(() => {
@@ -215,21 +249,31 @@ const GroupChat = ({ groupIdx }: { groupIdx: number }) => {
         messageList.concat(filteredMsgs)
       );
       socket.off('get previous group chats');
-    });
-
-    socket.off('receive group message');
-    socket.on('receive group message', (data: { sender:string, groupidx:number, msg:string }) => {
-      const { sender, groupidx, msg } = data;
-      if (groupidx === groupIdx) {
-        setMessageList((messageList: string[]) => messageList.concat(msg));
-      }
-
       document.querySelector('.group-chat-list')?.scrollBy({
         top: document.querySelector('.group-chat-list')?.scrollHeight,
         behavior: 'smooth'
       });
     });
+
+    socket.off('receive group message');
+    socket.on(
+      'receive group message',
+      (data: { sender: string; groupidx: number; msg: string }) => {
+        const { sender, groupidx, msg } = data;
+        if (groupidx === groupIdx) {
+          setMessageList((messageList: string[]) => messageList.concat(msg));
+        }
+        document.querySelector('.group-chat-list')?.scrollBy({
+          top: document.querySelector('.group-chat-list')?.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    );
   }, [socket, groupIdx]);
+
+  useEffect(() => {
+    return () => setGroupNavState({ ...groupNavState, groupChat: false });
+  }, []);
 
   function ShowReceiverInfoFlag(idx: number, msg: string) {
     if (idx === 0) return msg.split(':')[0] === currentUserName ? true : false;
@@ -240,11 +284,9 @@ const GroupChat = ({ groupIdx }: { groupIdx: number }) => {
   }
 
   const UserList = allUsers.map((user: string, idx: number) => (
-    <CurrentUserBox
-      key={idx}
-      className="User"
-    >
-      <ClickableProfileImage size={'30px'} />
+    <CurrentUserBox key={idx} className="User">
+      <ClickableProfilePhoto userName={user} size={'30px'} />
+      <LoginState user={user} loginStateArray={loginStateArray} />
       {user}
     </CurrentUserBox>
   ));
@@ -260,7 +302,7 @@ const GroupChat = ({ groupIdx }: { groupIdx: number }) => {
         sender={currentUserName}
         flag={ShowReceiverInfoFlag(idx, msg)}
       >
-        <ClickableProfileImage size={'30px'} />
+        <ClickableProfilePhoto userName={msg.split(':')[0]} size={'30px'} />
         <ReceiverName>{msg.split(':')[0]}</ReceiverName>
       </ReceiverDiv>
       <MessageText currentUserName={currentUserName} sender={msg.split(':')[0]}>
@@ -272,7 +314,7 @@ const GroupChat = ({ groupIdx }: { groupIdx: number }) => {
   return (
     <ChatSideBarContainer groupChatFlag={groupNavState.groupChat}>
       <CurrentUserTitle>이 그룹에 가입한 유저</CurrentUserTitle>
-      {UserList}
+      <CurrentUserWrapper>{UserList}</CurrentUserWrapper>
       <Divider />
       <ChatTitle>{'모두 에게 보내는 편지'}</ChatTitle>
       <ChatList className="group-chat-list">{chatList}</ChatList>

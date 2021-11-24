@@ -11,9 +11,9 @@ const OpacityAnimation = keyframes`
   100% { opacity: 1 }
 `;
 
-const SkeletonContainer = styled.div`
-  width: 680px;
-  min-width: 680px;
+const SkeletonContainer = styled.div<{ isProfile: boolean }>`
+  width: ${({ isProfile }) => (isProfile ? '538px' : '680px')};
+  min-width: ${({ isProfile }) => (isProfile ? '538px' : '680px')};
   position: relative;
   border-radius: 8px;
   box-sizing: border-box;
@@ -25,9 +25,15 @@ const SkeletonContainer = styled.div`
   animation: 0.3s ${OpacityAnimation};
 `;
 
-const Skeleton = ({ type = 'home' }: { type?: string }) => {
+const Skeleton = ({
+  type = 'home',
+  isProfile = false
+}: {
+  type?: string;
+  isProfile?: boolean;
+}) => {
   return (
-    <SkeletonContainer>
+    <SkeletonContainer isProfile={isProfile}>
       <FakeHeader type={type} />
       {type === 'home' && <FakeBody />}
       {type === 'problem' && <FakeAnswerWrap />}

@@ -7,3 +7,8 @@ export interface IProblem {
     title: string;
   };
 }
+
+export interface ISolvedProblem {
+  idx: number;
+  groupIdx: number;
+}

@@ -1,7 +1,9 @@
 # WEB13-JDevBook [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fboostcampwm-2021%2FWEB13-JDevBook%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
 ## 배포주소
+
 - https://www.jdevbook.kro.kr/
+
 ## 📗 JDevBook 소개
 
 개발자들을 위한 SNS와 분야별로 문제를 풀 수 있는 서비스 입니다.
@@ -46,11 +48,11 @@
 
 ### Frontend
 
-![](https://img.shields.io/badge/React-17.0.33-%2361DAFB?style=flat-square&logo=react) ![](https://img.shields.io/badge/Create--React--App-grey?style=flat-square&logo=react) ![](https://img.shields.io/badge/Typescript-4.4.4-%233178C6?style=flat-square&logo=typescript) ![](https://img.shields.io/badge/React--router--dom-5.3.2-%23CA4245?style=flat-square&logo=reactrouter) ![](https://img.shields.io/badge/Recoil-%3F%3F%3F-%2361DAFB?style=flat-square&logo=react) ![](https://img.shields.io/badge/styled--components-5.1.15-%23DB7093?style=flat-square&logo=styled-components)
+![](https://img.shields.io/badge/React-17.0.33-%2361DAFB?style=flat-square&logo=react) ![](https://img.shields.io/badge/Create--React--App-grey?style=flat-square&logo=react) ![](https://img.shields.io/badge/Typescript-4.4.4-%233178C6?style=flat-square&logo=typescript) ![](https://img.shields.io/badge/React--router--dom-5.3.2-%23CA4245?style=flat-square&logo=reactrouter) ![](https://img.shields.io/badge/Recoil-0.4.1-%2361DAFB?style=flat-square&logo=react) ![](https://img.shields.io/badge/styled--components-5.1.15-%23DB7093?style=flat-square&logo=styled-components)
 
 ### Backend
 
-![](https://img.shields.io/badge/node-14.17.3-%23339933?style=flat-square&logo=node.js) ![](https://img.shields.io/badge/Typescript-4.4.4-%233178C6?style=flat-square&logo=typescript) ![](https://img.shields.io/badge/express-4.16.1-%23000000?style=flat-square&logo=express) ![](https://img.shields.io/badge/socket--io-%3F%3F%3F-%23010101?style=flat-square&logo=socket.io) ![](https://img.shields.io/badge/sequelize-%3F%3F%3F-%2352B0E7?style=flat-square&logo=sequelize)
+![](https://img.shields.io/badge/node-14.17.3-%23339933?style=flat-square&logo=node.js) ![](https://img.shields.io/badge/Typescript-4.4.4-%233178C6?style=flat-square&logo=typescript) ![](https://img.shields.io/badge/express-4.16.1-%23000000?style=flat-square&logo=express) ![](https://img.shields.io/badge/socket--io-4.3.1-%23010101?style=flat-square&logo=socket.io) ![](https://img.shields.io/badge/sequelize-6.9.0-%2352B0E7?style=flat-square&logo=sequelize)
 
 ### Infra
 
@@ -58,7 +60,7 @@
 
 ### 테스트
 
-![](https://img.shields.io/badge/-Jest-%23C21325?style=flat-square&logo=jest&logoColor=white) ![](https://img.shields.io/badge/-Mocha-%238D6748?style=flat-square&logo=mocha&logoColor=white)
+![](https://img.shields.io/badge/-Jest-%23C21325?style=flat-square&logo=jest&logoColor=white)
 
 ### 협업 툴
 
@@ -74,18 +76,18 @@ Web13-JDevBook
 	│      ├─components
 	│      ├─images
 	│      ├─pages
+	│      ├─hooks
 	│      ├─utils
 	│      ├─api
+	│      ├─theme
 	│      └─recoil
 	└─server
 	    └─src
 	        ├─models
-							├─tables
-							├─index.ts
 	        ├─routes
 	        ├─config
-					├─service
-							├─interface.ts
-					├─sessions
+		├─service
+		├─types
+		├─sessions
 	        └─sockets
 ```

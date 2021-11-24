@@ -17,8 +17,8 @@ const BodyContainer = styled.div`
   }
 `;
 
-const ImagesWrap = styled.div`
-  width: 680px;
+const ImagesWrap = styled.div<{ isProfile: boolean }>`
+  width: ${({ isProfile }) => (isProfile ? `538px` : `680px`)};
   background: ${palette.white};
   position: relative;
   border-top: 1px solid #dddddd;
@@ -30,11 +30,19 @@ const ImagesWrap = styled.div`
 `;
 
 // 여기서 이미지 정보들을 전부 가공해서 주자 (url, 원본 width, 원본 height)
-const Body = ({ contents, picture1, picture2, picture3 }: PostBody) => {
+const Body = ({
+  postBody,
+  isProfile
+}: {
+  postBody: PostBody;
+  isProfile: boolean;
+}) => {
+  const { contents, picture1, picture2, picture3 } = postBody;
   const initMeta = {
     imageCount: [picture1, picture2, picture3].filter((item) => item !== null)
       .length,
-    images: null
+    images: null,
+    isProfile
   };
   const [imagesMeta, setImagesMeta] = useState<PostImageBoxProps>(initMeta);
 
@@ -69,10 +77,11 @@ const Body = ({ contents, picture1, picture2, picture3 }: PostBody) => {
     <BodyContainer>
       <p>{contents}</p>
       {picture1 && (
-        <ImagesWrap>
+        <ImagesWrap isProfile={isProfile}>
           <PostImageBox
             imageCount={imagesMeta.imageCount}
             images={imagesMeta.images}
+            isProfile={isProfile}
           />
         </ImagesWrap>
       )}

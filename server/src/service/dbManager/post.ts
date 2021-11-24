@@ -3,7 +3,24 @@ import { Op } from 'sequelize';
 import { PostAddData, PostUpdateData } from '../../types/interface';
 import db from '../../models';
 
-const getPosts = async (myIdx: number, lastIdx: number, count: number) => {
+const getPosts = async (
+  myIdx: number,
+  lastIdx: number,
+  count: number,
+  useridx?: number
+) => {
+  // 개선 못하나.. 흠
+  const findAllCondition = {
+    idx: { [Op.lt]: lastIdx === -1 ? 1000000000 : lastIdx },
+    [Op.or]: [{ useridx: myIdx }, { secret: false }]
+  };
+
+  const findOneCondition = {
+    idx: { [Op.lt]: lastIdx === -1 ? 1000000000 : lastIdx },
+    useridx,
+    [Op.or]: [{ useridx: myIdx }, { secret: false }]
+  };
+
   const postsWithUser = await db.models.Post.findAll({
     include: [
       {
@@ -22,10 +39,7 @@ const getPosts = async (myIdx: number, lastIdx: number, count: number) => {
       ['createdAt', 'DESC'],
       ['idx', 'DESC']
     ],
-    where: {
-      idx: { [Op.lt]: lastIdx === -1 ? 1000000000 : lastIdx },
-      [Op.or]: [{ useridx: myIdx }, { secret: false }]
-    },
+    where: useridx ? findOneCondition : findAllCondition,
     limit: count,
     logging: false
   });

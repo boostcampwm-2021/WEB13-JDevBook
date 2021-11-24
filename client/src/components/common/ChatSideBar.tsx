@@ -12,11 +12,9 @@ import {
 import CurrentUser from './CurrentUser';
 import palette from 'theme/palette';
 import style from 'theme/style';
-import ProfilePhoto from 'components/common/ProfilePhoto';
 import { iconSubmit, iconSubmitActive } from 'images/icons';
 import { IMessage, ISocketMessage, ISuccessiveMessage } from 'types/message';
-
-const ClickableProfileImage = styled(ProfilePhoto)``;
+import { ClickableProfilePhoto } from 'components/common';
 
 const OpenChatAnimation = keyframes`
   0% { opacity: 0; transform: translateX(100px); }
@@ -32,11 +30,13 @@ const ChatSideBarContainer = styled.div<{
   rightModalFlag: boolean;
   messageFlag: boolean;
 }>`
+  position: fixed;
+  top: 56px;
+  right: 0;
   display: flex;
   flex-direction: column;
-  width: inherit;
-  height: ${(props) =>
-    props.rightModalFlag && props.messageFlag ? `inherit` : `0px`};
+  width: 340px;
+  height: calc(100% - 56px);
 
   visibility: ${(props) =>
     props.rightModalFlag && props.messageFlag ? `` : `hidden`};
@@ -52,7 +52,9 @@ const ChatSideBarContainer = styled.div<{
           ${CloseChatAnimation}
         `};
   animation-duration: 0.5s;
+  animation-fill-mode: forwards;
 
+  overscroll-behavior: none;
   background-color: ${palette.white};
   box-shadow: -5px 2px 5px 0px rgb(0 0 0 / 24%);
 `;
@@ -197,6 +199,12 @@ const ChatSideBar = () => {
         receiver: chatReceiver,
         message: value
       });
+
+      socket.emit('send alarm', {
+        sender: currentUserName,
+        receiver: chatReceiver,
+        type: 'chat'
+      });
     }
   };
 
@@ -214,6 +222,10 @@ const ChatSideBar = () => {
           messageList.concat(filteredMsgs)
         );
         socket.off('get previous chats');
+        document.querySelector('.chat-list')?.scrollBy({
+          top: document.querySelector('.chat-list')?.scrollHeight,
+          behavior: 'smooth'
+        });
       });
 
       socket.off('send chat initial');
@@ -255,7 +267,7 @@ const ChatSideBar = () => {
         sender={currentUserName}
         flag={ShowReceiverInfoFlag(idx, msg)}
       >
-        <ClickableProfileImage size={'30px'} />
+        <ClickableProfilePhoto userName={msg.split(':')[0]} size={'30px'} />
         <ReceiverName>{msg.split(':')[0]}</ReceiverName>
       </ReceiverDiv>
       <MessageText currentUserName={currentUserName} sender={msg.split(':')[0]}>

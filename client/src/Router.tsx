@@ -13,6 +13,7 @@ import {
   IsLoginPage,
   GroupSelectPage
 } from 'pages';
+import { ChatSideBar, AlarmSideBar } from 'components/common';
 
 const Router = () => {
   const [login, setLogin] = useState(false);
@@ -52,7 +53,7 @@ const Router = () => {
           }
         />
         <Route
-          path="/profile/:userId"
+          path="/profile/:username"
           exact
           render={(props) =>
             login ? <ProfilePage {...props} /> : <IsLoginPage />
@@ -60,6 +61,8 @@ const Router = () => {
         />
         <Route path="/*" component={NotFoundPage} />
       </Switch>
+      <ChatSideBar />
+      <AlarmSideBar />
     </BrowserRouter>
   );
 };

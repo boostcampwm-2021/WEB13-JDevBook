@@ -22,11 +22,8 @@ const GroupSelectListContainer = styled.div<{
   fisrtFlag: boolean;
 }>`
   width: 100%;
-  /* width: ${(props) =>
-    !props.fisrtFlag && props.modalState ? `100%` : `130%`}; */
   box-sizing: border-box;
   padding-bottom: 40px;
-  z-index: 1;
 
   display: flex;
   flex-flow: row wrap;

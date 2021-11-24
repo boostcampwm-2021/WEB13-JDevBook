@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { RouteComponentProps } from 'react-router';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { GroupNavState, rightModalStates } from 'recoil/store';
+import { GroupNavState } from 'recoil/store';
+
 import { groupState } from 'recoil/store';
 import { defaultGroup } from 'images/groupimg';
 import palette from 'theme/palette';
@@ -11,7 +12,6 @@ import {
   Gnb,
   SideBar,
   InfoSideBar,
-  ChatSideBar,
   GroupSideBar,
   InitUserData,
   InitSocket,
@@ -33,22 +33,30 @@ const GlobalStyle = createGlobalStyle`
 
 const GroupPageContainer = styled.div`
   display: flex;
-  justify-content: center;
-  padding-bottom: 56px;
+  flex-direction: column;
+`;
+
+const PageLayout = styled.div`
+  display: flex;
 `;
 
 const ContentsContainer = styled.div<{ contentsState: boolean }>`
-  position: relative;
-  top: 56px;
-  width: 908px;
-  height: 1000px;
+  width: calc(100vw - 680px);
+  min-width: 720px;
+  margin: 0 12px;
 
   display: ${(props) => (props.contentsState ? 'flex' : 'none')};
   flex-direction: column;
   align-items: center;
 
+  @media screen and (max-width: 1040px) {
+    width: 100%;
+  }
+
   img {
     width: 100%;
+    min-width: 720px;
+    max-width: 908px;
     height: 320px;
     object-fit: cover;
   }
@@ -59,6 +67,7 @@ const GroupPage: React.FC<RouteComponentProps<{ groupidx: string }>> = ({
 }) => {
   const groupData = useRecoilValue(groupState);
   const resetGroupData = useResetRecoilState(groupState);
+  const groupNavState = useRecoilValue(GroupNavState);
 
   useEffect(() => {
     return () => resetGroupData();
@@ -72,20 +81,19 @@ const GroupPage: React.FC<RouteComponentProps<{ groupidx: string }>> = ({
       <InitSocket />
       <LoadingModal modalState={groupData.idx === 0} />
       <Gnb type="group" />
-      <SideBar isLeft={true}>
-        <InfoSideBar />
-        <GroupSideBar />
-      </SideBar>
-      <ContentsContainer contentsState={groupData.idx !== 0}>
-        <img src={groupData.cover || defaultGroup} alt="그룹 이미지" />
-        <GroupNavBar />
-        <About />
-        <ProblemList groupIdx={Number(match.params.groupidx)} />
-      </ContentsContainer>
-      <SideBar isLeft={false}>
-        <ChatSideBar />
+      <PageLayout>
+        <SideBar isLeft={true}>
+          <InfoSideBar />
+          <GroupSideBar />
+        </SideBar>
+        <ContentsContainer contentsState={groupData.idx !== 0}>
+          <img src={groupData.cover || defaultGroup} alt="그룹 이미지" />
+          <GroupNavBar />
+          <About />
+          <ProblemList groupIdx={Number(match.params.groupidx)} />
+        </ContentsContainer>
         <GroupChat groupIdx={Number(match.params.groupidx)} />
-      </SideBar>
+      </PageLayout>
     </GroupPageContainer>
   );
 };

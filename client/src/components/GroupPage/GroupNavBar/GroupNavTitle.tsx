@@ -18,11 +18,11 @@ const GroupNavTitleWrap = styled.div`
 `;
 
 const GroupTitle = styled.div`
+  margin-bottom: ${style.margin.small};
   font-size: ${style.font.title};
 `;
 
 const GroupMemberNum = styled.div`
-  margin: 10px 0 0 15px;
   color: ${palette.darkgray};
 `;
 

@@ -2,12 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import fetchApi from 'api/fetch';
 import { defaultGroup } from 'images/groupimg';
 import { IGroup } from 'types/group';
 import palette from 'theme/palette';
-import { useRecoilState, useResetRecoilState } from 'recoil';
-import { groupState } from 'recoil/store';
+import useResetGroup from 'hooks/useResetGroup';
 
 const JoinedGroupCardWrap = styled(Link)`
   display: flex;
@@ -38,18 +36,15 @@ const JoinedGroupCardWrap = styled(Link)`
 `;
 
 const JoinedGroupCard = ({ group }: { group: IGroup }) => {
-  const resetGroup = useResetRecoilState(groupState);
-  const [groupData, setGroupData] = useRecoilState(groupState);
+  const resetGroup = useResetGroup();
   const url = `/group/${group.idx}`;
 
-  const resetGroupData = async (e: React.MouseEvent) => {
-    resetGroup();
-    const fetchGroupData: IGroup = await fetchApi.getGroup(group.idx);
-    setGroupData(fetchGroupData);
+  const groupClickHandler = (e: React.MouseEvent) => {
+    resetGroup(group.idx);
   };
 
   return (
-    <JoinedGroupCardWrap to={url} onClick={resetGroupData}>
+    <JoinedGroupCardWrap to={url} onClick={groupClickHandler}>
       <img src={group.cover || defaultGroup} alt="cover 아이콘" />
       <p>{group.title}</p>
     </JoinedGroupCardWrap>

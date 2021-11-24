@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { imageViewerState as ivState } from 'recoil/store';
 
 import palette from 'theme/palette';
+import { gridImage } from 'images';
 
 const Container = styled.div`
   position: fixed;
@@ -45,6 +46,8 @@ const OriginalImage = styled.img`
   max-height: 100vh;
   display: block;
   box-sizing: border-box;
+  background-image: url(${gridImage});
+  background-color: white;
 `;
 
 const AnimationIcon = styled.div<{ isLeft?: boolean; hidden: boolean }>`

@@ -34,6 +34,9 @@ export default class Problem extends Model<Problem> {
   @Column({ allowNull: false })
   answer!: boolean;
 
+  @Column({ allowNull: true, type: DataType.STRING(1024) })
+  explanation!: string;
+
   @BelongsTo(() => Group, { foreignKey: 'groupidx', targetKey: 'idx' })
   BTGroupgroupidx?: Group;
 

@@ -13,8 +13,19 @@ const getProblems = async (groupindices: number[]) => {
 
 const insertSolvedProblem = async (useridx: number, problemidx: number) => {
   await db.models.UserProblem.findOrCreate({
-    where: { useridx, problemidx }
+    where: { useridx, problemidx },
+    logging: false
   });
 };
 
-export { getProblems, insertSolvedProblem };
+const getSolvedProblems = async (userName: string) => {
+  const solvedProblems = await db.models.User.findAll({
+    include: [db.models.Problem],
+    where: { nickname: userName },
+    logging: false
+  });
+
+  return solvedProblems;
+};
+
+export { getProblems, insertSolvedProblem, getSolvedProblems };

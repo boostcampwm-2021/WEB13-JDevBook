@@ -8,32 +8,32 @@ import OneImage from './OneImage';
 import TwoImages from './TwoImages';
 import { ThreeImagesHorizontal, ThreeImagesVertical } from './ThreeImages';
 
-const SkeletonBox = styled.div`
-  width: 680px;
-  height: 680px;
+const SkeletonBox = styled.div<{ isProfile: boolean }>`
+  width: ${({ isProfile }) => (isProfile ? '538px' : '680px')};
+  height: ${({ isProfile }) => (isProfile ? '538px' : '680px')};
   background: ${palette.lightgray};
 `;
 
-const PostImageBox = ({ imageCount, images }: PostImageBoxProps) => {
+const PostImageBox = ({ imageCount, images, isProfile }: PostImageBoxProps) => {
   const isLoading = useCallback(() => {
     return images === null;
   }, [images]);
 
   if (isLoading()) {
-    return <SkeletonBox />;
+    return <SkeletonBox isProfile={isProfile} />;
   }
 
   const postImages = images as PostImageInfo[];
   const { originalWidth, originalHeight } = postImages[0];
 
   return imageCount === 1 ? (
-    <OneImage postImages={postImages} />
+    <OneImage postImages={postImages} isProfile={isProfile} />
   ) : imageCount === 2 ? (
-    <TwoImages postImages={postImages} />
+    <TwoImages postImages={postImages} isProfile={isProfile} />
   ) : imageCount === 3 && originalWidth >= originalHeight ? (
-    <ThreeImagesHorizontal postImages={postImages} />
+    <ThreeImagesHorizontal postImages={postImages} isProfile={isProfile} />
   ) : imageCount === 3 && originalWidth < originalHeight ? (
-    <ThreeImagesVertical postImages={postImages} />
+    <ThreeImagesVertical postImages={postImages} isProfile={isProfile} />
   ) : (
     <div></div>
   );

@@ -12,6 +12,7 @@ export interface PostUpdateData extends PostBody {
 export interface PostAddData extends PostUpdateData {
   useridx: number;
   likenum: number;
+  commentnum: number;
 }
 
 export interface PostData extends PostAddData {
@@ -37,6 +38,9 @@ export interface PostFooterProps {
   likenum: number;
   commentFlag: boolean;
   setCommentFlag: React.Dispatch<boolean>;
+  postIdx: number;
+  commentsNum: number;
+  setCommentsNum: React.Dispatch<number>;
 }
 
 export interface PostImageInfo {
@@ -45,9 +49,17 @@ export interface PostImageInfo {
   originalHeight: number;
 }
 
+export interface PostImagesInfo {
+  width: number;
+  height: number;
+  index: number;
+  urls: string[];
+}
+
 export interface PostImageBoxProps {
   imageCount: number;
   images: PostImageInfo[] | null;
+  isProfile: boolean;
 }
 
 export interface PostImageBoxStyle {
@@ -57,9 +69,4 @@ export interface PostImageBoxStyle {
   rightBorder?: boolean;
   topBorder?: boolean;
   bottomBorder?: boolean;
-}
-
-export interface PostImageBoxStyleWithSource extends PostImageBoxStyle {
-  index: number;
-  urls: string[];
 }

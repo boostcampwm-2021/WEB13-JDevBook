@@ -7,7 +7,6 @@ import {
   Gnb,
   SideBar,
   InfoSideBar,
-  ChatSideBar,
   GroupSideBar,
   InitUserData,
   InitSocket
@@ -22,14 +21,18 @@ const GlobalStyle = createGlobalStyle`
 
 const GroupSelectPageContainer = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+`;
+
+const PageLayout = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
 const ContentsContainer = styled.div`
-  position: relative;
-  top: 56px;
-  width: 1220px;
-  height: 1000px;
+  width: 100%;
+  min-width: 720px;
+  margin: 0 12px;
   box-sizing: border-box;
   padding: 30px 50px;
 
@@ -44,17 +47,16 @@ const GroupSelectPage = () => {
       <InitUserData />
       <InitSocket />
       <Gnb type="group" />
-      <SideBar isLeft={true}>
-        <InfoSideBar />
-        <GroupSideBar />
-      </SideBar>
-      <ContentsContainer>
-        <GroupSelectTitle />
-        <GroupSelectList />
-      </ContentsContainer>
-      <SideBar isLeft={false}>
-        <ChatSideBar />
-      </SideBar>
+      <PageLayout>
+        <SideBar isLeft={true}>
+          <InfoSideBar />
+          <GroupSideBar />
+        </SideBar>
+        <ContentsContainer>
+          <GroupSelectTitle />
+          <GroupSelectList />
+        </ContentsContainer>
+      </PageLayout>
     </GroupSelectPageContainer>
   );
 };

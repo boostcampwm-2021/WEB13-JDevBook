@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 
-import { groupListState, myJoinedGroupState } from 'recoil/store';
+import {
+  groupListState,
+  myJoinedGroupState,
+  GroupNavState
+} from 'recoil/store';
 import palette from 'theme/palette';
 import { iconSearch } from 'images/icons';
 import { IGroup } from 'types/group';
@@ -50,6 +54,7 @@ const GroupList = styled.ul`
 const GroupSideBar = () => {
   const groupList = useRecoilValue(groupListState);
   const joinedGroupIdx = useRecoilValue(myJoinedGroupState);
+  const [groupNavState, setGroupNavState] = useRecoilState(GroupNavState);
   const [joinedGroup, setJoinedGroup] = useState<IGroup[]>([]);
   const [searchGroup, setSearchGroup] = useState<IGroup[]>([]);
 
@@ -76,7 +81,9 @@ const GroupSideBar = () => {
         <img src={iconSearch} alt="Search 아이콘" />
         <input type="text" placeholder="그룹 검색" onChange={searchHandler} />
       </SearchBarWrap>
-      <GroupList>
+      <GroupList
+        onClick={() => setGroupNavState({ ...groupNavState, groupChat: false })}
+      >
         {searchGroup.map((searchGroup, idx) => (
           <JoinedGroupCard key={idx} group={searchGroup} />
         ))}

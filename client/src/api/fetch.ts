@@ -1,5 +1,6 @@
 import { CommentData } from 'types/comment';
 import { PostData, PostAddData, PostUpdateData } from 'types/post';
+import { IProfile } from 'types/user';
 
 const fetchApi = {
   getLoginlink: async (): Promise<string> => {
@@ -26,11 +27,16 @@ const fetchApi = {
 
   getPosts: async (
     lastIdx: number = -1,
-    count: number = 10
+    count: number = 10,
+    username: string | null,
+    signal?: AbortSignal
   ): Promise<PostData[]> => {
-    const response = await fetch(
-      `/api/posts?lastIdx=${lastIdx}&count=${count}`
-    );
+    const response = username
+      ? await fetch(
+          `/api/posts?username=${username}&lastIdx=${lastIdx}&count=${count}`,
+          { signal }
+        )
+      : await fetch(`/api/posts?lastIdx=${lastIdx}&count=${count}`, { signal });
     const getPostsList = await response.json();
     return getPostsList.map((cur: any) =>
       cur.BTMLikepostidx.length === 0
@@ -105,6 +111,12 @@ const fetchApi = {
     return getCommentsList;
   },
 
+  getCommentsNum: async (postidx: number) => {
+    const response = await fetch(`/api/comments/${postidx}`);
+    const getCommentsList = await response.json();
+    return getCommentsList.length;
+  },
+
   addComments: async (addComment: CommentData) => {
     const response = await fetch(`/api/comments`, {
       method: 'POST',
@@ -117,10 +129,10 @@ const fetchApi = {
     return await response.json();
   },
 
-  getProblems: async (groupIdx?: number) => {
+  getProblems: async (groupIdx?: number | null, signal?: AbortSignal) => {
     const response = groupIdx
-      ? await fetch(`/api/problems/${groupIdx}`)
-      : await fetch(`/api/problems`);
+      ? await fetch(`/api/problems/${groupIdx}`, { signal })
+      : await fetch(`/api/problems`, { signal });
     const problems = await response.json();
     return problems;
   },
@@ -136,6 +148,16 @@ const fetchApi = {
     return await response.json();
   },
 
+  getSolvedProblems: async (userName: string) => {
+    const response = await fetch(`/api/problems/solved/${userName}`);
+    return await response.json();
+  },
+
+  getJoinedProblems: async (userIdx: number) => {
+    const response = await fetch(`/api/problems/joined/${userIdx}`);
+    return await response.json();
+  },
+
   getGroupList: async () => {
     const response = await fetch('/api/groups');
     return await response.json();
@@ -146,9 +168,30 @@ const fetchApi = {
     return await response.json();
   },
 
+  getJoinedGroups: async (userIdx: number) => {
+    const response = await fetch(`/api/groups/joined/${userIdx}`);
+    return await response.json();
+  },
+
   joinGroup: async (userIdx: number, groupIdx: number) => {
     const response = await fetch(`/api/joingroup/${userIdx}/${groupIdx}`, {
       method: 'POST'
+    });
+    return await response.json();
+  },
+
+  getProfile: async (userName: string) => {
+    const response = await fetch(`/api/profile/${userName}`);
+    return await response.json();
+  },
+
+  updateProfile: async (userUpdateData: IProfile) => {
+    const response = await fetch(`/api/profile/${userUpdateData.idx}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(userUpdateData)
     });
     return await response.json();
   }

@@ -4,7 +4,6 @@ import { IUserSocket } from '../types/interface';
 
 const UserObj: IUserSocket = {};
 
-
 const socketIO = (server: any) => {
   const io = new Server(server);
   io.on('connection', (socket: Socket) => {
@@ -13,10 +12,13 @@ const socketIO = (server: any) => {
     // });
 
     // 유저 접속 부분
-    socket.on('login notify', async (userData:{socketId:string, userName: string}) => {
-      UserObj[userData.socketId] = userData.userName;
-      io.emit('get current users', UserObj);
-    });
+    socket.on(
+      'login notify',
+      async (userData: { socketId: string; userName: string }) => {
+        UserObj[userData.socketId] = userData.userName;
+        io.emit('get current users', UserObj);
+      }
+    );
 
     // 1:1 채팅 이전 메시지 가져오는 부분
     socket.on('send chat initial', async (receivedData) => {
@@ -26,12 +28,12 @@ const socketIO = (server: any) => {
       const { senderidx, receiveridx, previousMsg } =
         await dbManager.getChatList(sender, receiver);
 
-      const filteredMsgs: string[] = previousMsg.map((msg) => {
+      const filteredAlarms: string[] = previousMsg.map((msg) => {
         if (msg.senderidx === senderidx) return `${sender}: ${msg.content}`;
         else return `${receiver}: ${msg.content}`; // msg.senderidx === receiveridx
       });
 
-      io.to(socket.id).emit('get previous chats', filteredMsgs);
+      io.to(socket.id).emit('get previous chats', filteredAlarms);
     });
 
     // 1:1 채팅 메시지 송수신 부분
@@ -50,24 +52,19 @@ const socketIO = (server: any) => {
       }
     });
 
-
     socket.on('post_added', () => {
       socket.broadcast.emit('post_added');
     });
 
-
     // 그룹 유저들 가져오는 부분
-    // socket.on('asd', (dd) => {
-    //   console.log(dd);
-    //   const asd = dbManager.getGroupUsers(dd.groupidx); 
-    //   console.log(asd);
-    // })
-    socket.on('enter group notify', async(receivedData) => {
-      const {groupidx} = receivedData;
+    socket.on('enter group notify', async (receivedData) => {
+      const { groupidx } = receivedData;
       const getGroupUsersIdx = await dbManager.getGroupUsers(groupidx);
-      const getGroupUsersName = await dbManager.getGroupUsersName(getGroupUsersIdx);
+      const getGroupUsersName = await dbManager.getGroupUsersName(
+        getGroupUsersIdx
+      );
       io.emit('get group users', getGroupUsersName);
-    })
+    });
 
     socket.on('send group message', async (receivedData) => {
       const { sender, groupidx, message } = receivedData;
@@ -78,7 +75,7 @@ const socketIO = (server: any) => {
         sender: sender,
         groupidx: groupidx,
         msg: msg
-      })
+      });
     });
 
     socket.on('send group chat initial', async (receivedData) => {
@@ -93,8 +90,45 @@ const socketIO = (server: any) => {
       io.to(socket.id).emit('get previous group chats', filteredMsgs);
     });
 
+    socket.on('send number of comments notify', async (receivedData) => {
+      const { postidx } = receivedData;
+      const commentsNum = await dbManager.getCommentsNum(postidx);
+      io.emit('get number of comments', {
+        postidx: postidx,
+        commentsNum: commentsNum
+      });
+    });
 
+    // 이전 알림 가져오는 부분
+    socket.on('send alarm initial', async (receivedData) => {
+      const { receiver } = receivedData;
+      const previousAlarms = await dbManager.getAlarmList(receiver);
+      io.emit('get previous alarms', previousAlarms);
+      const uncheckedAlarmsNum = await dbManager.getUncheckedAlarmsNum(receiver);
+      io.emit('get number of unchecked alarms', uncheckedAlarmsNum);
+    });
+
+    // 알람 부분
+    socket.on('send alarm', async (receivedData) => {
+      const { sender, receiver, type } = receivedData;
+      const msg: string = `${sender}:${type}`;
+      await dbManager.addAlarm(receiver, msg);
+      io.emit('get alarm', receivedData);
+      io.emit('get alarm info', receivedData);
+    });
+
+    socket.on('make alarms check', async (receivedData) => {
+      const {receiver} = receivedData;
+      await dbManager.setAlarmCheck(receiver);
+    });
     // 유저 로그아웃 부분
+    socket.on('disconnect notify', () => {
+      socket.get = false;
+      delete UserObj[socket.id];
+      io.emit('get current users', UserObj);
+      console.log(`${socket.name}:${socket.id} disconnected`);
+    });
+
     socket.on('disconnect', () => {
       socket.get = false;
       delete UserObj[socket.id];

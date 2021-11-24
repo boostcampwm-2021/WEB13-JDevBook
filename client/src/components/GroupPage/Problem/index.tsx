@@ -140,8 +140,13 @@ const Problem = ({
   const handleAnswer = (selected: boolean) => {
     if (problem.answer === selected) {
       showAlert('정답입니다.');
-      if (!solvedProblems.includes(problem.idx)) {
-        setSolvedProblems(solvedProblems.concat(problem.idx));
+      if (!solvedProblems.map((item) => item.idx).includes(problem.idx)) {
+        setSolvedProblems(
+          solvedProblems.concat({
+            idx: problem.idx,
+            groupIdx: problem.groupidx
+          })
+        );
         fetchApi.insertSolvedProblem(problem.idx);
       }
     } else {
@@ -151,7 +156,9 @@ const Problem = ({
 
   return (
     <ProblemContainer>
-      {solvedProblems.includes(problem.idx) && <SolvedLabel />}
+      {solvedProblems.map((item) => item.idx).includes(problem.idx) && (
+        <SolvedLabel />
+      )}
       {isHome && (
         <GroupTitle>[{problem.BTGroupgroupidx.title}] 그룹의 문제</GroupTitle>
       )}

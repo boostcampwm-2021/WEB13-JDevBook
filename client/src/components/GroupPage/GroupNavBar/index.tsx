@@ -10,6 +10,8 @@ import GroupNavigation from 'components/GroupPage/GroupNavBar/GroupNavigation';
 
 const GroupNavContainer = styled.div`
   width: 100%;
+  min-width: 720px;
+  max-width: 908px;
   box-sizing: border-box;
   padding: 28px 28px 0 28px;
 

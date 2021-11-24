@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import { useRecoilState } from 'recoil';
 
-import { PostImageBoxStyle, PostImageBoxStyleWithSource } from 'types/post';
+import { PostImagesInfo } from 'types/post';
 import { imageViewerState as ivState } from 'recoil/store';
 
 const HoverBox = styled.div`
@@ -24,32 +24,16 @@ const HoverBox = styled.div`
   }
 `;
 
-const ImageBox = styled.img<PostImageBoxStyle>`
+const ImageBox = styled.img<{ width: number; height: number }>`
   display: block;
   width: ${({ width }) => width};
   height: ${({ height }) => height};
   box-sizing: border-box;
-
-  ${({ leftBorder, rightBorder, topBorder, bottomBorder }) => css`
-    border-left: ${leftBorder && `1px solid white`};
-    border-right: ${rightBorder && `1px solid white`};
-    border-top: ${topBorder && `1px solid white`};
-    border-bottom: ${bottomBorder && `1px solid white`};
-  `}
 `;
 
-const ActiveImageBox = (props: PostImageBoxStyleWithSource) => {
+const ActiveImageBox = (props: PostImagesInfo) => {
   const [imageViewerState, setImageViewerState] = useRecoilState(ivState);
-  const {
-    index,
-    width,
-    height,
-    leftBorder,
-    rightBorder,
-    topBorder,
-    bottomBorder,
-    urls
-  } = props;
+  const { index, width, height, urls } = props;
   return (
     <HoverBox
       onClick={() => {
@@ -67,10 +51,6 @@ const ActiveImageBox = (props: PostImageBoxStyleWithSource) => {
         src={urls[index]}
         width={width}
         height={height}
-        leftBorder={leftBorder}
-        rightBorder={rightBorder}
-        topBorder={topBorder}
-        bottomBorder={bottomBorder}
       />
       <div />
     </HoverBox>

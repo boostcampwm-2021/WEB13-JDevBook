@@ -8,9 +8,10 @@ import {
   DBUser,
   PostAddData,
   PostUpdateData,
-  CommentData
+  CommentData,
+  IProfile
 } from '../types/interface';
-import { upload } from '../service/objectStorage';
+import { uploadFile } from '../service/objectStorage';
 const oauth = require('../config/oauth.json');
 
 const router = express.Router();
@@ -83,17 +84,24 @@ router.get(
 router.get(
   '/posts',
   async (
-    req: Request<{}, {}, {}, { lastIdx: number; count: number }>,
+    req: Request<
+      {},
+      {},
+      {},
+      { lastIdx: number; count: number; username: string }
+    >,
     res: Response,
     next: NextFunction
   ) => {
     try {
       const myIdx = req.session.useridx;
-      const { lastIdx, count } = req.query;
+      const { lastIdx, count, username } = req.query;
+      const userIdx = username ? await dbManager.getUseridx(username) : null;
       const posts = await dbManager.getPosts(
         myIdx,
         Number(lastIdx),
-        Number(count)
+        Number(count),
+        userIdx
       );
       res.json(posts);
     } catch (err) {
@@ -190,12 +198,11 @@ router.post(
 
 router.post(
   '/uploadimg',
-  upload.single('imgfile'), // multer-s3 location 추가됨
+  uploadFile, // file 크기 제한 에러핸들링, multer-s3 location 추가됨
   async (req: Request, res: Response, next: NextFunction) => {
     const s3file = req.file;
     if (s3file) res.json({ file: s3file, save: true });
-    else res.json({ save: false });
-    // type 생각하면 형식 똑같이 해야되나?
+    else res.json({ file: true, save: false });
   }
 );
 
@@ -244,6 +251,24 @@ router.get(
   }
 );
 
+router.get(
+  '/problems/joined/:useridx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userIdx = Number(req.params.useridx);
+      const groups = await dbManager.getUserJoinedGroups(userIdx);
+      const groupIndices = JSON.parse(JSON.stringify(groups)).map(
+        (item: any) => item.groupidx
+      );
+      const problems = await dbManager.getProblems(groupIndices);
+      res.json(problems);
+    } catch (err) {
+      console.error(err);
+      res.json([]);
+    }
+  }
+);
+
 router.post(
   '/comments',
   async (req: Request, res: Response, next: NextFunction) => {
@@ -266,6 +291,19 @@ router.post(
       const { problemIdx } = req.body;
       await dbManager.insertSolvedProblem(userIdx, Number(problemIdx));
       res.json(true);
+    } catch (err) {
+      res.json(false);
+    }
+  }
+);
+
+router.get(
+  '/problems/solved/:username',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userName = req.params.username;
+      const result = await dbManager.getSolvedProblems(userName);
+      res.json(result);
     } catch (err) {
       res.json(false);
     }
@@ -299,6 +337,20 @@ router.get(
   }
 );
 
+router.get(
+  '/groups/joined/:useridx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userIdx: number = Number(req.params.useridx);
+      const group = await dbManager.getUserJoinedGroups(userIdx);
+      res.json(group);
+    } catch (err) {
+      console.error(err);
+      res.json([]);
+    }
+  }
+);
+
 router.post(
   '/joingroup/:useridx/:postidx',
   async (req: Request, res: Response, next: NextFunction) => {
@@ -310,6 +362,31 @@ router.post(
     } catch (err) {
       res.json(false);
     }
+  }
+);
+
+router.put(
+  '/profile/:useridx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userIdx = Number(req.params.useridx);
+      const userUpdateData: IProfile = req.body;
+      await dbManager.updateProfile(userUpdateData, userIdx);
+      res.json({ check: true });
+    } catch (err) {
+      console.error(err);
+      res.json({ check: false });
+    }
+  }
+);
+
+router.get(
+  '/profile/:username',
+  async (req: Request, res: Response, next: NextFunction) => {
+    const name: string = req.params.username;
+    const userdata: DBUser = await dbManager.getProfile(name);
+    if (userdata === undefined) res.json({ data: '', error: true });
+    else res.json({ data: userdata, error: false });
   }
 );
 

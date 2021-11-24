@@ -2,23 +2,27 @@ import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { usersocketStates, userDataStates, chatWith } from 'recoil/store';
+import {
+  usersocketStates,
+  userDataStates,
+  chatWith,
+  loginState
+} from 'recoil/store';
 
 import getData from 'api/fetch';
 import { defaultProfile } from 'images';
-import ProfilePhoto from 'components/common/ProfilePhoto';
+import { ClickableProfilePhoto } from 'components/common';
 import palette from 'theme/palette';
 import style from 'theme/style';
 import { UserSocket } from 'types/common';
 
-const ClickableProfileImage = styled(ProfilePhoto)``;
-
 const CurrentUserWrapper = styled.div`
   width: inherit;
-  height: 300px;
+  height: 200px;
 
   overflow-x: hidden;
   overflow-y: scroll;
+  overscroll-behavior: none;
 
   &::-webkit-scrollbar {
     display: none;
@@ -66,7 +70,7 @@ const CurrentUser = () => {
   const [chatReceiver, setChatWith] = useRecoilState(chatWith);
   const currentUserName = useRecoilValue(userDataStates).name;
   const [usersLoginState, setUsersLoginState] = useState<UserSocket>({});
-  const [loginStateArray, setLoginStateArray] = useState<string[]>();
+  const [loginStateArray, setLoginStateArray] = useRecoilState(loginState);
 
   useEffect(() => {
     const fetchJob = setTimeout(async () => {
@@ -103,7 +107,7 @@ const CurrentUser = () => {
       className="User"
       onClick={() => setChatWith(user)}
     >
-      <ClickableProfileImage size={'30px'} />
+      <ClickableProfilePhoto userName={user} size={'30px'} />
       <LoginState user={user} loginStateArray={loginStateArray} />
       {user}
     </CurrentUserBox>

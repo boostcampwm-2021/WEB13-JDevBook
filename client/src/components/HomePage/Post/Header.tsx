@@ -5,7 +5,7 @@ import { IconPublic, IconPrivate } from 'images/icons';
 import { PostHeaderProps } from 'types/post';
 import textUtil from 'utils/textUtil';
 
-import { ProfilePhoto } from 'components/common';
+import { ClickableProfilePhoto } from 'components/common';
 
 const HeaderContainer = styled.div`
   width: 100%;
@@ -16,8 +16,6 @@ const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-
-const ClickableProfileImage = styled(ProfilePhoto)``;
 
 const HeaderContent = styled.div`
   flex: 1;
@@ -42,8 +40,8 @@ const HeaderContent = styled.div`
 
 const Header = ({ nickname, profile, createdAt, secret }: PostHeaderProps) => {
   return (
-    <HeaderContainer>
-      <ClickableProfileImage size={'40px'} />
+    <HeaderContainer className="no-drag">
+      <ClickableProfilePhoto userName={nickname} size={'44px'} />
       <HeaderContent>
         <p>{nickname}</p>
         <div>

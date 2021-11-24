@@ -5,12 +5,18 @@ import imageUtil from 'utils/imageUtil';
 
 import ActiveImageBox from './ActiveImageBox';
 
-const OneImage = ({ postImages }: { postImages: PostImageInfo[] }) => {
+const OneImage = ({
+  postImages,
+  isProfile
+}: {
+  postImages: PostImageInfo[];
+  isProfile: boolean;
+}) => {
   if (postImages.length !== 1) return <div></div>;
 
   const { url, originalWidth, originalHeight } = postImages[0];
   const [width, height] = imageUtil.getImageFitSize(
-    680,
+    isProfile ? 538 : 680,
     originalWidth,
     originalHeight
   );

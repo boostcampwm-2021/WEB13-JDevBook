@@ -1,24 +1,56 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { ProfilePhotoProps } from 'types/common';
 import { defaultProfile } from 'images';
+import useResetProfile from 'hooks/useResetProfile';
 
-const StyledProfilePhoto = styled.img<ProfilePhotoProps>`
-  width: ${(props) => props.size || '65px'};
-  height: ${(props) => props.size || '65px'};
-  border-radius: 50%;
+const ClickableProfilePhotoWrap = styled(Link)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const ProfilePhoto = ({ src, size }: ProfilePhotoProps) => {
+const StyledProfilePhoto = styled.img<{ size?: string }>`
+  width: ${(props) => props.size || '70px'};
+  height: ${(props) => props.size || '70px'};
+  border-radius: 50%;
+
+  &:hover {
+    filter: brightness(90%);
+  }
+
+  &:active {
+    filter: brightness(80%);
+  }
+`;
+
+const ProfilePhoto = ({ userName, size }: ProfilePhotoProps) => {
+  const profileImgURL = `https://github.com/${userName}.png`;
   return (
     <StyledProfilePhoto
-      src={src || defaultProfile}
+      src={userName !== '' ? profileImgURL : defaultProfile}
       size={size}
       alt="프로필 사진"
       className="no-drag"
-    ></StyledProfilePhoto>
+    />
   );
 };
 
-export default ProfilePhoto;
+const ClickableProfilePhoto = ({ userName, size }: ProfilePhotoProps) => {
+  const profileURL = `/profile/${userName}`;
+  const resetProfile = useResetProfile();
+
+  const photoClickHandler = (e: React.MouseEvent) => {
+    resetProfile(userName);
+  };
+
+  return (
+    <ClickableProfilePhotoWrap to={profileURL} onClick={photoClickHandler}>
+      <ProfilePhoto userName={userName} size={size} />
+    </ClickableProfilePhotoWrap>
+  );
+};
+
+export { ProfilePhoto, ClickableProfilePhoto };

@@ -53,7 +53,7 @@ const ProblemList = ({ groupIdx }: { groupIdx: number }) => {
   const fetchProblems = async (groupIdx: number) => {
     setFetching(true);
     const result = await fetchApi.getProblems(groupIdx);
-    setProblemList((prev) => prev.concat(result));
+    setProblemList(result);
     setFetching(false);
   };
 
@@ -67,7 +67,8 @@ const ProblemList = ({ groupIdx }: { groupIdx: number }) => {
 
   useEffect(() => {
     fetchProblems(groupIdx);
-  }, []);
+    return setProblemList([]);
+  }, [groupIdx]);
 
   return (
     <ProblemListContainer navState={groupNavState.problem}>

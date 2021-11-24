@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MdMoreHoriz } from 'react-icons/md';
 
-import { LikeIcon, LikeIconActive, CommentIcon } from 'images/icons';
+import { LikeIcon, CommentIcon } from 'images/icons';
 import { PostData } from 'types/post';
 
 import palette from 'theme/palette';
-import style from 'theme/style';
 
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { modalStateStore, userDataStates } from 'recoil/store';
+import {
+  modalStateStore,
+  userDataStates,
+  usersocketStates
+} from 'recoil/store';
 import Header from './Header';
 import OptionModal from './OptionModal';
 import Body from './Body';
@@ -18,8 +21,7 @@ import fetchApi from 'api/fetch';
 import Comment from './Comment';
 
 const PostContainer = styled.div`
-  width: 680px;
-  min-width: 680px;
+  width: 100%;
   position: relative;
   border-radius: 8px;
   box-sizing: border-box;
@@ -112,12 +114,20 @@ const Divider = styled.div`
   margin-right: 16px;
 `;
 
-const Post = ({ post }: { post: PostData }) => {
+const Post = ({
+  post,
+  isProfile = false
+}: {
+  post: PostData;
+  isProfile?: boolean;
+}) => {
   const [modalState, setModalState] = useRecoilState(modalStateStore);
   const { idx: myIdx } = useRecoilValue(userDataStates);
   const [likeFlag, setLikeFlag] = useState<boolean>(false);
   const [likeNum, setLikeNum] = useState<number>(0);
   const [commentFlag, setCommentFlag] = useState<boolean>(false);
+  const [commentsNum, setCommentsNum] = useState<number>(post.commentnum);
+  const socket = useRecoilValue(usersocketStates);
 
   const {
     idx: postIdx,
@@ -146,6 +156,19 @@ const Post = ({ post }: { post: PostData }) => {
     setLikeNum(post.likenum);
   }, []);
 
+  useEffect(() => {
+    socket.emit('send number of comments notify', { postidx: postIdx });
+  }, [commentsNum]);
+  socket.on(
+    'get number of comments',
+    (data: { postidx: number; commentsNum: number }) => {
+      const { postidx, commentsNum } = data;
+      if (postIdx === postidx) {
+        setCommentsNum(commentsNum);
+      }
+    }
+  );
+
   return (
     <PostContainer>
       {postUserIdx === myIdx && (
@@ -168,18 +191,19 @@ const Post = ({ post }: { post: PostData }) => {
         secret={secret}
       />
       <Body
-        contents={contents}
-        picture1={picture1}
-        picture2={picture2}
-        picture3={picture3}
+        postBody={{ contents, picture1, picture2, picture3 }}
+        isProfile={isProfile}
       />
       <Footer
         likenum={likeNum}
         commentFlag={commentFlag}
         setCommentFlag={setCommentFlag}
+        postIdx={postIdx}
+        commentsNum={commentsNum}
+        setCommentsNum={setCommentsNum}
       />
       <Divider />
-      <ButtonsWrap>
+      <ButtonsWrap className="no-drag">
         <Button isLike={likeFlag} onClick={likeToggle}>
           <LikeIcon />
           <p>좋아요</p>
@@ -194,7 +218,14 @@ const Post = ({ post }: { post: PostData }) => {
         </Button>
       </ButtonsWrap>
       <Divider />
-      {commentFlag && <Comment postIdx={postIdx} />}
+      {commentFlag && (
+        <Comment
+          postIdx={postIdx}
+          commentsNum={commentsNum}
+          setCommentsNum={setCommentsNum}
+          nickname={nickname}
+        />
+      )}
     </PostContainer>
   );
 };

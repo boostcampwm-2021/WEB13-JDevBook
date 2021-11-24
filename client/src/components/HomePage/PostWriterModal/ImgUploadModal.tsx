@@ -2,7 +2,7 @@ import React, { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { IoClose } from 'react-icons/io5';
 import { FiUpload } from 'react-icons/fi';
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { imageViewerState as ivState, uploadImgList } from 'recoil/store';
 
 import {
@@ -13,6 +13,7 @@ import {
 import palette from 'theme/palette';
 import fetchApi from 'api/fetch';
 import useAlertModal from 'hooks/useAlertModal';
+import style from 'theme/style';
 
 const ModalAnimation = keyframes`
   0% {
@@ -25,7 +26,7 @@ const ModalAnimation = keyframes`
 
 const ImgUploadContainer = styled.div<{ modalState: boolean }>`
   position: fixed;
-  top: 360px;
+  top: 260px;
   width: 532px;
   height: 200px;
   box-sizing: border-box;
@@ -48,7 +49,6 @@ const ImgUploadWrap = styled.div`
   background-color: ${palette.lightgray};
 
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: center;
   overflow-y: scroll;
@@ -64,13 +64,6 @@ const ImgUploadWrap = styled.div`
 
   &:hover {
     cursor: pointer;
-    /* background-color: ${palette.darkgray};
-    filter: brightness(95%);
-    transition: all 0.1s; */
-  }
-
-  &:active {
-    //filter: brightness(90%);
   }
 `;
 
@@ -139,24 +132,26 @@ const WhatWorkModal = styled.div`
 `;
 
 const ImgPreview = styled.div`
-  /* width: 300px;
-  height: 200px; */
-
   display: none;
-  flex-direction: row;
-  justify-content: center;
   align-items: center;
 
   div.imgset {
     display: flex;
-    flex-direction: row;
   }
 
   img {
-    width: 120px;
-    height: 100%;
-    max-height: 180px;
-    padding: 10px;
+    position: relative;
+    width: 146px;
+    height: 146px;
+    right: 14px;
+    object-fit: contain;
+    margin-right: 8px;
+    box-sizing: border-box;
+    padding: ${style.padding.smallest};
+
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
+    background-color: ${palette.white};
+    border-radius: 8px;
 
     &:hover {
       cursor: pointer;
@@ -175,14 +170,13 @@ const ImgPreview = styled.div`
 
 const CloseOneImg = styled.div<{ imgsrc: string | undefined }>`
   display: ${({ imgsrc }) => (imgsrc ? 'flex' : 'none')};
-  position: relative;
-  top: 10px;
-  left: 30px;
+  position: absolute;
+  margin: 6px 0 0 106px;
   z-index: 3;
 
   &:hover {
     cursor: pointer;
-    color: red;
+    color: ${palette.alert};
   }
   &:active {
     cursor: pointer;
@@ -204,10 +198,7 @@ const ImgUploadModal = () => {
   const inputfile = useRef() as React.MutableRefObject<HTMLInputElement>;
   const imgUploadWrapRef = useRef() as React.MutableRefObject<HTMLInputElement>;
   const imgPreviewModal = useRef() as React.MutableRefObject<HTMLInputElement>;
-  const uploadButtonRef = useRef() as React.MutableRefObject<HTMLInputElement>;
   const workModalRef = useRef() as React.MutableRefObject<HTMLInputElement>;
-
-  let dropfile: FileList[] = [];
 
   const imgUploadModalOff = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -220,34 +211,40 @@ const ImgUploadModal = () => {
   const openFileModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (imgList.length >= 3)
       return alertMessage('첨부 사진은 3장까지 가능합니다.', palette.alert);
+    if (isImgUploading > 0)
+      return alertMessage('이미지 업로드 중입니다.', palette.alert);
 
     inputfile.current.click();
   };
 
-  const uploadOneFile = (filelist: FileList | null, uploadNum: number) => {
-    if (imgList.length >= 3) {
+  const uploadOneFile = (filelist: FileList | null) => {
+    if (imgList.length >= 3)
       return alertMessage('첨부 사진은 3장까지 가능합니다.', palette.alert);
-    }
+    if (isImgUploading > 0)
+      return alertMessage('이미지 업로드 중입니다.', palette.alert);
+
+    const uploadNum = isImgUploading;
     setIsImgUploading(uploadNum + 1);
     getFile(filelist, uploadNum + 1);
   };
 
   const getFile = async (filelist: FileList | null, uploadNum: number) => {
     if (!filelist || filelist.length === 0) {
-      setIsImgUploading(uploadNum - 1);
-      return alertMessage('파일을 가져오지 못했습니다.', palette.alert);
+      alertMessage('파일을 가져오지 못했습니다.', palette.alert);
+      return setIsImgUploading(uploadNum - 1);
     }
 
     if (filelist[0].type.match(/image\/*/) === null) {
-      setIsImgUploading(uploadNum - 1);
-      return alertMessage('이미지 파일이 아닙니다.', palette.alert);
+      alertMessage('이미지 파일이 아닙니다.', palette.alert);
+      return setIsImgUploading(uploadNum - 1);
     }
 
     const imglist: FileList = filelist; //inputfile.current.files;
     const s3fileRes = await fetchApi.uploadImg(imglist);
 
     if (!s3fileRes.save) {
-      alertMessage('이미지 업로드 실패');
+      if (s3fileRes.file) alertMessage('이미지 업로드 실패', palette.alert);
+      else alertMessage('1MB 이하만 가능합니다.', palette.alert);
       return setIsImgUploading(uploadNum - 1);
     }
 
@@ -338,7 +335,7 @@ const ImgUploadModal = () => {
         }}
         onDrop={(e) => {
           dragDropEvent(e, palette.lightgray);
-          uploadOneFile(e.dataTransfer.files, isImgUploading);
+          uploadOneFile(e.dataTransfer.files);
         }}
       >
         <CloseBtn onClick={imgUploadModalOff}>
@@ -355,7 +352,7 @@ const ImgUploadModal = () => {
             accept="image/*"
             ref={inputfile}
             onChange={() => {
-              uploadOneFile(inputfile.current.files, isImgUploading);
+              uploadOneFile(inputfile.current.files);
             }}
             style={{ display: 'none' }}
           />

@@ -38,6 +38,9 @@ export default class Post extends Model<Post> {
   @Column({ allowNull: false, defaultValue: 0 })
   likenum!: number;
 
+  @Column({ allowNull: false, defaultValue: 0 })
+  commentnum!: number;
+
   @Column({ type: DataType.STRING(1024) })
   contents!: string;
 

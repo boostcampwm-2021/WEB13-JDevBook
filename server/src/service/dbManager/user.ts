@@ -1,4 +1,5 @@
 import db from '../../models';
+import { IProfile } from '../../types/interface';
 
 const getUserData = async (username: string) => {
   const [user, created] = await db.models.User.findOrCreate({
@@ -17,15 +18,15 @@ const getAllUsers = async () => {
 };
 
 const getAllUsersObj = async () => {
-  const users = await db.models.User.findAll({logging:false});
+  const users = await db.models.User.findAll({ logging: false });
   const usersIdxArray = users.map((data) => data.get().idx);
   const usersNameArray = users.map((data) => data.get().nickname);
-  const usersObj:any = {};
-  for(let i=0 ; i<usersIdxArray.length ; i++) {
+  const usersObj: any = {};
+  for (let i = 0; i < usersIdxArray.length; i++) {
     usersObj[usersIdxArray[i]] = usersNameArray[i];
   }
   return usersObj;
-}
+};
 
 const getUserName = async function (idx: number) {
   const username = await db.models.User.findOne({
@@ -67,6 +68,21 @@ const getUserLoginState = async function (name: string) {
   return user?.get().loginstate;
 };
 
+const getProfile = async (userName: string) => {
+  const profile = await db.models.User.findOne({
+    where: { nickname: userName },
+    logging: false
+  });
+  return profile?.get();
+};
+
+const updateProfile = async (userUpdateData: IProfile, userIdx: number) => {
+  await db.models.User.update(
+    { bio: userUpdateData.bio, cover: userUpdateData.cover },
+    { where: { idx: userIdx }, logging: false }
+  );
+};
+
 export {
   getUserData,
   getAllUsers,
@@ -75,5 +91,7 @@ export {
   setUserLoginState,
   getUserLoginState,
   getUserJoinedGroups,
-  getAllUsersObj
+  getAllUsersObj,
+  updateProfile,
+  getProfile
 };

@@ -31,6 +31,7 @@ const PostList = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const problemOrders = useRef<number[]>([]);
   const observerRef = useRef<IntersectionObserver>();
+  const abortController = useRef<AbortController | null>(null);
 
   const observer = (element: HTMLDivElement) => {
     if (isFetching) return;
@@ -51,28 +52,51 @@ const PostList = () => {
   };
 
   const fetchInit = async () => {
-    setFetching(true);
-    const fetchPosts = await fetchApi.getPosts();
-    const fetchProblems = await fetchApi.getProblems();
-    const result = await Promise.all([fetchPosts, fetchProblems]);
-    setPosts((prev) => prev.concat(result[0]));
-    setProblems(result[1]);
-    problemOrders.current = arrayUtil.shuffle(
-      Array(result[1].length)
-        .fill(undefined)
-        .map((_, idx) => idx)
-    );
-    setFetching(false);
+    try {
+      abortController.current = new AbortController();
+      setFetching(true);
+      const fetchPosts = await fetchApi.getPosts(
+        -1,
+        10,
+        null,
+        abortController.current.signal
+      );
+      const fetchProblems = await fetchApi.getProblems(
+        null,
+        abortController.current.signal
+      );
+      const result = await Promise.all([fetchPosts, fetchProblems]);
+      setPosts(result[0]);
+      setProblems(result[1]);
+      problemOrders.current = arrayUtil.shuffle(
+        Array(result[1].length)
+          .fill(undefined)
+          .map((_, idx) => idx)
+      );
+      setFetching(false);
+    } finally {
+      abortController.current = null;
+    }
   };
 
   const fetchPostsMore = async (lastIdx: number, count: number) => {
-    setFetching(true);
-    const result = await fetchApi.getPosts(lastIdx, count);
-    if (result.length < count) {
-      setHasMore(false);
+    try {
+      abortController.current = new AbortController();
+      setFetching(true);
+      const result = await fetchApi.getPosts(
+        lastIdx,
+        count,
+        null,
+        abortController.current.signal
+      );
+      if (result.length < count) {
+        setHasMore(false);
+      }
+      setPosts((prev) => prev.concat(result));
+      setFetching(false);
+    } finally {
+      abortController.current = null;
     }
-    setPosts((prev) => prev.concat(result));
-    setFetching(false);
   };
 
   const getSkeletons = (count: number) => {
@@ -84,8 +108,15 @@ const PostList = () => {
   };
 
   useEffect(() => {
-    setPosts([]);
     fetchInit();
+
+    return () => {
+      if (abortController.current) {
+        abortController.current.abort();
+        abortController.current = null;
+      }
+      setPosts([]);
+    };
   }, []);
 
   const getNextProblem = (idx: number) => {
@@ -95,9 +126,16 @@ const PostList = () => {
       : null;
   };
 
+  const reloadList = () => {
+    window.scrollTo({ top: 0 });
+    setPosts([]);
+    setProblems([]);
+    fetchInit();
+  };
+
   return (
     <>
-      <NewPostAlert />
+      <NewPostAlert reloadList={reloadList} />
       <PostListContainer>
         {Array(posts.length)
           .fill(undefined)

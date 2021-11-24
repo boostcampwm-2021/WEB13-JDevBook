@@ -28,6 +28,9 @@ export default class Alarm extends Model<Alarm> {
   @Column({ allowNull: false, type: DataType.STRING(1024) })
   message!: string;
 
+  @Column({ allowNull: false, defaultValue: false })
+  check!: boolean;
+
   @BelongsTo(() => User, { foreignKey: 'useridx', targetKey: 'idx' })
   BTUseruseridx?: User;
 }

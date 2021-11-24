@@ -24,7 +24,7 @@ jobs:
             cd WEB13-JDevBook && git pull origin release
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
-            cd server && npm install && pm2 restart app
+            cd server && npm install && pm2 restart npm
             cd ../client && npm install && npm run build
             sudo service nginx restart
             

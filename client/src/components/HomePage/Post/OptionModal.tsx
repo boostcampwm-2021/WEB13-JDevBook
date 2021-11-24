@@ -86,7 +86,7 @@ const OptionModal = ({ post }: { post: PostData }) => {
   }, []);
 
   return (
-    <OptionModalContainer ref={modal}>
+    <OptionModalContainer className="no-drag" ref={modal}>
       <div onClick={() => openPostModal()}>게시글 수정</div>
       <div style={{ color: palette.alert }} onClick={() => deletePost()}>
         게시글 삭제

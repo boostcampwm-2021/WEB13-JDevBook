@@ -3,6 +3,7 @@ import multer from 'multer';
 import multerS3 from 'multer-s3';
 import fs from 'fs';
 import { yyyymmdd } from './date';
+import { NextFunction, Request, Response } from 'express';
 const storage = require('../config/objectstorage.json');
 
 //const endpoint: AWS.Endpoint = new AWS.Endpoint(storage.url);
@@ -35,7 +36,19 @@ const storageS3 = multerS3({
   serverSideEncryption: 'AES256'
 });
 
-export const upload = multer({ storage: storageS3 });
+const limits = {
+  files: 1,
+  fileSize: 1 * 1024 * 1024
+};
+
+export const upload = multer({ storage: storageS3, limits: limits });
+
+export const uploadFile = (req: Request, res: Response, next: NextFunction) => {
+  upload.single('imgfile')(req, res, (err) => {
+    if (err) return res.json({ file: false, save: false });
+    else next();
+  });
+};
 
 export const objectStorage = {
   makeBucket: async (bucket_name: string) => {

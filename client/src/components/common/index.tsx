@@ -5,7 +5,10 @@ import GroupSideBar from 'components/common/GroupSideBar';
 import InfoSideBar from 'components/common/InfoSideBar';
 import Gnb from 'components/common/Gnb';
 import SideBar from 'components/common/SideBar';
-import ProfilePhoto from 'components/common/ProfilePhoto';
+import {
+  ProfilePhoto,
+  ClickableProfilePhoto
+} from 'components/common/ProfilePhoto';
 import { UserSearchBar, UserSearchModal } from 'components/common/UserSearch';
 import UserCard from 'components/common/UserCard';
 import InitUserData from 'components/common/InitUserData';
@@ -24,6 +27,7 @@ export {
   Gnb,
   SideBar,
   ProfilePhoto,
+  ClickableProfilePhoto,
   UserSearchBar,
   UserSearchModal,
   UserCard,

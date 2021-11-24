@@ -12,8 +12,8 @@ import fetchApi from 'api/fetch';
 import useAlertModal from 'hooks/useAlertModal';
 
 const GroupCardWrap = styled.div`
-  width: 244px;
-  height: 244px;
+  width: 320px;
+  height: 320px;
   margin: 18px;
 
   border-radius: 8px;
@@ -40,7 +40,7 @@ const GroupSelectorWrap = styled.div`
   width: 100%;
   height: 35%;
   box-sizing: border-box;
-  padding: ${style.padding.normal};
+  padding: ${style.padding.large};
 
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -49,16 +49,16 @@ const GroupSelectorWrap = styled.div`
 
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 `;
 
 const GroupName = styled.div`
-  margin-bottom: ${style.margin.small};
-  font-size: ${style.font.normal};
+  font-size: ${style.font.large};
 `;
 
 const GroupJoinBtn = styled.div`
   width: 100%;
-  height: 30px;
+  height: 35px;
 
   border-radius: 8px;
   background-color: ${palette.lightgray};
@@ -80,7 +80,7 @@ const GroupJoinBtn = styled.div`
 
 const GroupEnterBtn = styled(Link)`
   width: 100%;
-  height: 30px;
+  height: 35px;
 
   border-radius: 8px;
   background-color: ${palette.green};

@@ -55,6 +55,7 @@ export interface DBPost extends DBCUD {
   useridx: number;
   secret: boolean;
   likenum: number;
+  commentnum: number;
   contents: string;
   picture1: string;
   picture2: string;
@@ -134,4 +135,11 @@ export interface IGroup {
 
 export interface IUserSocket {
   [key: string]: string;
+}
+
+export interface IProfile {
+  idx: number;
+  nickname: string;
+  cover: string | null;
+  bio: string | null;
 }

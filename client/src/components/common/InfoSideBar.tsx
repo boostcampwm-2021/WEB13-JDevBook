@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
 import {
   solvedProblemState,
   userDataStates,
@@ -9,9 +10,10 @@ import {
   myJoinedGroupState
 } from 'recoil/store';
 import palette from 'theme/palette';
+import fetchApi from 'api/fetch';
+import useResetProfile from 'hooks/useResetProfile';
 
 import { ProfilePhoto } from 'components/common';
-import fetchApi from 'api/fetch';
 
 const InfoSideBarContainer = styled.div`
   height: 200px;
@@ -87,38 +89,46 @@ const InnerBarGraph = styled.span<{ prevRate: number; solvedRate: number }>`
 const InfoSideBar = () => {
   const userdata = useRecoilValue(userDataStates);
   const joinedGroups = useRecoilValue(myJoinedGroupState);
-  const solvedProblemCount = useRecoilValue(solvedProblemState).length;
+  const solvedProblem = useRecoilValue(solvedProblemState);
   const [rate, setRate] = useRecoilState(rateState);
+  const resetProfile = useResetProfile();
+
+  const photoClickHandler = (e: React.MouseEvent) => {
+    resetProfile(userdata.name);
+  };
 
   const prevRateUpdate = (e: React.AnimationEvent) => {
     setRate((prev) => ({ ...prev, prevRate: rate.solvedRate }));
   };
 
   const getSolvedRate = useCallback(() => {
-    return rate.problemCount === 0
+    const solvedLength = solvedProblem.filter((item) =>
+      joinedGroups?.includes(item.groupIdx)
+    ).length;
+    return rate.totalProblemsCount === 0
       ? 0
-      : Number(((solvedProblemCount / rate.problemCount) * 100).toFixed(1));
-  }, [solvedProblemCount, rate.problemCount]);
+      : Number(((solvedLength / rate.totalProblemsCount) * 100).toFixed(1));
+  }, [solvedProblem, rate.totalProblemsCount, joinedGroups]);
 
   useEffect(() => {
     const solvedRate = getSolvedRate();
     setRate((prev) => ({ ...prev, solvedRate }));
-  }, [solvedProblemCount, rate.problemCount]);
+  }, [solvedProblem, rate.totalProblemsCount]);
 
   useEffect(() => {
     const initProblemCount = async () => {
-      const problems = await fetchApi.getProblems();
-      if (problems.length !== rate.problemCount) {
-        setRate((prev) => ({ ...prev, problemCount: problems.length }));
-      }
+      const totalProblemsCount = (await fetchApi.getProblems()).length;
+      setRate((prev) => ({ ...prev, totalProblemsCount }));
     };
-    initProblemCount();
+    if (joinedGroups) {
+      initProblemCount();
+    }
   }, [joinedGroups]);
 
   return (
     <InfoSideBarContainer className="no-drag">
-      <ProfileWrap to="/profile/shin">
-        <ProfilePhoto src="" />
+      <ProfileWrap to={`/profile/${userdata.name}`} onClick={photoClickHandler}>
+        <ProfilePhoto userName={userdata.name} />
         <p>{userdata.name}</p>
       </ProfileWrap>
       <SolvedTitle>문제 정답률</SolvedTitle>
@@ -130,7 +140,7 @@ const InfoSideBar = () => {
             solvedRate={rate.solvedRate}
             onAnimationEnd={prevRateUpdate}
           >
-            {rate.problemCount !== 0 && `${rate.solvedRate}%`}
+            {rate.totalProblemsCount !== 0 && `${rate.solvedRate}%`}
           </InnerBarGraph>
         </SolvedBarGraph>
       )}

@@ -33,6 +33,7 @@ const PostWriterModalOverlay = styled.div<{ modalState: boolean }>`
   background-color: rgba(0, 0, 0, 0.2);
 
   display: ${(props) => (props.modalState ? 'flex' : 'none')};
+  overscroll-behavior: none;
 `;
 
 const ModalAnimation = keyframes`
@@ -47,6 +48,8 @@ const ModalAnimation = keyframes`
 const PostWriterModalInner = styled.div<{ modalState: boolean }>`
   position: fixed;
   top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 600px;
   box-sizing: border-box;
   padding: 20px;
@@ -59,6 +62,7 @@ const PostWriterModalInner = styled.div<{ modalState: boolean }>`
   display: ${(props) => (props.modalState ? 'flex' : 'none')};
   flex-direction: column;
   align-items: center;
+  overscroll-behavior: none;
 `;
 
 const Line = styled.div`
@@ -172,7 +176,7 @@ const PostWriterModal = () => {
               : post
           );
 
-      if (isEnrollMode()) {
+      if (isEnrollMode() && !secret) {
         socket.emit('post_added');
       }
       alertSuccess();

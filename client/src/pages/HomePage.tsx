@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useRecoilState } from 'recoil';
 
@@ -10,9 +10,6 @@ import {
   Gnb,
   SideBar,
   InfoSideBar,
-  ChatSideBar,
-  AlarmSideBar,
-  SelectorSideBar,
   GroupSideBar,
   InitUserData,
   InitSocket
@@ -26,15 +23,29 @@ const BodyColor = createGlobalStyle`
 
 const HomePageContainer = styled.div`
   display: flex;
-  justify-content: center;
-  padding-bottom: 56px;
+  flex-direction: column;
+`;
+
+const PageLayout = styled.div`
+  display: flex;
 `;
 
 const PostContainer = styled.div`
-  position: relative;
-  top: 56px;
-  width: 680px;
+  width: calc(100vw - 680px);
+  min-width: 720px;
+  margin: 0 12px;
 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media screen and (max-width: 1040px) {
+    width: 100%;
+  }
+`;
+
+const InnerContainer = styled.div`
+  width: 680px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -42,23 +53,31 @@ const PostContainer = styled.div`
 
 const HomePage = () => {
   const [imageViewerState, setImageViewerState] = useRecoilState(ivState);
+
+  useEffect(() => {
+    return () => {
+      window.scrollTo({ top: 0 });
+    };
+  }, []);
+
   return (
     <HomePageContainer>
       <BodyColor />
       <InitUserData />
       <InitSocket />
       <Gnb type="home" rightModalType="" />
-      <SideBar isLeft={true}>
-        <InfoSideBar />
-        <GroupSideBar />
-      </SideBar>
-      <PostContainer>
-        <PostWriter />
-        <PostList />
-      </PostContainer>
-      <SideBar isLeft={false}>
-        <ChatSideBar />
-      </SideBar>
+      <PageLayout>
+        <SideBar isLeft={true}>
+          <InfoSideBar />
+          <GroupSideBar />
+        </SideBar>
+        <PostContainer>
+          <InnerContainer>
+            <PostWriter />
+            <PostList />
+          </InnerContainer>
+        </PostContainer>
+      </PageLayout>
       {imageViewerState.isOpen && <ImageViewer />}
     </HomePageContainer>
   );

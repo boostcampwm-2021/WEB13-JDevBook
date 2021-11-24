@@ -38,10 +38,12 @@ const AlertModalWrap = styled.div`
 
 export const Alert = ({
   count,
-  setCount
+  setCount,
+  reloadList
 }: {
   count: number;
   setCount: React.Dispatch<React.SetStateAction<number>>;
+  reloadList: () => void;
 }) => {
   const getMessage = (count: number): string => {
     if (count < 5) {
@@ -56,8 +58,13 @@ export const Alert = ({
   };
 
   return (
-    <AlertModalWrap onClick={() => setCount(0)}>
-      {getMessage(count)}의 새로운 메세지
+    <AlertModalWrap
+      onClick={() => {
+        reloadList();
+        setCount(0);
+      }}
+    >
+      {getMessage(count)}의 새로운 게시글
     </AlertModalWrap>
   );
 };

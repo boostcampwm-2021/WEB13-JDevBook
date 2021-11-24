@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { usersocketStates } from 'recoil/store';
 import { Alert } from './Alert';
 
-const NewPostAlert = () => {
+const NewPostAlert = ({ reloadList }: { reloadList: () => void }) => {
   const socket = useRecoilValue(usersocketStates);
   const [newPostCount, setNewPostCount] = useState<number>(0);
 
@@ -17,7 +17,11 @@ const NewPostAlert = () => {
   });
 
   return newPostCount > 0 ? (
-    <Alert count={newPostCount} setCount={setNewPostCount} />
+    <Alert
+      count={newPostCount}
+      setCount={setNewPostCount}
+      reloadList={reloadList}
+    />
   ) : (
     <></>
   );
