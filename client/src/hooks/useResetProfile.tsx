@@ -1,12 +1,11 @@
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 
 import { modalStateStore, profileState } from 'recoil/store';
-import { IProfile } from 'types/user';
 import fetchApi from 'api/fetch';
 
 const useResetProfile = () => {
   const resetProfile = useResetRecoilState(profileState);
-  const [profileData, setProfileData] = useRecoilState(profileState);
+  const setProfileData = useSetRecoilState(profileState);
   const [modalState, setModalState] = useRecoilState(modalStateStore);
 
   const resetProfileData = async (userName: string) => {

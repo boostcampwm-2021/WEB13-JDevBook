@@ -3,7 +3,6 @@ import styled, { keyframes } from 'styled-components';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 
 import { alertState } from 'recoil/store';
-import palette from 'theme/palette';
 
 const onAnimation = keyframes`
   0% {
@@ -24,7 +23,7 @@ const onAnimation = keyframes`
   }
 `;
 
-const AlertModalWrap = styled.div<{ bgColor?: string; modalState: boolean }>`
+const AlertModalWrap = styled.div<{ bgColor?: boolean; modalState: boolean }>`
   position: fixed;
   top: -70px;
   left: 50%;
@@ -34,8 +33,9 @@ const AlertModalWrap = styled.div<{ bgColor?: string; modalState: boolean }>`
   z-index: 7;
 
   border-radius: 8px;
-  background-color: ${(props) => props.bgColor ?? `${palette.blue}`};
-  color: ${palette.white};
+  background-color: ${(props) =>
+    props.bgColor ? props.theme.alert : props.theme.blue};
+  color: ${(props) => props.theme.white};
   animation: ${onAnimation} 2s ease;
 
   display: ${(props) => (props.modalState ? `flex` : `none`)};
@@ -54,7 +54,7 @@ const AlertModal = () => {
   return (
     <AlertModalWrap
       modalState={alert.modalState}
-      bgColor={alert.bgColor}
+      bgColor={alert.isAlert}
       onAnimationEnd={alertOff}
     >
       {alert.comment}

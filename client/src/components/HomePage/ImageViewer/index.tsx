@@ -4,7 +4,6 @@ import { MdClose, MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 import { useRecoilState } from 'recoil';
 import { imageViewerState as ivState } from 'recoil/store';
 
-import palette from 'theme/palette';
 import { gridImage } from 'images';
 
 const Container = styled.div`
@@ -54,7 +53,7 @@ const AnimationIcon = styled.div<{ isLeft?: boolean; hidden: boolean }>`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: ${palette.darkgray};
+  background-color: ${(props) => props.theme.darkgray};
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -68,7 +67,7 @@ const AnimationIcon = styled.div<{ isLeft?: boolean; hidden: boolean }>`
     `}
 
   &:hover {
-    background-color: ${palette.lightgray};
+    background-color: ${(props) => props.theme.lightgray};
     transform: ${({ isLeft }) =>
       isLeft ? css`translateX(-8px)` : css`translateX(8px)`};
   }
@@ -80,7 +79,7 @@ const AnimationIcon = styled.div<{ isLeft?: boolean; hidden: boolean }>`
 
 const ImageViewer = () => {
   const [imageViewerState, setImageViewerState] = useRecoilState(ivState);
-  const { isOpen, imageCount, currentIdx, images } = imageViewerState;
+  const { imageCount, currentIdx, images } = imageViewerState;
 
   useEffect(() => {
     const [x, y] = [window.scrollX, window.scrollY];

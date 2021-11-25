@@ -4,34 +4,38 @@ import styled from 'styled-components';
 
 import { defaultGroup } from 'images/groupimg';
 import { IGroup } from 'types/group';
-import palette from 'theme/palette';
 import useResetGroup from 'hooks/useResetGroup';
 
 const JoinedGroupCardWrap = styled(Link)`
+  height: 70px;
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: ${palette.black};
+  color: ${(props) => props.theme.black};
   padding: 5px;
-  margin: 0 0 20px 0;
+  margin-bottom: 20px;
   font-weight: bold;
 
   img {
     width: 50px;
     height: 50px;
-    margin: 0 20px 0 0;
+    margin-right: 20px;
     border-radius: 10px;
     object-fit: cover;
   }
 
+  p {
+    word-break: keep-all;
+  }
+
   &:hover {
     border-radius: 10px;
-    background: ${palette.lightgray};
+    background: ${(props) => props.theme.lightgray};
     transition: all 0.2s;
   }
 
   &:active {
-    background: ${palette.gray};
+    background: ${(props) => props.theme.gray};
   }
 `;
 

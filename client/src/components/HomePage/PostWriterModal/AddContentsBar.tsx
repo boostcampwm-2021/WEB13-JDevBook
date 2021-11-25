@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
 
 import { modalStateStore } from 'recoil/store';
-import palette from 'theme/palette';
 import { iconPhoto } from 'images/icons';
 
 const AddContentsBarWrap = styled.div`
@@ -14,6 +13,7 @@ const AddContentsBarWrap = styled.div`
 
   display: flex;
   align-items: center;
+  color: ${(props) => props.theme.black};
   p {
     width: 50%;
     box-sizing: border-box;
@@ -33,7 +33,7 @@ const ContentsBtn = styled.div<{ modalState: boolean }>`
 
   border-radius: 50%;
   background-color: ${(props) =>
-    props.modalState ? `${palette.lightgray}` : `${palette.white}`};
+    props.modalState ? props.theme.lightgray : props.theme.white};
 
   display: flex;
   justify-content: center;

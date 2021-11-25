@@ -7,7 +7,6 @@ import { useRecoilState } from 'recoil';
 import { modalStateStore } from 'recoil/store';
 
 import { SearchedUser } from 'types/GNB';
-import palette from 'theme/palette';
 import fetchApi from 'api/fetch';
 import { mainLogo } from 'images';
 
@@ -23,7 +22,7 @@ const ModalHeader = styled(FlexBox)`
   justify-content: space-between;
 
   svg {
-    color: ${palette.darkgray};
+    color: ${(props) => props.theme.darkgray};
   }
   margin-right: 8px;
 `;
@@ -36,7 +35,7 @@ const MainLogo = styled.img`
 const UserSearchBarContainer = styled.div`
   width: 240px;
   height: 40px;
-  background: ${palette.lightgray};
+  background: ${(props) => props.theme.lightgray};
   border-radius: 24px;
   margin-left: 16px;
   display: flex;
@@ -98,9 +97,8 @@ const SearchBarContainerModal = styled(UserSearchBarContainer)`
 const UserSearchModalContainer = styled.div`
   width: 320px;
   max-height: 600px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px,
-    rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-  background: ${palette.white};
+  box-shadow: ${(props) => props.theme.shadow.searchUser};
+  background: ${(props) => props.theme.white};
   border-radius: 12px;
   position: fixed;
   top: 0;
@@ -123,7 +121,7 @@ const HoverRound = styled.div`
   cursor: pointer;
 
   &:hover {
-    background: ${palette.lightgray};
+    background: ${(props) => props.theme.lightgray};
     border-radius: 100%;
   }
 `;
@@ -146,8 +144,12 @@ const SearchModalBody = styled.div`
 
   & > p {
     text-align: center;
-    color: ${palette.darkgray};
+    color: ${(props) => props.theme.darkgray};
   }
+`;
+
+const StyledInput = styled.input`
+  color: ${(props) => props.theme.black};
 `;
 
 const UserSearchBar = () => {
@@ -220,7 +222,7 @@ const UserSearchModal = () => {
           <MdArrowBack />
         </HoverRound>
         <SearchBarContainerModal>
-          <input
+          <StyledInput
             type="text"
             placeholder="사용자 검색"
             value={input}

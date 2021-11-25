@@ -10,13 +10,10 @@ import socketIO from './sockets/socketIO';
 dotenv.config({ path: path.resolve(__dirname, './config/.env.development') });
 
 import dbManager from './service/dbManager';
-//import cors from 'cors';
 
 const indexRouter = require('./routes/index');
 const oauthRouter = require('./routes/oauth');
 const apiRouter = require('./routes/api');
-
-const debug = require('debug')('server:server');
 
 const app = express();
 app.use(logger('dev'));
@@ -29,27 +26,16 @@ const port = 4000;
 app.set('port', port);
 const FileStore = sessionFileStore(session);
 
-// app.use(
-//   cors({
-//     origin: 'http://localhost:3000',
-//     credentials: true
-//   })
-// );
-
 dbManager.sync();
 
 app.use(
   session({
-    //HttpOnly: true,
-    //secure: process.env.HTTPS_FALSE ? false : true,
-    // typescript es6 import 형식으로 바꾸면서 secure는 자동 설정 되는듯?
-    // 배포해서 https로 실험해봐야 확실할듯...
-    secret: 'secret key', // 암호화할 때 쓰이는 키라는데...
+    secret: 'secret key',
     resave: false,
     saveUninitialized: true,
     cookie: {
       httpOnly: true,
-      secure: false, //process.env.HTTPS_FALSE ? false : true,
+      secure: false,
       maxAge: 24000 * 60 * 60
     },
     store: new FileStore({

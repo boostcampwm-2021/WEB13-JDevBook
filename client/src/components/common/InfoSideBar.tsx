@@ -9,7 +9,6 @@ import {
   rateState,
   myJoinedGroupState
 } from 'recoil/store';
-import palette from 'theme/palette';
 import fetchApi from 'api/fetch';
 import useResetProfile from 'hooks/useResetProfile';
 
@@ -18,10 +17,10 @@ import { ProfilePhoto } from 'components/common';
 const InfoSideBarContainer = styled.div`
   height: 200px;
   width: inherit;
-  background: ${palette.white};
+  background: ${(props) => props.theme.white};
   display: flex;
   flex-direction: column;
-  box-shadow: rgba(0, 0, 0, 0.24) 3px 3px 3px;
+  box-shadow: rgba(0, 0, 0, 0.15) 3px 3px 3px;
 `;
 
 const ProfileWrap = styled(Link)`
@@ -30,7 +29,7 @@ const ProfileWrap = styled(Link)`
   justify-content: flex-start;
   margin: 35px 50px 0 50px;
   text-decoration: none;
-  color: ${palette.black};
+  color: ${(props) => props.theme.black};
 
   p {
     font-size: large;
@@ -42,11 +41,13 @@ const ProfileWrap = styled(Link)`
 const SolvedTitle = styled.div`
   font-weight: bold;
   margin: 10px 50px;
+
+  color: ${(props) => props.theme.black};
 `;
 
 const NoGroup = styled.div`
   margin: 0 50px;
-  color: ${palette.darkgray};
+  color: ${(props) => props.theme.darkgray};
 
   &:after {
     content: '가입된 그룹이 없습니다';
@@ -55,7 +56,7 @@ const NoGroup = styled.div`
 
 const SolvedBarGraph = styled.div`
   height: 25px;
-  background: ${palette.gray};
+  background: ${(props) => props.theme.gray};
   border-radius: 40px;
   margin: 0 50px;
 `;
@@ -75,11 +76,11 @@ const InnerBarGraph = styled.span<{ prevRate: number; solvedRate: number }>`
   height: 25px;
   line-height: 25px;
   text-align: right;
-  background: ${palette.green};
+  background: ${(props) => props.theme.green};
   border-radius: 40px;
   padding: 0 10px;
   box-sizing: border-box;
-  color: ${palette.white};
+  color: ${(props) => props.theme.white};
   font-size: small;
   font-weight: 600;
   animation: ${(props) => GraphAnimation(props.prevRate, props.solvedRate)} 1.5s

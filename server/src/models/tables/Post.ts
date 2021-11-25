@@ -4,12 +4,9 @@ import {
   Model,
   HasMany,
   BelongsToMany,
-  Unique,
-  Length,
   ForeignKey,
   BelongsTo,
-  DataType,
-  Comment
+  DataType
 } from 'sequelize-typescript';
 import Like from './Like';
 import User from './User';

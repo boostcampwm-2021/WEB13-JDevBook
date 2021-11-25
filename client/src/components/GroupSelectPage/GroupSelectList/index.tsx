@@ -8,15 +8,6 @@ import fetchApi from 'api/fetch';
 import GroupCard from 'components/GroupSelectPage/GroupSelectList/GroupCard';
 import { IGroup } from 'types/group';
 
-const listAnimation = keyframes`
-  0% {
-    width: 100%;
-  }
-  100% {
-    width: 130%;
-  }
-`;
-
 const GroupSelectListContainer = styled.div<{
   modalState: boolean;
   fisrtFlag: boolean;
@@ -27,12 +18,6 @@ const GroupSelectListContainer = styled.div<{
 
   display: flex;
   flex-flow: row wrap;
-  /* ${(props) =>
-    props.fisrtFlag || props.modalState
-      ? css``
-      : css`
-          animation: ${listAnimation} 0.5s;
-        `}; */
 `;
 
 const GroupSelectList = () => {

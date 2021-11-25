@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, useEffect, useRef, useState } from 'react';
+import React, { BaseSyntheticEvent, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { IoClose } from 'react-icons/io5';
 import { FiUpload } from 'react-icons/fi';
@@ -10,7 +10,6 @@ import {
   modalStateStore,
   postModalDataStates
 } from 'recoil/store';
-import palette from 'theme/palette';
 import fetchApi from 'api/fetch';
 import useAlertModal from 'hooks/useAlertModal';
 import style from 'theme/style';
@@ -35,7 +34,7 @@ const ImgUploadContainer = styled.div<{ modalState: boolean }>`
   border-style: solid;
   border-width: 1px;
   border-radius: 8px;
-  border-color: ${palette.darkgray};
+  border-color: ${(props) => props.theme.darkgray};
   animation: ${ModalAnimation} 0.2s 1;
 
   display: ${(props) => (props.modalState ? 'block' : 'none')};
@@ -46,7 +45,7 @@ const ImgUploadWrap = styled.div`
   height: 100%;
 
   border-radius: 8px;
-  background-color: ${palette.lightgray};
+  background-color: ${(props) => props.theme.lightgray};
 
   display: flex;
   justify-content: center;
@@ -59,7 +58,7 @@ const ImgUploadWrap = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
   }
 
   &:hover {
@@ -79,9 +78,9 @@ const CloseBtn = styled.div`
   border-radius: 50%;
   border-style: solid;
   border-width: 1px;
-  border-color: ${palette.darkgray};
-  background-color: ${palette.white};
-  color: ${palette.darkgray};
+  border-color: ${(props) => props.theme.darkgray};
+  background-color: ${(props) => props.theme.white};
+  color: ${(props) => props.theme.darkgray};
 
   display: flex;
   justify-content: center;
@@ -96,7 +95,7 @@ const CloseBtn = styled.div`
   &:active {
     width: 35px;
     height: 35px;
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
   }
 `;
 
@@ -115,7 +114,7 @@ const WhatWorkModal = styled.div`
     margin-bottom: 5px;
 
     border-radius: 50%;
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
 
     display: flex;
     justify-content: center;
@@ -150,7 +149,7 @@ const ImgPreview = styled.div`
     padding: ${style.padding.smallest};
 
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
-    background-color: ${palette.white};
+    background-color: ${(props) => props.theme.white};
     border-radius: 8px;
 
     &:hover {
@@ -173,10 +172,11 @@ const CloseOneImg = styled.div<{ imgsrc: string | undefined }>`
   position: absolute;
   margin: 6px 0 0 106px;
   z-index: 3;
+  color: ${(props) => props.theme.black};
 
   &:hover {
     cursor: pointer;
-    color: ${palette.alert};
+    color: ${(props) => props.theme.alert};
   }
   &:active {
     cursor: pointer;
@@ -210,18 +210,18 @@ const ImgUploadModal = () => {
 
   const openFileModal = (e: React.MouseEvent<HTMLDivElement>) => {
     if (imgList.length >= 3)
-      return alertMessage('첨부 사진은 3장까지 가능합니다.', palette.alert);
+      return alertMessage('첨부 사진은 3장까지 가능합니다.', true);
     if (isImgUploading > 0)
-      return alertMessage('이미지 업로드 중입니다.', palette.alert);
+      return alertMessage('이미지 업로드 중입니다.', true);
 
     inputfile.current.click();
   };
 
   const uploadOneFile = (filelist: FileList | null) => {
     if (imgList.length >= 3)
-      return alertMessage('첨부 사진은 3장까지 가능합니다.', palette.alert);
+      return alertMessage('첨부 사진은 3장까지 가능합니다.', true);
     if (isImgUploading > 0)
-      return alertMessage('이미지 업로드 중입니다.', palette.alert);
+      return alertMessage('이미지 업로드 중입니다.', true);
 
     const uploadNum = isImgUploading;
     setIsImgUploading(uploadNum + 1);
@@ -230,12 +230,17 @@ const ImgUploadModal = () => {
 
   const getFile = async (filelist: FileList | null, uploadNum: number) => {
     if (!filelist || filelist.length === 0) {
-      alertMessage('파일을 가져오지 못했습니다.', palette.alert);
+      alertMessage('파일을 가져오지 못했습니다.', true);
       return setIsImgUploading(uploadNum - 1);
     }
 
     if (filelist[0].type.match(/image\/*/) === null) {
-      alertMessage('이미지 파일이 아닙니다.', palette.alert);
+      alertMessage('이미지 파일이 아닙니다.', true);
+      return setIsImgUploading(uploadNum - 1);
+    }
+
+    if (filelist[0].size > 1024 * 1024) {
+      alertMessage('1MB 이하만 가능합니다.', true);
       return setIsImgUploading(uploadNum - 1);
     }
 
@@ -243,8 +248,8 @@ const ImgUploadModal = () => {
     const s3fileRes = await fetchApi.uploadImg(imglist);
 
     if (!s3fileRes.save) {
-      if (s3fileRes.file) alertMessage('이미지 업로드 실패', palette.alert);
-      else alertMessage('1MB 이하만 가능합니다.', palette.alert);
+      if (s3fileRes.file) alertMessage('이미지 업로드 실패', true);
+      else alertMessage('1MB 이하만 가능합니다.', true);
       return setIsImgUploading(uploadNum - 1);
     }
 
@@ -325,16 +330,16 @@ const ImgUploadModal = () => {
         ref={imgUploadWrapRef}
         onClick={openFileModal}
         onDragEnter={(e) => {
-          dragDropEvent(e, palette.darkgray);
+          dragDropEvent(e, '#8a8c91');
         }}
         onDragOver={(e) => {
-          dragDropEvent(e, palette.darkgray);
+          dragDropEvent(e, '#8a8c91');
         }}
         onDragLeave={(e) => {
-          dragDropEvent(e, palette.lightgray);
+          dragDropEvent(e, '#e4e6eb');
         }}
         onDrop={(e) => {
-          dragDropEvent(e, palette.lightgray);
+          dragDropEvent(e, '#e4e6eb');
           uploadOneFile(e.dataTransfer.files);
         }}
       >

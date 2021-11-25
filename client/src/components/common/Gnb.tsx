@@ -1,5 +1,5 @@
 import React, { Dispatch, useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import { useRecoilValue, useRecoilState, useResetRecoilState } from 'recoil';
 
@@ -10,7 +10,9 @@ import {
   userDataStates,
   GroupNavState,
   alarmState,
-  usersocketStates
+  usersocketStates,
+  themeState,
+  animationState
 } from 'recoil/store';
 import fetchApi from 'api/fetch';
 import {
@@ -54,7 +56,8 @@ const GnbContainer = styled.div`
   padding-right: 16px;
   box-sizing: border-box;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
+
   a {
     text-decoration: none;
   }
@@ -76,8 +79,8 @@ const FlexWrap = styled.div<FlexProps>`
       top: 50%;
       transform: translate(-50%, -50%);
 
-      @media screen and (max-width: 800px) {
-        display: none;
+      @media screen and (max-width: 852px) {
+        margin-left: 20px;
       }
     `}
 `;
@@ -88,23 +91,31 @@ const GnbTab = styled.div<TabProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: 0.1s ease-in;
+  transition: background-color border-radius 0.1s ease-in;
 
   &:hover {
-    background-color: ${palette.lightgray};
+    background-color: ${(props) => props.theme.lightgray};
     border-radius: 8px;
   }
 
   &:active {
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
   }
 
   svg path {
     ${({ current }) =>
-      current &&
-      css`
-        fill: ${palette.green};
-      `}
+      current
+        ? css`
+            fill: ${(props) => props.theme.green};
+          `
+        : css`
+            fill: ${(props) => props.theme.darkgray};
+          `}
+  }
+
+  @media screen and (max-width: 852px) {
+    width: 60px;
+    height: 48px;
   }
 `;
 
@@ -116,31 +127,57 @@ const ProfileWrap = styled.div`
   padding-right: 12px;
 
   &:hover {
-    background-color: ${palette.lightgray};
+    background-color: ${(props) => props.theme.lightgray};
     border-radius: 24px;
   }
 
   &:active {
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
   }
 
   p {
-    color: ${palette.black};
+    color: ${(props) => props.theme.black};
     margin-left: 8px;
     font-size: 1rem;
     font-weight: bold;
+  }
+
+  @media screen and (max-width: 852px) {
+    padding: 0px;
+    p {
+      display: none;
+      margin-left: 0px;
+    }
+    img {
+      width: 36px;
+      height: 36px;
+
+      &:hover {
+        filter: brightness(90%);
+      }
+
+      &:active {
+        filter: brightness(80%);
+      }
+    }
   }
 `;
 
 const IconWrap = styled.div<IconProps>`
   width: 40px;
   height: 40px;
-  background: ${palette.lightgray};
+  background: ${(props) => props.theme.lightgray};
   border-radius: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  background-color: ${({ img }) =>
+    img.match('active')
+      ? css`
+          ${(props) => props.theme.lightestgreen}
+        `
+      : ``};
 
   &:after {
     content: '';
@@ -151,11 +188,18 @@ const IconWrap = styled.div<IconProps>`
   }
 
   &:hover {
-    background-color: ${palette.lightgray};
+    background-color: ${({ img }) =>
+      img.match('active')
+        ? css`
+            ${(props) => props.theme.lightgreen}
+          `
+        : css`
+            ${(props) => props.theme.gray};
+          `};
   }
 
   &:active {
-    background-color: ${palette.gray};
+    transform: scale(0.95);
   }
 `;
 
@@ -170,9 +214,71 @@ const AlarmBadge = styled.div`
   text-align: center;
 
   cursor: pointer;
-  background-color: red;
+  background-color: ${(props) => props.theme.alert};
   color: white;
   font-size: 8px;
+`;
+
+const ToggleBtnWrap = styled.div`
+  width: 50px;
+  height: 25px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const ToggleBar = styled.div`
+  position: relative;
+  width: 80%;
+  height: 30%;
+
+  border-radius: 20px;
+  background-color: ${(props) => props.theme.gray};
+`;
+
+const turnDark = keyframes`
+  0%{
+    left: -2px;
+  }
+  100%{
+    left: 22px;
+    background-color: ${palette.darkgray};
+  }
+`;
+const turnLight = keyframes`
+  0%{
+    left: 22px;
+  }
+  100%{
+    left: -2px;
+    background-color: ${palette.green};
+  }
+`;
+
+const ToggleBtn = styled.div<{ themeState: string; animationState: boolean }>`
+  position: absolute;
+  top: -6px;
+  left: ${(props) => (props.themeState === 'dark' ? '22px' : '-2px')};
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+  background-color: ${(props) =>
+    props.themeState === 'dark' ? props.theme.darkgray : props.theme.green};
+  animation: ${(props) =>
+    props.animationState &&
+    (props.themeState === 'dark'
+      ? css`
+          ${turnDark} ease 0.5s
+        `
+      : css`
+          ${turnLight} ease 0.5s
+        `)};
 `;
 
 const Gnb = ({ type, rightModalType }: GnbProps) => {
@@ -183,12 +289,23 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
     useRecoilState(rightModalStates);
   const [groupNavState, setGroupNavState] = useRecoilState(GroupNavState);
   const [alarmNum, setAlarmNum] = useRecoilState(alarmState);
+  const [theme, setTheme] = useRecoilState(themeState);
   const socket = useRecoilValue(usersocketStates);
+  const [animation, setAnimaition] = useRecoilState(animationState);
   const history = useHistory();
   const resetProfile = useResetProfile();
 
   const photoClickHandler = (e: React.MouseEvent) => {
     resetProfile(userdata.name);
+  };
+
+  const themeToggleHandler = (e: React.MouseEvent) => {
+    setAnimaition(true);
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+
+  const animationEnd = (e: React.AnimationEvent) => {
+    setAnimaition(false);
   };
 
   useEffect(() => {}, [alarmNum]);
@@ -220,6 +337,15 @@ const Gnb = ({ type, rightModalType }: GnbProps) => {
         </Link>
       </FlexWrap>
       <FlexWrap>
+        <ToggleBtnWrap onClick={themeToggleHandler}>
+          <ToggleBar>
+            <ToggleBtn
+              animationState={animation}
+              themeState={theme}
+              onAnimationEnd={animationEnd}
+            />
+          </ToggleBar>
+        </ToggleBtnWrap>
         <Link to={`/profile/${userdata.name}`} onClick={photoClickHandler}>
           <ProfileWrap>
             <ProfilePhoto userName={userdata.name} size="28px" />

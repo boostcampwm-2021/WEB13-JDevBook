@@ -3,7 +3,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { modalStateStore, profileState, userDataStates } from 'recoil/store';
-import palette from 'theme/palette';
 import style from 'theme/style';
 
 const ProfileEditWrap = styled.div<{ myProfile: boolean }>`
@@ -18,8 +17,8 @@ const ProfileEditBtn = styled.div`
   padding: 8px ${style.padding.normal};
 
   border-radius: 8px;
-  background-color: ${palette.green};
-  color: ${palette.white};
+  background-color: ${(props) => props.theme.green};
+  color: ${(props) => props.theme.white};
 
   display: flex;
   justify-content: center;

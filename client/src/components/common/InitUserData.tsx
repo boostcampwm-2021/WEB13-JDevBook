@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import fetchApi from 'api/fetch';
 
@@ -13,9 +13,10 @@ import {
 import { useHistory } from 'react-router-dom';
 import { IProblem } from 'types/problem';
 import { IGroup } from 'types/group';
+import socket from './Socket';
 
-const InitUserData = (/*{ history }: RouteComponentProps*/) => {
-  const [userdata, setUserdata] = useRecoilState(userDataStates);
+const InitUserData = () => {
+  const setUserdata = useSetRecoilState(userDataStates);
   const [postData, setPostData] = useRecoilState(postModalDataStates);
   const [groupList, setGroupList] = useRecoilState(groupListState);
   const setSolvedProblems = useSetRecoilState(solvedProblemState);
@@ -54,6 +55,7 @@ const InitUserData = (/*{ history }: RouteComponentProps*/) => {
           data.BTMUserGroupuseridx.map((item: IGroup) => item.idx)
         );
 
+        //socket.connect();
         //socket?.emit('name', data.nickname);
       }
     })();

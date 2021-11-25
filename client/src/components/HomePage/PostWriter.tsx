@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { userDataStates, modalStateStore } from 'recoil/store';
-import palette from 'theme/palette';
 import { iconPhoto } from 'images/icons';
 
 import { ProfilePhoto } from 'components/common';
@@ -20,7 +19,7 @@ const PostWriterBox = styled.div`
   padding: 4px 16px;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
 `;
 
 const InputWrap = styled.div`
@@ -34,10 +33,10 @@ const ModalCallBtn = styled.div`
   width: 100%;
   margin: 0 0 0 10px;
   padding: 10px 15px;
-  background-color: ${palette.lightgray};
+  background-color: ${(props) => props.theme.lightgray};
   border-radius: 25px;
 
-  color: ${palette.darkgray};
+  color: ${(props) => props.theme.darkgray};
 
   &:hover {
     cursor: pointer;
@@ -52,7 +51,7 @@ const ModalCallBtn = styled.div`
 const Line = styled.div`
   width: 100%;
   height: 1px;
-  background-color: ${palette.gray};
+  background-color: ${(props) => props.theme.gray};
 `;
 
 const ButtonsWrap = styled.div`
@@ -72,12 +71,12 @@ const StyledBtn = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: ${palette.lightgray};
+    background-color: ${(props) => props.theme.lightgray};
     transition: all 0.2s;
   }
 
   &:active {
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
   }
 
   img {
@@ -88,7 +87,7 @@ const StyledBtn = styled.div`
 
   div {
     font-weight: bold;
-    color: ${palette.darkgray};
+    color: ${(props) => props.theme.darkgray};
   }
 `;
 

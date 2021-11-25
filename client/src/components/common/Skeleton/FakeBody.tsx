@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import palette from 'theme/palette';
 
 const FakeBodyContainer = styled.div`
   width: 100%;
@@ -9,7 +8,7 @@ const FakeBodyContainer = styled.div`
 
   div {
     border-radius: 12px;
-    background: ${palette.skeleton};
+    background: ${(props) => props.theme.skeleton};
 
     &:last-child {
       margin-top: 2px;
@@ -20,7 +19,7 @@ const FakeBodyContainer = styled.div`
 const FakeImageBox = styled.div`
   width: 100%;
   height: 320px;
-  background: ${palette.skeleton};
+  background: ${(props) => props.theme.skeleton};
   margin-top: 16px;
 `;
 

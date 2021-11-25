@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
-import styled, { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle, css } from 'styled-components';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 
 import { imageViewerState, profileState, userDataStates } from 'recoil/store';
@@ -25,9 +25,13 @@ import {
 } from 'components/ProfilePage';
 
 const GlobalStyle = createGlobalStyle`
-  body {
-    background-color: ${palette.lightgray};
-  }
+  ${({}) => {
+    return css`
+      body {
+        background-color: ${(props) => props.theme.lightgray};
+      }
+    `;
+  }}
 `;
 
 const ProfilePageContainer = styled.div`
@@ -109,7 +113,7 @@ const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({
           <InfoSideBar />
           <GroupSideBar />
         </SideBar>
-        <ContentsContainer contentsState={true}>
+        <ContentsContainer contentsState={profileData.idx !== 0}>
           <ProfileCover />
           <ProfileBar />
           <InnerContainer>
@@ -118,7 +122,7 @@ const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({
             </InfoContainer>
             <PostContainer>
               {myProfile ? <PostWriter /> : ''}
-              <PostList username={match.params.username} />
+              <PostList />
             </PostContainer>
           </InnerContainer>
         </ContentsContainer>

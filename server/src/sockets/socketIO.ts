@@ -7,10 +7,6 @@ const UserObj: IUserSocket = {};
 const socketIO = (server: any) => {
   const io = new Server(server);
   io.on('connection', (socket: Socket) => {
-    // socket.on('name', (username: string) => {
-    //   socket.name = username;
-    // });
-
     // 유저 접속 부분
     socket.on(
       'login notify',
@@ -19,11 +15,10 @@ const socketIO = (server: any) => {
         io.emit('get current users', UserObj);
       }
     );
-
     // 1:1 채팅 이전 메시지 가져오는 부분
     socket.on('send chat initial', async (receivedData) => {
       const { sender, receiver } = receivedData;
-      socket.name = sender;
+      socket.name = sender; // 본인 이름 설정
 
       const { senderidx, receiveridx, previousMsg } =
         await dbManager.getChatList(sender, receiver);
@@ -104,21 +99,24 @@ const socketIO = (server: any) => {
       const { receiver } = receivedData;
       const previousAlarms = await dbManager.getAlarmList(receiver);
       io.emit('get previous alarms', previousAlarms);
-      const uncheckedAlarmsNum = await dbManager.getUncheckedAlarmsNum(receiver);
+      const uncheckedAlarmsNum = await dbManager.getUncheckedAlarmsNum(
+        receiver
+      );
       io.emit('get number of unchecked alarms', uncheckedAlarmsNum);
     });
 
     // 알람 부분
     socket.on('send alarm', async (receivedData) => {
-      const { sender, receiver, type } = receivedData;
-      const msg: string = `${sender}:${type}`;
+      const { sender, receiver, type, text } = receivedData;      
+      const msg = `${sender}:${type}:${text}`;
+      
       await dbManager.addAlarm(receiver, msg);
       io.emit('get alarm', receivedData);
       io.emit('get alarm info', receivedData);
     });
 
     socket.on('make alarms check', async (receivedData) => {
-      const {receiver} = receivedData;
+      const { receiver } = receivedData;
       await dbManager.setAlarmCheck(receiver);
     });
     // 유저 로그아웃 부분
@@ -136,9 +134,6 @@ const socketIO = (server: any) => {
       console.log(`${socket.name}:${socket.id} disconnected`);
     });
   });
-
-  //io.on("forceDisconnect")
-  //io.on("disconnect")
 };
 
 export default socketIO;

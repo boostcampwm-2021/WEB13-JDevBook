@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { userDataStates, myJoinedGroupState, groupState } from 'recoil/store';
-import palette from 'theme/palette';
 import style from 'theme/style';
 import useAlertModal from 'hooks/useAlertModal';
 import fetchApi from 'api/fetch';
@@ -21,8 +20,9 @@ const GroupJoinBtn = styled.div<{ joinedState: boolean }>`
 
   border-radius: 8px;
   background-color: ${(props) =>
-    props.joinedState ? palette.gray : palette.green};
-  color: ${(props) => (props.joinedState ? palette.black : palette.white)};
+    props.joinedState ? props.theme.gray : props.theme.green};
+  color: ${(props) =>
+    props.joinedState ? props.theme.black : props.theme.white};
 
   display: flex;
   justify-content: center;
@@ -54,7 +54,7 @@ const GroupNavMiddle = () => {
         setMyJoinedGroup([...myJoinedGroup, groupData.idx]);
         setJoinedState(true);
       } else {
-        alertMessage(`${groupData.title} 그룹을 탈퇴했습니다.`, palette.alert);
+        alertMessage(`${groupData.title} 그룹을 탈퇴했습니다.`, true);
         setMyJoinedGroup(
           myJoinedGroup.filter((groupidx) => groupidx !== groupData.idx)
         );
@@ -75,7 +75,7 @@ const GroupNavMiddle = () => {
         onClick={joinGroup}
         className="no-drag"
       >
-        {joinedState ? `그룹 탈퇴` : `그룹 추가`}
+        {joinedState ? `그룹 탈퇴` : `그룹 가입`}
       </GroupJoinBtn>
     </GroupNavMiddleWrap>
   );

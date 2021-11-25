@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled, { keyframes } from 'styled-components';
 
 import { isLoginfailStates } from 'recoil/store';
@@ -42,15 +42,12 @@ const LoadingTitle = styled.div`
 
 const IsLoginPage = () => {
   const loginfail = useRecoilValue(isLoginfailStates);
-  const [message, setMessage] = useState('로그인 여부 확인중 ...');
   const history = useHistory();
 
   useEffect(() => {
     if (loginfail === true) {
       alert('비정상적인 접근입니다.');
       history.push('/');
-      //setMessage('로그인이 되어있지 않습니다.');
-      //setLink(<button onClick={() => history.push('/')}>돌아가기</button>);
     }
   }, [loginfail]);
 

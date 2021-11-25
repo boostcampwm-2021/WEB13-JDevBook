@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components';
 import { useRecoilState } from 'recoil';
 
 import { GroupNavState, rightModalStates } from 'recoil/store';
-import palette from 'theme/palette';
 import style from 'theme/style';
 
 const GroupNavigationWrap = styled.div`
@@ -20,8 +19,9 @@ const NavigationBtn = styled.div<{ isActive: boolean }>`
   border-radius: ${(props) => (props.isActive ? `0` : `8px`)};
   border-bottom-style: solid;
   border-bottom-color: ${(props) =>
-    props.isActive ? `${palette.green}` : `${palette.white}`};
-  background-color: ${palette.white};
+    props.isActive ? props.theme.green : props.theme.white};
+  background-color: ${(props) => props.theme.white};
+  color: ${(props) => props.theme.black};
 
   display: flex;
   justify-content: center;
@@ -34,22 +34,12 @@ const NavigationBtn = styled.div<{ isActive: boolean }>`
 
   &:hover {
     cursor: pointer;
-    ${(props) =>
-      props.isActive
-        ? ``
-        : css`
-            filter: brightness(90%);
-          `};
+    background-color: ${(props) =>
+      props.isActive ? '' : props.theme.lightgray};
   }
 
   &:active {
-    ${(props) =>
-      props.isActive
-        ? ``
-        : css`
-            font-size: 15px;
-            filter: brightness(85%);
-          `};
+    font-size: ${(props) => (props.isActive ? `` : `15px`)};
   }
 `;
 

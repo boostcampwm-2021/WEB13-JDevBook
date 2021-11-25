@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
 import { profileState } from 'recoil/store';
@@ -10,7 +10,6 @@ const InitProfileData = ({ userName }: { userName: string }) => {
 
   const fetchProfile = async (userName: string) => {
     const { data: profile, error } = await fetchApi.getProfile(userName);
-    //if (!error) setprofileData(profile);
     if (!error) {
       setProfileData({
         idx: profile.idx,

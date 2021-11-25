@@ -7,4 +7,5 @@ export interface CommentData {
 export interface IComment {
   writer: string;
   text: string;
+  createdAt: Date;
 }

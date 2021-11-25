@@ -1,6 +1,4 @@
-import React from 'react';
 import styled, { keyframes } from 'styled-components';
-import palette from 'theme/palette';
 
 const Wrapper = styled.span`
   justify-content: center;
@@ -11,7 +9,7 @@ const Wrapper = styled.span`
 `;
 
 const SubTitle = styled.div`
-  color: ${palette.black};
+  color: #000;
 `;
 
 const Animation = keyframes`
@@ -24,7 +22,7 @@ const Animation = keyframes`
 const Content = styled.span`
   width: 50vw;
   font-size: 50px;
-  color: ${palette.green};
+  color: #87d474;
   display: inline-block;
   span {
     display: inline-block;

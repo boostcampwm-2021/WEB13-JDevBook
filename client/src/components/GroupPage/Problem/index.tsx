@@ -1,13 +1,12 @@
 import fetchApi from 'api/fetch';
 import useAlertModal from 'hooks/useAlertModal';
-import React from 'react';
-import { useRecoilState } from 'recoil';
-import { solvedProblemState } from 'recoil/store';
+import React, { useEffect, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { GroupNavState, solvedProblemState } from 'recoil/store';
 import styled from 'styled-components';
 
-import palette from 'theme/palette';
-import style from 'theme/style';
 import { IProblem } from 'types/problem';
+import Explanation from './Explanation';
 
 const ProblemContainer = styled.div`
   width: 680px;
@@ -17,9 +16,8 @@ const ProblemContainer = styled.div`
   box-sizing: border-box;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
   margin-top: 24px;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
   box-sizing: border-box;
-  padding-bottom: 32px;
 
   * {
     box-sizing: inherit;
@@ -42,39 +40,43 @@ const GroupTitle = styled.div`
 `;
 
 const QuestionBox = styled.div`
+  color: ${(props) => props.theme.black};
   position: relative;
   padding: 16px 24px 0px;
   border-radius: 8px;
   line-height: 2;
 `;
 
-const AnswerWrap = styled.div`
+const AnswerWrap = styled.div<{ isSolvedNow: boolean }>`
   display: flex;
-  margin: 24px 24px 0px;
+  padding: 24px;
+  border-bottom: ${(props) =>
+    props.isSolvedNow && `1px solid ${props.theme.lightgray}`};
 `;
 
 const AnswerButton = styled.div`
   flex: 1;
   height: 64px;
   border-radius: 8px;
-  color: black;
+  color: ${(props) => props.theme.black};
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 24px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 3px 12px;
+  box-shadow: ${(props) => props.theme.shadow.answerButton};
   transition: 0.2s ease-out;
+  cursor: pointer;
 
   & + & {
     margin-left: 24px;
   }
 
   &:hover {
-    color: white;
+    color: ${(props) => props.theme.white};
   }
 
   &:active {
-    color: white;
+    color: ${(props) => props.theme.white};
     font-size: 22px;
     box-shadow: none;
     box-shadow: rgba(0, 0, 0, 0.03) 0px 3px 12px;
@@ -111,14 +113,14 @@ const WrongButton = styled(AnswerButton)`
 
 const SolvedLabel = styled.div`
   width: 100%;
-  height: 48px;
-  background: ${palette.green};
+  height: 36px;
+  background: ${(props) => props.theme.green};
   display: flex;
   justify-content: center;
   align-items: center;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  color: white;
+  color: ${(props) => props.theme.white};
   letter-spacing: 1px;
 
   &::after {
@@ -133,13 +135,16 @@ const Problem = ({
   problem: IProblem;
   isHome?: boolean;
 }) => {
+  const groupNavState = useRecoilValue(GroupNavState);
   const [solvedProblems, setSolvedProblems] =
     useRecoilState(solvedProblemState);
   const showAlert = useAlertModal();
+  const [isSolvedNow, setSolvedNow] = useState<boolean>(false);
 
   const handleAnswer = (selected: boolean) => {
     if (problem.answer === selected) {
-      showAlert('정답입니다.');
+      showAlert('정답입니다. 뛰어난 실력이시군요!');
+      setSolvedNow(true);
       if (!solvedProblems.map((item) => item.idx).includes(problem.idx)) {
         setSolvedProblems(
           solvedProblems.concat({
@@ -150,9 +155,15 @@ const Problem = ({
         fetchApi.insertSolvedProblem(problem.idx);
       }
     } else {
-      showAlert('오답입니다.', palette.alert);
+      showAlert('오답입니다. 더 공부 하세요!', true);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      setSolvedNow(false);
+    };
+  }, [groupNavState.problem]);
 
   return (
     <ProblemContainer>
@@ -163,10 +174,13 @@ const Problem = ({
         <GroupTitle>[{problem.BTGroupgroupidx.title}] 그룹의 문제</GroupTitle>
       )}
       <QuestionBox>{problem.question}</QuestionBox>
-      <AnswerWrap>
+      <AnswerWrap isSolvedNow={isSolvedNow}>
         <RightButton onClick={() => handleAnswer(true)} />
         <WrongButton onClick={() => handleAnswer(false)} />
       </AnswerWrap>
+      {isSolvedNow && problem.explanation && (
+        <Explanation explanation={problem.explanation} />
+      )}
     </ProblemContainer>
   );
 };

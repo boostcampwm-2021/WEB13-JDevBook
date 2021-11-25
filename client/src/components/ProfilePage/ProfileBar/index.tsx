@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-
-import palette from 'theme/palette';
 
 import ProfileInfo from 'components/ProfilePage/ProfileBar/ProfileInfo';
 import ProfilePhoto from 'components/ProfilePage/ProfileBar/ProfilePhoto';
 import ProfileEdit from 'components/ProfilePage/ProfileBar/ProfileEdit';
-import ProfileEditModal from 'components/ProfilePage/ProfileEditModal';
 import { useRecoilValue } from 'recoil';
-import { profileState, userDataStates } from 'recoil/store';
+import { profileState } from 'recoil/store';
 
 const ProfileBarContainer = styled.div`
   width: 100%;
@@ -22,7 +19,7 @@ const ProfileBarContainer = styled.div`
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
 
   display: flex;
 `;
@@ -35,7 +32,6 @@ const ProfileBar = () => {
       <ProfilePhoto userName={profileData.nickname} />
       <ProfileInfo />
       <ProfileEdit />
-      <ProfileEditModal />
     </ProfileBarContainer>
   );
 };

@@ -1,9 +1,7 @@
-import React from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { IoClose } from 'react-icons/io5';
 
-import palette from 'theme/palette';
 import { modalStateStore } from 'recoil/store';
 import useClosePostModal from 'hooks/useClosePostModal';
 
@@ -18,6 +16,7 @@ const ModalTitleWrap = styled.div`
   div {
     font-size: 20px;
     font-weight: bold;
+    color: ${(props) => props.theme.black};
   }
 `;
 
@@ -29,8 +28,8 @@ const CloseBtn = styled.div`
   box-sizing: border-box;
   margin-right: 20px;
   border-radius: 50%;
-  background-color: ${palette.lightgray};
-  color: ${palette.darkgray};
+  background-color: ${(props) => props.theme.lightgray};
+  color: ${(props) => props.theme.darkgray};
 
   display: flex;
   justify-content: center;

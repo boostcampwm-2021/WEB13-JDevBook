@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import palette from 'theme/palette';
 
 const FakeHeaderContainer = styled.div`
   width: 100%;
@@ -16,7 +15,7 @@ const FakeImage = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: ${palette.skeleton};
+  background: ${(props) => props.theme.skeleton};
 `;
 
 const FakeHeaderContent = styled.div`
@@ -25,7 +24,7 @@ const FakeHeaderContent = styled.div`
 
   div {
     border-radius: 12px;
-    background: ${palette.skeleton};
+    background: ${(props) => props.theme.skeleton};
 
     &:last-child {
       margin-top: 2px;
@@ -36,7 +35,7 @@ const FakeHeaderContent = styled.div`
 const FakeHeaderProblem = styled.div`
   div {
     border-radius: 12px;
-    background: ${palette.skeleton};
+    background: ${(props) => props.theme.skeleton};
 
     &:last-child {
       margin-top: 12px;

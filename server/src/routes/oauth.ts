@@ -30,7 +30,7 @@ router.get(
     console.log(userdata);
 
     req.session.username = userdata.nickname;
-    req.session.useridx = userdata.idx; // 자신 idx
+    req.session.useridx = userdata.idx;
     req.session.jwt = jwt.sign(
       {
         name: username,
@@ -53,8 +53,6 @@ router.get('/logout', (req: Request, res: Response, next: NextFunction) => {
   const username = req.session.username;
   req.session.destroy((err: any) => {
     if (err) console.error(err);
-    //console.log(`로그아웃 정상 작동: ${username}`);
-    //res.redirect(clientURL);
     res.status(200).json({ message: `${username} Logged Out` });
   });
 });

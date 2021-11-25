@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-import palette from 'theme/palette';
 import { PostBody, PostImageBoxProps, PostImageInfo } from 'types/post';
 import PostImageBox from 'components/HomePage/PostImageBox';
 import imageUtil from 'utils/imageUtil';
@@ -13,13 +12,13 @@ const BodyContainer = styled.div`
   p {
     padding-left: 16px;
     padding-right: 16px;
-    color: #050505;
+    color: ${(props) => props.theme.black};
   }
 `;
 
 const ImagesWrap = styled.div<{ isProfile: boolean }>`
-  width: ${({ isProfile }) => (isProfile ? `538px` : `680px`)};
-  background: ${palette.white};
+  width: ${({ isProfile }) => (isProfile ? `532px` : `680px`)};
+  background: ${(props) => props.theme.white};
   position: relative;
   border-top: 1px solid #dddddd;
   border-bottom: 1px solid #dddddd;

@@ -10,12 +10,6 @@ const ClickableProfilePhotoWrap = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-
-const StyledProfilePhoto = styled.img<{ size?: string }>`
-  width: ${(props) => props.size || '70px'};
-  height: ${(props) => props.size || '70px'};
-  border-radius: 50%;
 
   &:hover {
     filter: brightness(90%);
@@ -24,6 +18,12 @@ const StyledProfilePhoto = styled.img<{ size?: string }>`
   &:active {
     filter: brightness(80%);
   }
+`;
+
+const StyledProfilePhoto = styled.img<{ size?: string }>`
+  width: ${(props) => props.size || '70px'};
+  height: ${(props) => props.size || '70px'};
+  border-radius: 50%;
 `;
 
 const ProfilePhoto = ({ userName, size }: ProfilePhotoProps) => {

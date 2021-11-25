@@ -3,7 +3,6 @@ import styled, { keyframes } from 'styled-components';
 import { useRecoilState } from 'recoil';
 
 import { modalStateStore, profileState } from 'recoil/store';
-import palette from 'theme/palette';
 import style from 'theme/style';
 import useAlertModal from 'hooks/useAlertModal';
 import fetchApi from 'api/fetch';
@@ -18,40 +17,42 @@ const EditModalAnimation = keyframes`
 `;
 
 const EditModalWrap = styled.div<{ modalState: boolean }>`
-  position: absolute;
+  position: relative;
+  top: -44px;
+  height: inherit;
   box-sizing: border-box;
   padding: ${style.padding.normal};
-  margin-left: 508px;
-  margin-top: -80px;
+  margin-right: 12px;
+  z-index: 5;
 
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
 
   display: ${(props) => (props.modalState ? 'flex' : 'none')};
   flex-direction: column;
-  animation: ${EditModalAnimation} 0.2s;
+  animation: ${EditModalAnimation} 0.1s;
 `;
 
 const BioTitle = styled.div`
   padding-left: ${style.padding.small};
 
-  color: ${palette.darkgray};
+  color: ${(props) => props.theme.darkgray};
 `;
 
 const BioArea = styled.textarea`
-  width: 300px;
-  height: 100px;
   box-sizing: border-box;
   padding: ${style.padding.small};
 
   border: none;
   outline: none;
   resize: none;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
   font-size: ${style.font.normal};
+  color: ${(props) => props.theme.black};
 
   overscroll-behavior: none;
+  word-break: keep-all;
 
   ::placeholder,
   ::-webkit-input-placeholder {
@@ -75,8 +76,8 @@ const StyledBtn = styled.div<{ saveBtn: boolean }>`
 
   border-radius: 8px;
   background-color: ${(props) =>
-    props.saveBtn ? palette.green : palette.gray};
-  color: ${(props) => (props.saveBtn ? palette.white : palette.black)};
+    props.saveBtn ? props.theme.green : props.theme.gray};
+  color: ${(props) => (props.saveBtn ? props.theme.white : props.theme.black)};
 
   display: flex;
   justify-content: center;
@@ -111,12 +112,9 @@ const ProfileEditModal = () => {
       });
       result !== undefined
         ? alertMessage('성공적으로 수정되었습니다!')
-        : alertMessage(
-            '알 수 없는 이유로 수정에 실패하였습니다.',
-            palette.alert
-          );
+        : alertMessage('알 수 없는 이유로 수정에 실패하였습니다.', true);
     } else {
-      return alertMessage('내용을 입력하세요.', palette.alert);
+      return alertMessage('내용을 입력하세요.', true);
     }
     setProfileData({ ...profileData, bio: bio.trim() });
     setModalState({ ...modalState, editProfile: false });
@@ -131,10 +129,7 @@ const ProfileEditModal = () => {
 
     if (bio.length > maxLength) {
       let contents = bio;
-      alertMessage(
-        `자기소개는 ${maxLength}글자를 넘을 수 없습니다.`,
-        palette.alert
-      );
+      alertMessage(`자기소개는 ${maxLength}글자를 넘을 수 없습니다.`, true);
       while (contents.length > maxLength) {
         contents = contents.slice(0, -1);
       }

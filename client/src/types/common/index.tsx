@@ -9,7 +9,7 @@ export interface SideBarProps {
 }
 
 export interface Alert {
-  bgColor?: string;
+  isAlert?: boolean;
   comment: string;
   modalState: boolean;
 }

@@ -1,9 +1,7 @@
-import React from 'react';
-
 import { PostImageInfo } from 'types/post';
 import imageUtil from 'utils/imageUtil';
 
-import ActiveImageBox from './ActiveImageBox';
+import ActiveImageBox from 'components/HomePage/PostImageBox/ActiveImageBox';
 
 const OneImage = ({
   postImages,
@@ -16,7 +14,7 @@ const OneImage = ({
 
   const { url, originalWidth, originalHeight } = postImages[0];
   const [width, height] = imageUtil.getImageFitSize(
-    isProfile ? 538 : 680,
+    isProfile ? 532 : 680,
     originalWidth,
     originalHeight
   );

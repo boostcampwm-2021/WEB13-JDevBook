@@ -2,21 +2,33 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
 import { mainLogo } from 'images';
-import palette from 'theme/palette';
+
+const fadeIn = keyframes`
+  0%{
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+`;
 
 const LoadingModalContainer = styled.div<{ modalState: boolean }>`
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
+  top: 64px;
+  left: 348px;
+  width: calc(100vw - 696px);
+  height: calc(100vh - 64px);
 
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.lightgray};
   display: ${(props) => (props.modalState ? 'flex' : 'none')};
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  animation: ${fadeIn} 1s;
 `;
 
 const loadingAnimation = keyframes`
@@ -40,7 +52,7 @@ const LoadingLogo = styled.img`
 
 const LoadingTitle = styled.div`
   font-size: 50px;
-  color: ${palette.green};
+  color: ${(props) => props.theme.green};
 `;
 
 const LoadingModal = ({ modalState }: { modalState: boolean }) => {

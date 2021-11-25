@@ -351,6 +351,20 @@ router.get(
   }
 );
 
+router.get(
+  '/groups/usernum/:groupidx',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const groupIdx: number = Number(req.params.groupidx);
+      const userNum = await dbManager.getUserNumInGroup(groupIdx);
+      res.json(userNum);
+    } catch (err) {
+      console.error(err);
+      res.json([]);
+    }
+  }
+);
+
 router.post(
   '/joingroup/:useridx/:postidx',
   async (req: Request, res: Response, next: NextFunction) => {

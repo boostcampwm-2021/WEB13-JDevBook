@@ -1,4 +1,3 @@
-import React from 'react';
 import styled, { css } from 'styled-components';
 
 import { IconPublic, IconPrivate } from 'images/icons';
@@ -15,6 +14,7 @@ const HeaderContainer = styled.div`
   border-top-right-radius: 8px;
   display: flex;
   align-items: center;
+  color: ${(props) => props.theme.black};
 `;
 
 const HeaderContent = styled.div`

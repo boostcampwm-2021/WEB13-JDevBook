@@ -180,6 +180,11 @@ const fetchApi = {
     return await response.json();
   },
 
+  getUserNumInGroup: async (groupIdx: number) => {
+    const response = await fetch(`/api/groups/usernum/${groupIdx}`);
+    return await response.json();
+  },
+
   getProfile: async (userName: string) => {
     const response = await fetch(`/api/profile/${userName}`);
     return await response.json();

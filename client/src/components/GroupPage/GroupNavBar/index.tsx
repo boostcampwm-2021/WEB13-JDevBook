@@ -1,9 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import palette from 'theme/palette';
-import style from 'theme/style';
-
 import GroupNavTitle from 'components/GroupPage/GroupNavBar/GroupNavTitle';
 import GroupNavMiddle from 'components/GroupPage/GroupNavBar/GroupNavMiddle';
 import GroupNavigation from 'components/GroupPage/GroupNavBar/GroupNavigation';
@@ -19,7 +16,7 @@ const GroupNavContainer = styled.div`
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
 
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
 `;
 
 const Line = styled.div`
@@ -27,7 +24,7 @@ const Line = styled.div`
   height: 1px;
   margin: 24px 0 0 0;
 
-  background-color: ${palette.gray};
+  background-color: ${(props) => props.theme.gray};
 `;
 
 const GroupNavBar = () => {

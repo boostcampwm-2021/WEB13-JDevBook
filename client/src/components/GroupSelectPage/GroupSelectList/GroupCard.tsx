@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { userDataStates, myJoinedGroupState } from 'recoil/store';
-import palette from 'theme/palette';
 import style from 'theme/style';
 import { defaultGroup } from 'images/groupimg';
 import { IGroup } from 'types/group';
@@ -12,8 +11,8 @@ import fetchApi from 'api/fetch';
 import useAlertModal from 'hooks/useAlertModal';
 
 const GroupCardWrap = styled.div`
-  width: 320px;
-  height: 320px;
+  width: 240px;
+  height: 240px;
   margin: 18px;
 
   border-radius: 8px;
@@ -30,6 +29,7 @@ const GroupImg = styled(Link)`
   img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
 
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -40,12 +40,12 @@ const GroupSelectorWrap = styled.div`
   width: 100%;
   height: 35%;
   box-sizing: border-box;
-  padding: ${style.padding.large};
+  padding: ${style.padding.normal};
 
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  border-top: solid 1px ${palette.gray};
-  background-color: ${palette.white};
+  border-top: solid 1px ${(props) => props.theme.gray};
+  background-color: ${(props) => props.theme.white};
 
   display: flex;
   flex-direction: column;
@@ -53,19 +53,21 @@ const GroupSelectorWrap = styled.div`
 `;
 
 const GroupName = styled.div`
-  font-size: ${style.font.large};
+  font-size: ${style.font.normal};
+  color: ${(props) => props.theme.black};
 `;
 
 const GroupJoinBtn = styled.div`
   width: 100%;
-  height: 35px;
+  height: 30px;
 
   border-radius: 8px;
-  background-color: ${palette.lightgray};
+  background-color: ${(props) => props.theme.lightgray};
 
   display: flex;
   justify-content: center;
   align-items: center;
+  color: ${(props) => props.theme.black};
 
   &:hover {
     cursor: pointer;
@@ -80,15 +82,15 @@ const GroupJoinBtn = styled.div`
 
 const GroupEnterBtn = styled(Link)`
   width: 100%;
-  height: 35px;
+  height: 30px;
 
   border-radius: 8px;
-  background-color: ${palette.green};
+  background-color: ${(props) => props.theme.green};
 
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${palette.white};
+  color: ${(props) => props.theme.white};
   text-decoration: none;
 
   &:hover {
@@ -136,7 +138,7 @@ const GroupCard = ({ group }: { group: IGroup }) => {
           </GroupEnterBtn>
         ) : (
           <GroupJoinBtn onClick={joinGroup} className="no-drag">
-            그룹 추가
+            그룹 가입
           </GroupJoinBtn>
         )}
       </GroupSelectorWrap>

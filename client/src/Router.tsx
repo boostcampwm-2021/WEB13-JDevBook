@@ -1,7 +1,6 @@
-import userEvent from '@testing-library/user-event';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { userDataStates, isLoginfailStates } from 'recoil/store';
 
@@ -17,7 +16,7 @@ import { ChatSideBar, AlarmSideBar } from 'components/common';
 
 const Router = () => {
   const [login, setLogin] = useState(false);
-  const [loginfail, setLoginfail] = useRecoilState(isLoginfailStates);
+  const setLoginfail = useSetRecoilState(isLoginfailStates);
   const userdata = useRecoilValue(userDataStates);
   useEffect(() => {
     if (userdata.login === false) {

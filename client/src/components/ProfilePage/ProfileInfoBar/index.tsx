@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
 import { profileState } from 'recoil/store';
 import { ISolvedProblem, IProblem } from 'types/problem';
 import { IUserWithSolved, IUserGroup } from 'types/user';
-import palette from 'theme/palette';
 import fetchApi from 'api/fetch';
 
 const ProfileBarContainer = styled.div`
@@ -17,16 +16,17 @@ const ProfileBarContainer = styled.div`
 
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
 `;
 
 const SolvedTitle = styled.div`
   font-weight: bold;
   margin-bottom: 12px;
+  color: ${(props) => props.theme.black};
 `;
 
 const NoGroup = styled.div`
-  color: ${palette.darkgray};
+  color: ${(props) => props.theme.darkgray};
 
   &:after {
     content: '가입된 그룹이 없습니다';
@@ -35,7 +35,7 @@ const NoGroup = styled.div`
 
 const SolvedBarGraph = styled.div`
   height: 25px;
-  background: ${palette.gray};
+  background: ${(props) => props.theme.gray};
   border-radius: 40px;
 `;
 
@@ -54,11 +54,11 @@ const InnerBarGraph = styled.span<{ solvedRate: number }>`
   height: 25px;
   line-height: 25px;
   text-align: right;
-  background: ${palette.green};
+  background: ${(props) => props.theme.green};
   border-radius: 40px;
   padding: 0 10px;
   box-sizing: border-box;
-  color: ${palette.white};
+  color: ${(props) => props.theme.white};
   font-size: small;
   font-weight: 600;
   animation: ${(props) => GraphAnimation(props.solvedRate)} 1.5s 1;
@@ -76,7 +76,6 @@ const ProfileInfoBar = () => {
     const result: IUserWithSolved[] = await fetchApi.getSolvedProblems(
       profileData.nickname
     );
-    console.log(result);
     if (result.length > 0) {
       setSolvedProblem(
         result[0].BTMUserProblemuseridx.map((cur) => ({
@@ -138,7 +137,7 @@ const ProfileInfoBar = () => {
       setIsFetching(true);
       resetData();
     }
-  }, [profileData.idx]);
+  }, [profileData.idx !== 0]);
 
   useEffect(() => {
     getData();

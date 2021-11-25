@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import palette from 'theme/palette';
 import style from 'theme/style';
 
 const GroupSelectTitleWrap = styled.div`
@@ -13,10 +12,12 @@ const GroupSelectTitleWrap = styled.div`
 `;
 const Title = styled.div`
   font-size: ${style.font.title};
+  color: ${(props) => props.theme.black};
 `;
 const Description = styled.div`
   margin: ${style.margin.normal} 0;
   font-size: ${style.font.normal};
+  color: ${(props) => props.theme.black};
 `;
 
 const GroupSelectTitle = () => {

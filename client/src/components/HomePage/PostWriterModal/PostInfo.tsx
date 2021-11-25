@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { userDataStates, postModalDataStates } from 'recoil/store';
-import palette from 'theme/palette';
 
 import { ProfilePhoto } from 'components/common';
 
@@ -12,6 +11,7 @@ const PostInfoWrap = styled.div`
 
   display: flex;
   align-items: center;
+  color: ${(props) => props.theme.black};
 
   div {
     margin: 0 12px;
@@ -24,7 +24,7 @@ const SecretSelector = styled.div`
   width: 112px;
   height: 30px;
 
-  background-color: ${palette.lightgray};
+  background-color: ${(props) => props.theme.lightgray};
   border-radius: 5px;
 
   display: flex;

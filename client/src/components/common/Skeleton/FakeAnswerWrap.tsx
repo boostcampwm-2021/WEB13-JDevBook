@@ -1,6 +1,5 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
-import palette from 'theme/palette';
 
 const FakeBodyContainer = styled.div`
   width: 100%;
@@ -12,7 +11,7 @@ const FakeBodyContainer = styled.div`
     flex: 1;
     height: 64px;
     border-radius: 8px;
-    background: ${palette.skeleton};
+    background: ${(props) => props.theme.skeleton};
 
     & + div {
       margin-left: 24px;

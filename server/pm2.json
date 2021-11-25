@@ -1,0 +1,11 @@
+{
+    "apps": [
+        {
+            "script": "ts-node",
+            "args": "./src/app.ts",
+            "ignore_watch": [
+                "./src/sessions"
+            ]
+        }
+    ]
+}

@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { postListStore } from 'recoil/store';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import fetchApi from 'api/fetch';
 import arrayUtil from 'utils/arrayUtil';
@@ -66,6 +66,9 @@ const PostList = () => {
         abortController.current.signal
       );
       const result = await Promise.all([fetchPosts, fetchProblems]);
+      if (result[0].length < 10) {
+        setHasMore(false);
+      }
       setPosts(result[0]);
       setProblems(result[1]);
       problemOrders.current = arrayUtil.shuffle(

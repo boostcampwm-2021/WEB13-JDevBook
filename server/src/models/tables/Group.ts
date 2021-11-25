@@ -4,7 +4,6 @@ import {
   Model,
   HasMany,
   BelongsToMany,
-  Length,
   Unique,
   DataType
 } from 'sequelize-typescript';

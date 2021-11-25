@@ -8,7 +8,6 @@ import { Problem } from '..';
 import { IProblem } from 'types/problem';
 import { Skeleton } from 'components/common';
 import { GroupNavState, myJoinedGroupState } from 'recoil/store';
-import palette from 'theme/palette';
 
 const ProblemListContainer = styled.div<{ navState: boolean }>`
   width: 680px;
@@ -29,7 +28,7 @@ const BoxStyle = styled.div`
   align-items: center;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
   margin-top: 16px;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
 `;
 
 const NoJoinedGroupDatabase = styled(BoxStyle)`

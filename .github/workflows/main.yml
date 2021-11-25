@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ release ]
+    branches: [release]
 
   workflow_dispatch:
 
@@ -24,10 +24,6 @@ jobs:
             cd WEB13-JDevBook && git pull origin release
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
-            cd server && npm install && pm2 restart npm
+            cd server && npm install && pm2 restart pm2.json
             cd ../client && npm install && npm run build
             sudo service nginx restart
-            
-            
-
-     

@@ -5,8 +5,6 @@ import { MdMoreHoriz } from 'react-icons/md';
 import { LikeIcon, CommentIcon } from 'images/icons';
 import { PostData } from 'types/post';
 
-import palette from 'theme/palette';
-
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   modalStateStore,
@@ -27,7 +25,7 @@ const PostContainer = styled.div`
   box-sizing: border-box;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
   margin-top: 24px;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
 
   p {
     margin: 0;
@@ -54,7 +52,7 @@ const Button = styled.div<{ isLike?: boolean }>`
   p {
     margin-left: 8px;
     color: ${(props) =>
-      props.isLike ? `${palette.darkgreen}` : `${palette.darkgray}`};
+      props.isLike ? props.theme.darkgreen : props.theme.darkgray};
   }
 
   svg {
@@ -64,16 +62,16 @@ const Button = styled.div<{ isLike?: boolean }>`
 
   path {
     fill: ${(props) =>
-      props.isLike ? `${palette.darkgreen}` : `${palette.darkgray}`};
+      props.isLike ? props.theme.darkgreen : props.theme.darkgray};
   }
 
   &:hover {
     cursor: pointer;
-    background: ${palette.lightgray};
+    background: ${(props) => props.theme.lightgray};
     border-radius: 4px;
   }
   &:active {
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
     svg {
       width: 16px;
       height: 16px;
@@ -94,15 +92,16 @@ const IconHover = styled.div`
 
   &:hover {
     cursor: pointer;
-    background-color: ${palette.lightgray};
+    background-color: ${(props) => props.theme.lightgray};
   }
 
   &:active {
-    background-color: ${palette.gray};
+    background-color: ${(props) => props.theme.gray};
   }
 
   svg {
     font-size: 24px;
+    color: ${(props) => props.theme.black};
   }
 `;
 
@@ -217,14 +216,16 @@ const Post = ({
           <p>댓글 달기</p>
         </Button>
       </ButtonsWrap>
-      <Divider />
       {commentFlag && (
-        <Comment
-          postIdx={postIdx}
-          commentsNum={commentsNum}
-          setCommentsNum={setCommentsNum}
-          nickname={nickname}
-        />
+        <>
+          <Divider />
+          <Comment
+            postIdx={postIdx}
+            commentsNum={commentsNum}
+            setCommentsNum={setCommentsNum}
+            nickname={nickname}
+          />
+        </>
       )}
     </PostContainer>
   );

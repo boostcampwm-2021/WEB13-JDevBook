@@ -3,6 +3,7 @@ export interface IProblem {
   groupidx: number;
   question: string;
   answer: boolean;
+  explanation: string | null;
   BTGroupgroupidx: {
     title: string;
   };

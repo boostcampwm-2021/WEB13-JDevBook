@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { useRecoilValue, useRecoilState } from 'recoil';
 import {
   usersocketStates,
   userDataStates,
   chatWith,
-  loginState
+  loginState,
+  usersNumState
 } from 'recoil/store';
 
 import getData from 'api/fetch';
-import { defaultProfile } from 'images';
 import { ClickableProfilePhoto } from 'components/common';
-import palette from 'theme/palette';
 import style from 'theme/style';
 import { UserSocket } from 'types/common';
 
 const CurrentUserWrapper = styled.div`
   width: inherit;
-  height: 200px;
+  height: 210px;
 
   overflow-x: hidden;
   overflow-y: scroll;
@@ -47,7 +46,7 @@ const CurrentUserBox = styled.div`
 
   &:hover {
     border-radius: 10px;
-    background: ${palette.lightgray};
+    background: ${(props) => props.theme.lightgray};
   }
 `;
 
@@ -59,8 +58,8 @@ const LoginState = styled.div<{ user: string; loginStateArray: any }>`
   ${(props) =>
     `background-color: ${
       props.loginStateArray?.includes(props.user)
-        ? `${palette.green}`
-        : `${palette.darkgray}`
+        ? props.theme.green
+        : props.theme.darkgray
     };`}
 `;
 
@@ -71,6 +70,7 @@ const CurrentUser = () => {
   const currentUserName = useRecoilValue(userDataStates).name;
   const [usersLoginState, setUsersLoginState] = useState<UserSocket>({});
   const [loginStateArray, setLoginStateArray] = useRecoilState(loginState);
+  const [usersNum, setUsersNum] = useRecoilState(usersNumState);
 
   useEffect(() => {
     const fetchJob = setTimeout(async () => {
@@ -79,9 +79,10 @@ const CurrentUser = () => {
         (user: { idx: number; nickname: string }) => user.nickname
       );
       setAllUsers(usersInfo);
+      setUsersNum(usersInfo.length);
       return () => clearTimeout(fetchJob);
     }, 0);
-  }, []);
+  }, [usersLoginState]);
 
   useEffect(() => {
     if (currentUserName) {

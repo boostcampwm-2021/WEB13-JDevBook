@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
 import { GroupNavState, groupState } from 'recoil/store';
-import palette from 'theme/palette';
 import style from 'theme/style';
 
 const AboutContainer = styled.div<{ navState: boolean }>`
@@ -13,7 +12,7 @@ const AboutContainer = styled.div<{ navState: boolean }>`
   padding: 28px;
 
   border-radius: 8px;
-  background-color: ${palette.white};
+  background-color: ${(props) => props.theme.white};
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
 
   display: ${(props) => (props.navState ? 'flex' : 'none')};
@@ -25,6 +24,7 @@ const AboutTitle = styled.div`
   padding-left: 16px;
 
   font-size: ${style.font.large};
+  color: ${(props) => props.theme.black};
 
   display: flex;
   align-items: center;
@@ -35,7 +35,7 @@ const Line = styled.div`
   height: 1px;
   margin: 20px 0;
 
-  background-color: ${palette.gray};
+  background-color: ${(props) => props.theme.gray};
 `;
 
 const AboutDescription = styled.div`
@@ -43,6 +43,7 @@ const AboutDescription = styled.div`
   padding-left: 16px;
 
   font-size: ${style.font.normal};
+  color: ${(props) => props.theme.black};
 
   display: flex;
   align-items: center;

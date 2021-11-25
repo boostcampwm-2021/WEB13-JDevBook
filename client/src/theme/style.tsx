@@ -13,6 +13,8 @@ const style = {
     large: '16px'
   },
   font: {
+    smallest: '8px',
+    smaller: '10px',
     small: '12px',
     normal: '16px',
     large: '20px',

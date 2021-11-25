@@ -4,18 +4,18 @@ const DAY = 24 * HOUR;
 const WEEK = 7 * DAY;
 
 const MONTH_NAME: string[] = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
+  '1월',
+  '2월',
+  '3월',
+  '4월',
+  '5월',
+  '6월',
+  '7월',
+  '8월',
+  '9월',
+  '10월',
+  '11월',
+  '12월'
 ];
 
 const getConventionalHour = (hour: number): string => {
@@ -45,16 +45,16 @@ const textUtil = {
       return 'Something wrong';
     }
     if (diff < MINUTE) {
-      return 'just now';
+      return '방금 전';
     }
     if (diff < HOUR) {
-      return `${Math.floor(diff / MINUTE)}m`;
+      return `${Math.floor(diff / MINUTE)}분 전`;
     }
     if (diff < DAY) {
-      return `${Math.floor(diff / HOUR)}h`;
+      return `${Math.floor(diff / HOUR)}시간 전`;
     }
     if (diff < WEEK) {
-      return `${Math.floor(diff / DAY)}d`;
+      return `${Math.floor(diff / DAY)}일 전`;
     }
     if (target.getFullYear() !== now.getFullYear()) {
       return `${

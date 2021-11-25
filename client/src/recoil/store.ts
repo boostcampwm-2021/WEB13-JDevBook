@@ -121,7 +121,7 @@ export const GroupNavState = atom({
 export const alertState = atom<Alert>({
   key: 'alertState',
   default: {
-    bgColor: undefined,
+    isAlert: false,
     comment: '',
     modalState: false
   }
@@ -188,4 +188,19 @@ export const loginState = atom({
 export const alarmState = atom({
   key: 'alarm',
   default: 0 as number
-})
+});
+
+export const themeState = atom<string>({
+  key: 'theme',
+  default: 'light'
+});
+
+export const animationState = atom<boolean>({
+  key: 'animation',
+  default: true
+});
+
+export const usersNumState = atom<number>({
+  key: 'number of usres',
+  default: 0
+});

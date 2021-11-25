@@ -5,10 +5,8 @@ import {
   HasMany,
   BelongsToMany,
   Unique,
-  Length,
   DataType
 } from 'sequelize-typescript';
-import Chat from './Chat';
 import Group from './Group';
 import Like from './Like';
 import Post from './Post';
@@ -47,12 +45,6 @@ export default class User extends Model<User> {
 
   @Column({ allowNull: false, defaultValue: false })
   loginstate!: boolean;
-
-  // @BelongsToMany(() => User, {through: () => Chat, foreignKey: 'senderidx'})
-  // BTMChatsenderidx?: User[]
-
-  // @BelongsToMany(() => User, {through: () => Chat, foreignKey: 'receiveridx'})
-  // BTMChatreceiveridx?: User[]
 
   @BelongsToMany(() => Group, {
     through: () => UserGroup,

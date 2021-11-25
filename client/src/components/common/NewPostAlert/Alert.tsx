@@ -1,5 +1,4 @@
 import styled, { keyframes } from 'styled-components';
-import palette from 'theme/palette';
 
 const EnterAnimation = keyframes`
   0% {
@@ -26,7 +25,7 @@ const AlertModalWrap = styled.div`
 
   box-sizing: border-box;
   border-radius: 16px;
-  background-color: ${palette.lightgray};
+  background-color: ${(props) => props.theme.lightgray};
   color: black;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
   animation: ${EnterAnimation} 0.75s ease-in-out;

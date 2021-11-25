@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { likeBadge } from 'images/icons';
 import { PostFooterProps } from 'types/post';

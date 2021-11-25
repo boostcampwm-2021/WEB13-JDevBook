@@ -1,20 +1,19 @@
 import React, { useEffect } from 'react';
-import styled, { css } from 'styled-components';
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import styled from 'styled-components';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 
 import {
   modalStateStore,
   postListStore,
   postModalDataStates
 } from 'recoil/store';
-import palette from 'theme/palette';
 import fetchApi from 'api/fetch';
 import { PostData } from 'types/post';
 
 const OptionModalContainer = styled.div`
   width: 240px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  background: ${palette.white};
+  box-shadow: ${(props) => props.theme.shadow.optionModal};
+  background: ${(props) => props.theme.white};
   border-radius: 8px;
   position: absolute;
   top: 48px;
@@ -29,16 +28,24 @@ const OptionModalContainer = styled.div`
 
     &:hover {
       cursor: pointer;
-      background: ${palette.gray};
+      background: ${(props) => props.theme.gray};
       border-radius: 8px;
     }
   }
 `;
 
+const FixDiv = styled.div`
+  color: ${(props) => props.theme.black};
+`;
+
+const DeleteDiv = styled.div`
+  color: ${(props) => props.theme.alert};
+`;
+
 const OptionModal = ({ post }: { post: PostData }) => {
   const [modalState, setModalState] = useRecoilState(modalStateStore);
   const [postList, setPostList] = useRecoilState(postListStore);
-  const [postData, setPostData] = useRecoilState(postModalDataStates);
+  const setPostData = useSetRecoilState(postModalDataStates);
   const resetModalState = useResetRecoilState(modalStateStore);
 
   const modal = React.useRef<HTMLDivElement>(null);
@@ -87,10 +94,8 @@ const OptionModal = ({ post }: { post: PostData }) => {
 
   return (
     <OptionModalContainer className="no-drag" ref={modal}>
-      <div onClick={() => openPostModal()}>게시글 수정</div>
-      <div style={{ color: palette.alert }} onClick={() => deletePost()}>
-        게시글 삭제
-      </div>
+      <FixDiv onClick={() => openPostModal()}>게시글 수정</FixDiv>
+      <DeleteDiv onClick={() => deletePost()}>게시글 삭제</DeleteDiv>
     </OptionModalContainer>
   );
 };
