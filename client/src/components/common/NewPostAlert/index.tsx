@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { usersocketStates } from 'recoil/store';
-import { Alert } from './Alert';
+
+import { usersocketStates } from 'recoil/socket';
+
+import { Alert } from 'components/common/NewPostAlert/Alert';
 
 const NewPostAlert = ({ reloadList }: { reloadList: () => void }) => {
   const socket = useRecoilValue(usersocketStates);
@@ -16,15 +18,7 @@ const NewPostAlert = ({ reloadList }: { reloadList: () => void }) => {
     };
   });
 
-  return newPostCount > 0 ? (
-    <Alert
-      count={newPostCount}
-      setCount={setNewPostCount}
-      reloadList={reloadList}
-    />
-  ) : (
-    <></>
-  );
+  return newPostCount > 0 ? <Alert count={newPostCount} setCount={setNewPostCount} reloadList={reloadList} /> : <></>;
 };
 
 export default NewPostAlert;

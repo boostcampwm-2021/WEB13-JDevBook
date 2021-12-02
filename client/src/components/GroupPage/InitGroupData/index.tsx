@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
-import { useRecoilState, useResetRecoilState } from 'recoil';
+import { useEffect } from 'react';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { groupState } from 'recoil/store';
+import { groupState } from 'recoil/group';
+
 import fetchApi from 'api/fetch';
 import { IGroup } from 'types/group';
 
 const InitGroupData = ({ groupIdx }: { groupIdx: number }) => {
-  const [groupData, setGroupData] = useRecoilState(groupState);
+  const setGroupData = useSetRecoilState(groupState);
   const resetGroupData = useResetRecoilState(groupState);
 
   const fetchGroup = async (groupIdx: number) => {

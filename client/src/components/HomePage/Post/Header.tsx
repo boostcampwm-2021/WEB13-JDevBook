@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import { IconPublic, IconPrivate } from 'images/icons';
 import { PostHeaderProps } from 'types/post';

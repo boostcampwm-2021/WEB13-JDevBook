@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import { likeBadge } from 'images/icons';
@@ -37,14 +36,7 @@ const Comments = styled.div`
 
 const CommentsNum = styled.div``;
 
-const Footer = ({
-  likenum,
-  commentFlag,
-  setCommentFlag,
-  postIdx,
-  commentsNum,
-  setCommentsNum
-}: PostFooterProps) => {
+const Footer = ({ likenum, commentFlag, setCommentFlag, postIdx, commentsNum, setCommentsNum }: PostFooterProps) => {
   return (
     <FooterContainer className="no-drag">
       <div>
@@ -53,9 +45,7 @@ const Footer = ({
       </div>
       {commentsNum ? (
         <Comments onClick={() => setCommentFlag(!commentFlag)}>
-          <CommentsNum onClick={() => setCommentFlag(!commentFlag)}>
-            댓글 {commentsNum} 개
-          </CommentsNum>
+          <CommentsNum onClick={() => setCommentFlag(!commentFlag)}>댓글 {commentsNum} 개</CommentsNum>
         </Comments>
       ) : null}
     </FooterContainer>

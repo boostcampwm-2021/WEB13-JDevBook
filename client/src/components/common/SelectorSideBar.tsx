@@ -1,7 +1,6 @@
-import React from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
-import { rightModalStates } from 'recoil/store';
+import { rightModalStates } from 'recoil/common';
 
 const SelectorSideBarContainer = styled.div<any>`
   width: inherit;
@@ -13,11 +12,7 @@ const SelectorSideBar = () => {
   const rightModalState = useRecoilValue(rightModalStates);
 
   if (rightModalState.rightModalFlag && rightModalState.selectorFlag) {
-    return (
-      <SelectorSideBarContainer>
-        This is SelectorSideBar
-      </SelectorSideBarContainer>
-    );
+    return <SelectorSideBarContainer>This is SelectorSideBar</SelectorSideBarContainer>;
   } else return null;
 };
 

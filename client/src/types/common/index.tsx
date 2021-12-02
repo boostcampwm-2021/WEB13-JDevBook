@@ -17,3 +17,11 @@ export interface Alert {
 export interface UserSocket {
   [key: string]: string;
 }
+
+export enum Page {
+  LOGIN,
+  HOME,
+  GROUP_SELECT,
+  GROUP,
+  PROFILE
+}

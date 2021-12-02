@@ -1,18 +1,14 @@
 import { useEffect } from 'react';
 import styled, { createGlobalStyle, css } from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { imageViewerState as ivState } from 'recoil/store';
+import { currentPageStates } from 'recoil/common';
+import { imageViewerState as ivState } from 'recoil/post';
+
+import { Page } from 'types/common';
 
 import { PostWriter, PostList, ImageViewer } from 'components/HomePage';
-import {
-  Gnb,
-  SideBar,
-  InfoSideBar,
-  GroupSideBar,
-  InitUserData,
-  InitSocket
-} from 'components/common';
+import { FakeSideBar, InitUserData, FakeGnb } from 'components/common';
 
 const BodyColor = createGlobalStyle`
   ${({}) => {
@@ -36,7 +32,6 @@ const PageLayout = styled.div`
 const PostContainer = styled.div`
   width: calc(100vw - 680px);
   min-width: 720px;
-  margin: 0 12px;
 
   display: flex;
   flex-direction: column;
@@ -56,8 +51,11 @@ const InnerContainer = styled.div`
 
 const HomePage = () => {
   const [imageViewerState, setImageViewerState] = useRecoilState(ivState);
+  const setCurrentPage = useSetRecoilState(currentPageStates);
 
   useEffect(() => {
+    setCurrentPage(Page.HOME);
+
     return () => {
       window.scrollTo({ top: 0 });
     };
@@ -67,13 +65,9 @@ const HomePage = () => {
     <HomePageContainer>
       <BodyColor />
       <InitUserData />
-      <InitSocket />
-      <Gnb type="home" rightModalType="" />
+      <FakeGnb />
       <PageLayout>
-        <SideBar isLeft={true}>
-          <InfoSideBar />
-          <GroupSideBar />
-        </SideBar>
+        <FakeSideBar />
         <PostContainer>
           <InnerContainer>
             <PostWriter />

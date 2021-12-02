@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { profileState } from 'recoil/store';
+import { profileState } from 'recoil/user';
+
 import fetchApi from 'api/fetch';
 
 const InitProfileData = ({ userName }: { userName: string }) => {

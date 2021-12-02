@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { PostBody, PostImageBoxProps, PostImageInfo } from 'types/post';
@@ -29,17 +29,10 @@ const ImagesWrap = styled.div<{ isProfile: boolean }>`
 `;
 
 // 여기서 이미지 정보들을 전부 가공해서 주자 (url, 원본 width, 원본 height)
-const Body = ({
-  postBody,
-  isProfile
-}: {
-  postBody: PostBody;
-  isProfile: boolean;
-}) => {
+const Body = ({ postBody, isProfile }: { postBody: PostBody; isProfile: boolean }) => {
   const { contents, picture1, picture2, picture3 } = postBody;
   const initMeta = {
-    imageCount: [picture1, picture2, picture3].filter((item) => item !== null)
-      .length,
+    imageCount: [picture1, picture2, picture3].filter((item) => item !== null).length,
     images: null,
     isProfile
   };
@@ -53,17 +46,14 @@ const Body = ({
             .filter((item) => item !== null)
             .map(async (item) => {
               if (item) {
-                const [url, originalWidth, originalHeight] =
-                  await imageUtil.getImageSize(item);
+                const [url, originalWidth, originalHeight] = await imageUtil.getImageSize(item);
                 return { url, originalWidth, originalHeight };
               }
             })
         );
         setImagesMeta({
           ...initMeta,
-          images: images.filter(
-            (image) => image !== undefined
-          ) as PostImageInfo[]
+          images: images.filter((image) => image !== undefined) as PostImageInfo[]
         });
       }
     }
@@ -77,11 +67,7 @@ const Body = ({
       <p>{contents}</p>
       {picture1 && (
         <ImagesWrap isProfile={isProfile}>
-          <PostImageBox
-            imageCount={imagesMeta.imageCount}
-            images={imagesMeta.images}
-            isProfile={isProfile}
-          />
+          <PostImageBox imageCount={imagesMeta.imageCount} images={imagesMeta.images} isProfile={isProfile} />
         </ImagesWrap>
       )}
     </BodyContainer>

@@ -1,8 +1,8 @@
-import React from 'react';
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
-import { GroupNavState, groupState } from 'recoil/store';
+import { GroupNavState, groupState } from 'recoil/group';
+
 import style from 'theme/style';
 
 const AboutContainer = styled.div<{ navState: boolean }>`

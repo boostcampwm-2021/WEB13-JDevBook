@@ -1,6 +1,8 @@
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { modalStateStore, profileState } from 'recoil/store';
+import { modalStateStore } from 'recoil/common';
+import { profileState } from 'recoil/user';
+
 import fetchApi from 'api/fetch';
 
 const useResetProfile = () => {
@@ -15,9 +17,7 @@ const useResetProfile = () => {
       editProfile: false,
       post: { ...modalState.post, writer: false }
     });
-    const { data: fetchProfileData, error } = await fetchApi.getProfile(
-      userName
-    );
+    const { data: fetchProfileData, error } = await fetchApi.getProfile(userName);
     if (!error) setProfileData(fetchProfileData);
   };
 

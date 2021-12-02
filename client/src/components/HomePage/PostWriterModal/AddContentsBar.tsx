@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useRecoilState } from 'recoil';
 
-import { modalStateStore } from 'recoil/store';
+import { modalStateStore } from 'recoil/common';
 import { iconPhoto } from 'images/icons';
 
 const AddContentsBarWrap = styled.div`
@@ -32,8 +32,7 @@ const ContentsBtn = styled.div<{ modalState: boolean }>`
   height: 48px;
 
   border-radius: 50%;
-  background-color: ${(props) =>
-    props.modalState ? props.theme.lightgray : props.theme.white};
+  background-color: ${(props) => (props.modalState ? props.theme.lightgray : props.theme.white)};
 
   display: flex;
   justify-content: center;
@@ -41,11 +40,11 @@ const ContentsBtn = styled.div<{ modalState: boolean }>`
 
   &:hover {
     cursor: pointer;
-    filter: brightness(90%);
+    background-color: ${(props) => props.theme.lightgray};
   }
 
   &:active {
-    filter: brightness(85%);
+    background-color: ${(props) => props.theme.gray};
   }
 
   img {
@@ -68,10 +67,7 @@ const AddContentsBar = () => {
     <AddContentsBarWrap>
       <p>게시물에 추가</p>
       <AddContentsBtnWrap>
-        <ContentsBtn
-          modalState={modalState.post.inPhoto}
-          onClick={imgUploadModalToggle}
-        >
+        <ContentsBtn modalState={modalState.post.inPhoto} onClick={imgUploadModalToggle}>
           <img src={iconPhoto} className="no-drag" alt="사진 아이콘" />
         </ContentsBtn>
       </AddContentsBtnWrap>

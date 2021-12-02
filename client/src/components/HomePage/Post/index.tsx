@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MdMoreHoriz } from 'react-icons/md';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { usersocketStates } from 'recoil/socket';
+import { modalStateStore } from 'recoil/common';
+import { userDataStates } from 'recoil/user';
 
 import { LikeIcon, CommentIcon } from 'images/icons';
 import { PostData } from 'types/post';
 
-import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  modalStateStore,
-  userDataStates,
-  usersocketStates
-} from 'recoil/store';
-import Header from './Header';
-import OptionModal from './OptionModal';
-import Body from './Body';
-import Footer from './Footer';
+import Header from 'components/HomePage/Post/Header';
+import OptionModal from 'components/HomePage/Post/OptionModal';
+import Body from 'components/HomePage/Post/Body';
+import Footer from 'components/HomePage/Post/Footer';
 import fetchApi from 'api/fetch';
-import Comment from './Comment';
+import Comment from 'components/HomePage/Post/Comment';
 
 const PostContainer = styled.div`
   width: 100%;
@@ -51,8 +50,7 @@ const Button = styled.div<{ isLike?: boolean }>`
 
   p {
     margin-left: 8px;
-    color: ${(props) =>
-      props.isLike ? props.theme.darkgreen : props.theme.darkgray};
+    color: ${(props) => (props.isLike ? props.theme.darkgreen : props.theme.darkgray)};
   }
 
   svg {
@@ -61,8 +59,7 @@ const Button = styled.div<{ isLike?: boolean }>`
   }
 
   path {
-    fill: ${(props) =>
-      props.isLike ? props.theme.darkgreen : props.theme.darkgray};
+    fill: ${(props) => (props.isLike ? props.theme.darkgreen : props.theme.darkgray)};
   }
 
   &:hover {
@@ -113,13 +110,7 @@ const Divider = styled.div`
   margin-right: 16px;
 `;
 
-const Post = ({
-  post,
-  isProfile = false
-}: {
-  post: PostData;
-  isProfile?: boolean;
-}) => {
+const Post = ({ post, isProfile = false }: { post: PostData; isProfile?: boolean }) => {
   const [modalState, setModalState] = useRecoilState(modalStateStore);
   const { idx: myIdx } = useRecoilValue(userDataStates);
   const [likeFlag, setLikeFlag] = useState<boolean>(false);
@@ -128,22 +119,11 @@ const Post = ({
   const [commentsNum, setCommentsNum] = useState<number>(post.commentnum);
   const socket = useRecoilValue(usersocketStates);
 
-  const {
-    idx: postIdx,
-    secret,
-    createdAt,
-    contents,
-    picture1,
-    picture2,
-    picture3,
-    BTUseruseridx
-  } = post;
+  const { idx: postIdx, secret, createdAt, contents, picture1, picture2, picture3, BTUseruseridx } = post;
   const { idx: postUserIdx, nickname, profile } = BTUseruseridx;
 
   const likeToggle = async (e: React.MouseEvent<HTMLDivElement>) => {
-    likeFlag
-      ? fetchApi.updateLikeNum(postIdx, likeNum - 1)
-      : fetchApi.updateLikeNum(postIdx, likeNum + 1);
+    likeFlag ? fetchApi.updateLikeNum(postIdx, likeNum - 1) : fetchApi.updateLikeNum(postIdx, likeNum + 1);
 
     likeFlag ? setLikeNum(likeNum - 1) : setLikeNum(likeNum + 1);
     setLikeFlag(!likeFlag);
@@ -158,15 +138,12 @@ const Post = ({
   useEffect(() => {
     socket.emit('send number of comments notify', { postidx: postIdx });
   }, [commentsNum]);
-  socket.on(
-    'get number of comments',
-    (data: { postidx: number; commentsNum: number }) => {
-      const { postidx, commentsNum } = data;
-      if (postIdx === postidx) {
-        setCommentsNum(commentsNum);
-      }
+  socket.on('get number of comments', (data: { postidx: number; commentsNum: number }) => {
+    const { postidx, commentsNum } = data;
+    if (postIdx === postidx) {
+      setCommentsNum(commentsNum);
     }
-  );
+  });
 
   return (
     <PostContainer>
@@ -183,16 +160,8 @@ const Post = ({
         </IconHover>
       )}
       {modalState.post.index === postIdx && <OptionModal post={post} />}
-      <Header
-        nickname={nickname}
-        profile={profile}
-        createdAt={createdAt}
-        secret={secret}
-      />
-      <Body
-        postBody={{ contents, picture1, picture2, picture3 }}
-        isProfile={isProfile}
-      />
+      <Header nickname={nickname} profile={profile} createdAt={createdAt} secret={secret} />
+      <Body postBody={{ contents, picture1, picture2, picture3 }} isProfile={isProfile} />
       <Footer
         likenum={likeNum}
         commentFlag={commentFlag}
@@ -207,11 +176,7 @@ const Post = ({
           <LikeIcon />
           <p>좋아요</p>
         </Button>
-        <Button
-          onClick={() =>
-            commentFlag ? setCommentFlag(false) : setCommentFlag(true)
-          }
-        >
+        <Button onClick={() => (commentFlag ? setCommentFlag(false) : setCommentFlag(true))}>
           <CommentIcon />
           <p>댓글 달기</p>
         </Button>
@@ -219,12 +184,7 @@ const Post = ({
       {commentFlag && (
         <>
           <Divider />
-          <Comment
-            postIdx={postIdx}
-            commentsNum={commentsNum}
-            setCommentsNum={setCommentsNum}
-            nickname={nickname}
-          />
+          <Comment postIdx={postIdx} setCommentsNum={setCommentsNum} nickname={nickname} />
         </>
       )}
     </PostContainer>

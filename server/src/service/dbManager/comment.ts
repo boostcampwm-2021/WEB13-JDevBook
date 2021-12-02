@@ -1,6 +1,5 @@
-import { CommentData } from '../../types/interface';
+import { CommentData } from '../../types';
 import db from '../../models';
-import './index';
 
 const getComments = async function (postidx: number) {
   const prevComments = await db.models.Comment.findAll({
@@ -30,7 +29,7 @@ const addComment = async function (addComment: CommentData) {
     logging: false
   });
   const userIdx: number = user?.get().idx ? user?.get().idx : -1;
-  
+
   await db.models.Post.increment(['commentnum'], {
     where: { idx: addComment.postidx },
     logging: false

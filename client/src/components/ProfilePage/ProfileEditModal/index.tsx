@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useRecoilState } from 'recoil';
 
-import { modalStateStore, profileState } from 'recoil/store';
+import { modalStateStore } from 'recoil/common';
+import { profileState } from 'recoil/user';
+
 import style from 'theme/style';
-import useAlertModal from 'hooks/useAlertModal';
 import fetchApi from 'api/fetch';
+import useAlertModal from 'hooks/useAlertModal';
 
 const EditModalAnimation = keyframes`
   0% {
@@ -75,9 +77,8 @@ const StyledBtn = styled.div<{ saveBtn: boolean }>`
   margin: 0 ${style.margin.smallest};
 
   border-radius: 8px;
-  background-color: ${(props) =>
-    props.saveBtn ? props.theme.green : props.theme.gray};
-  color: ${(props) => (props.saveBtn ? props.theme.white : props.theme.black)};
+  background-color: ${(props) => (props.saveBtn ? props.theme.green : props.theme.gray)};
+  color: ${(props) => (props.saveBtn ? props.theme.inColorBox : props.theme.black)};
 
   display: flex;
   justify-content: center;
@@ -144,12 +145,7 @@ const ProfileEditModal = () => {
   return (
     <EditModalWrap modalState={modalState.editProfile}>
       <BioTitle>자기소개</BioTitle>
-      <BioArea
-        onChange={inputContents}
-        onKeyUp={bioLengthCheck}
-        value={bio}
-        placeholder="자기소개를 적어주세요."
-      />
+      <BioArea onChange={inputContents} onKeyUp={bioLengthCheck} value={bio} placeholder="자기소개를 적어주세요." />
       <BtnWrap>
         <StyledBtn onClick={saveBtnHandler} saveBtn={true}>
           저장

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { modalStateStore, profileState, userDataStates } from 'recoil/store';
+import { modalStateStore } from 'recoil/common';
+import { userDataStates, profileState } from 'recoil/user';
+
 import style from 'theme/style';
 
 const ProfileEditWrap = styled.div<{ myProfile: boolean }>`
@@ -18,7 +20,7 @@ const ProfileEditBtn = styled.div`
 
   border-radius: 8px;
   background-color: ${(props) => props.theme.green};
-  color: ${(props) => props.theme.white};
+  color: ${(props) => props.theme.inColorBox};
 
   display: flex;
   justify-content: center;

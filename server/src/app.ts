@@ -1,30 +1,31 @@
+import path from 'path';
+import dotenv from 'dotenv';
+dotenv.config({ path: path.resolve(__dirname, './config/.env.development') });
+
 import express from 'express';
 import session from 'express-session';
 import sessionFileStore from 'session-file-store';
-import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import dotenv from 'dotenv';
 import { createServer } from 'http';
-import socketIO from './sockets/socketIO';
-dotenv.config({ path: path.resolve(__dirname, './config/.env.development') });
 
+import socketIO from './sockets/socketIO';
 import dbManager from './service/dbManager';
 
 const indexRouter = require('./routes/index');
 const oauthRouter = require('./routes/oauth');
 const apiRouter = require('./routes/api');
+const FileStore = sessionFileStore(session);
 
 const app = express();
+const port = 4000;
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'build') /*, { maxAge: 10 }*/));
-
-const port = 4000;
 app.set('port', port);
-const FileStore = sessionFileStore(session);
 
 dbManager.sync();
 
@@ -40,8 +41,9 @@ app.use(
     },
     store: new FileStore({
       path: path.resolve(__dirname, './sessions/'),
-      reapInterval: 24 * 60 * 60,
-      ttl: 24 * 60 * 60
+      ttl: 24 * 60 * 60,
+      //retries: 0
+      logFn: function () {}
     })
   })
 );

@@ -2,7 +2,8 @@ import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 import { IoClose } from 'react-icons/io5';
 
-import { modalStateStore } from 'recoil/store';
+import { modalStateStore } from 'recoil/common';
+
 import useClosePostModal from 'hooks/useClosePostModal';
 
 const ModalTitleWrap = styled.div`
@@ -52,9 +53,7 @@ const ModalTitle = () => {
 
   return (
     <ModalTitleWrap>
-      <div>
-        {modalState.post.isEnroll ? '게시물 만들기' : '게시물 수정하기'}
-      </div>
+      <div>{modalState.post.isEnroll ? '게시물 만들기' : '게시물 수정하기'}</div>
       <CloseBtn onClick={() => closeModal()}>
         <IoClose size="28px" />
       </CloseBtn>

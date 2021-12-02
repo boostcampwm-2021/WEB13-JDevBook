@@ -3,11 +3,12 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { userDataStates, myJoinedGroupState } from 'recoil/store';
-import style from 'theme/style';
-import { defaultGroup } from 'images/groupimg';
-import { IGroup } from 'types/group';
+import { userDataStates, myJoinedGroupState } from 'recoil/user';
+
 import fetchApi from 'api/fetch';
+import style from 'theme/style';
+import { IGroup } from 'types/group';
+import { defaultGroup } from 'images/groupimg';
 import useAlertModal from 'hooks/useAlertModal';
 
 const GroupCardWrap = styled.div`
@@ -90,7 +91,7 @@ const GroupEnterBtn = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${(props) => props.theme.white};
+  color: ${(props) => props.theme.inColorBox};
   text-decoration: none;
 
   &:hover {

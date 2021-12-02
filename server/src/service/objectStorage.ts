@@ -2,11 +2,12 @@ import AWS from 'aws-sdk';
 import multer from 'multer';
 import multerS3 from 'multer-s3';
 import fs from 'fs';
+
 import { yyyymmdd } from './date';
-import { NextFunction, Request, Response } from 'express';
 const storage = require('../config/objectstorage.json');
 
 const url: string = storage.url;
+const urlDomain: string = url.split('//')[1];
 const region: string = storage.region;
 const access_key: string = storage.access_key;
 const secret_key: string = storage.secret_key;
@@ -40,16 +41,9 @@ const limits = {
   fileSize: 1 * 1024 * 1024
 };
 
-export const upload = multer({ storage: storageS3, limits: limits });
+const upload = multer({ storage: storageS3, limits: limits });
 
-export const uploadFile = (req: Request, res: Response, next: NextFunction) => {
-  upload.single('imgfile')(req, res, (err) => {
-    if (err) return res.json({ file: false, save: false });
-    else next();
-  });
-};
-
-export const objectStorage = {
+const objectStorage = {
   makeBucket: async (bucket_name: string) => {
     await S3.createBucket({
       Bucket: bucket_name,
@@ -108,6 +102,28 @@ export const objectStorage = {
     return data.Contents;
   },
 
+  getExistObject: async (
+    pictureUrl: string,
+    bucket_name = default_bucket
+  ): Promise<boolean> => {
+    const re = new RegExp(
+      `https:\/\/${bucket_name}.${urlDomain}\/(?<key>\\S+\/\\d{8}\/\\S+)$`
+    );
+    const result = re.exec(pictureUrl);
+    if (result?.groups?.key === undefined) return false;
+
+    const params = {
+      Bucket: bucket_name,
+      Key: decodeURI(result.groups.key)
+    };
+    try {
+      await S3.getObject(params).promise();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
   deleteObject: async (object_name: string, bucket_name = default_bucket) => {
     // 폴더 삭제일 경우 마지막에 '/' 붙어야 한다.
     await S3.deleteObject({
@@ -116,3 +132,5 @@ export const objectStorage = {
     }).promise();
   }
 };
+
+export { upload, objectStorage };

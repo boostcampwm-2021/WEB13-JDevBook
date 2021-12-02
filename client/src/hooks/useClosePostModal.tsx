@@ -1,10 +1,7 @@
 import { useRecoilState, useResetRecoilState } from 'recoil';
-import {
-  isImgUploadingState,
-  modalStateStore,
-  postModalDataStates,
-  uploadImgList
-} from 'recoil/store';
+
+import { modalStateStore } from 'recoil/common';
+import { isImgUploadingState, postModalDataStates, uploadImgList } from 'recoil/post';
 
 const useClosePostModal = () => {
   const resetModal = useResetRecoilState(modalStateStore);

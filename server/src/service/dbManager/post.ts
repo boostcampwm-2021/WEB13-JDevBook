@@ -1,14 +1,9 @@
 import { Op } from 'sequelize';
 
-import { PostAddData, PostUpdateData } from '../../types/interface';
+import { PostAddData, PostUpdateData } from '../../types';
 import db from '../../models';
 
-const getPosts = async (
-  myIdx: number,
-  lastIdx: number,
-  count: number,
-  useridx?: number
-) => {
+const getPosts = async (myIdx: number, lastIdx: number, count: number, useridx?: number) => {
   // 개선 못하나.. 흠
   const findAllCondition = {
     idx: { [Op.lt]: lastIdx === -1 ? 1000000000 : lastIdx },
@@ -48,10 +43,12 @@ const getPosts = async (
 };
 
 const addPost = async (postAddData: PostAddData) => {
-  const result = await db.models.Post.create({
-    ...postAddData,
-    logging: false
-  });
+  const result = await db.models.Post.create(
+    {
+      ...postAddData
+    },
+    { logging: false }
+  );
   return result.get();
 };
 

@@ -70,3 +70,9 @@ export interface PostImageBoxStyle {
   topBorder?: boolean;
   bottomBorder?: boolean;
 }
+
+export interface PostRequestOptions {
+  lastIdx: number;
+  count: number;
+  username: string;
+}

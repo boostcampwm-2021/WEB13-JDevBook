@@ -1,12 +1,15 @@
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { solvedProblemState } from 'recoil/user';
+import { GroupNavState } from 'recoil/group';
+
 import fetchApi from 'api/fetch';
 import useAlertModal from 'hooks/useAlertModal';
-import React, { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { GroupNavState, solvedProblemState } from 'recoil/store';
-import styled from 'styled-components';
-
 import { IProblem } from 'types/problem';
-import Explanation from './Explanation';
+
+import Explanation from 'components/GroupPage/Problem/Explanation';
 
 const ProblemContainer = styled.div`
   width: 680px;
@@ -50,8 +53,7 @@ const QuestionBox = styled.div`
 const AnswerWrap = styled.div<{ isSolvedNow: boolean }>`
   display: flex;
   padding: 24px;
-  border-bottom: ${(props) =>
-    props.isSolvedNow && `1px solid ${props.theme.lightgray}`};
+  border-bottom: ${(props) => props.isSolvedNow && `1px solid ${props.theme.lightgray}`};
 `;
 
 const AnswerButton = styled.div`
@@ -128,16 +130,9 @@ const SolvedLabel = styled.div`
   }
 `;
 
-const Problem = ({
-  problem,
-  isHome
-}: {
-  problem: IProblem;
-  isHome?: boolean;
-}) => {
+const Problem = ({ problem, isHome }: { problem: IProblem; isHome?: boolean }) => {
   const groupNavState = useRecoilValue(GroupNavState);
-  const [solvedProblems, setSolvedProblems] =
-    useRecoilState(solvedProblemState);
+  const [solvedProblems, setSolvedProblems] = useRecoilState(solvedProblemState);
   const showAlert = useAlertModal();
   const [isSolvedNow, setSolvedNow] = useState<boolean>(false);
 
@@ -167,20 +162,14 @@ const Problem = ({
 
   return (
     <ProblemContainer>
-      {solvedProblems.map((item) => item.idx).includes(problem.idx) && (
-        <SolvedLabel />
-      )}
-      {isHome && (
-        <GroupTitle>[{problem.BTGroupgroupidx.title}] 그룹의 문제</GroupTitle>
-      )}
+      {solvedProblems.map((item) => item.idx).includes(problem.idx) && <SolvedLabel />}
+      {isHome && <GroupTitle>[{problem.BTGroupgroupidx.title}] 그룹의 문제</GroupTitle>}
       <QuestionBox>{problem.question}</QuestionBox>
       <AnswerWrap isSolvedNow={isSolvedNow}>
         <RightButton onClick={() => handleAnswer(true)} />
         <WrongButton onClick={() => handleAnswer(false)} />
       </AnswerWrap>
-      {isSolvedNow && problem.explanation && (
-        <Explanation explanation={problem.explanation} />
-      )}
+      {isSolvedNow && problem.explanation && <Explanation explanation={problem.explanation} />}
     </ProblemContainer>
   );
 };

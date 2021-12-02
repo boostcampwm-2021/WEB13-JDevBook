@@ -1,13 +1,8 @@
-@font-face {
-  font-family: 'Spoqa Han Sans Neo';
-  src: url(./theme/SpoqaHanSansNeo-Regular.otf);
-}
-
 body {
   background-color: #fafafa;
-  font-family: 'Spoqa Han Sans Neo', 'Noto Sans KR', -apple-system,
-    BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
-    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

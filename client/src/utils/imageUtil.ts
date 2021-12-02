@@ -46,12 +46,7 @@ const imageUtil = {
    * @param width 원본 너비
    * @param height 원본 높이
    */
-  getImageFitSizeForCrop: (
-    targetWidth: number,
-    targetHeight: number,
-    width: number,
-    height: number
-  ) => {
+  getImageFitSizeForCrop: (targetWidth: number, targetHeight: number, width: number, height: number) => {
     const targetRatio = targetWidth / targetHeight;
     if (targetRatio >= width / height) {
       return [targetWidth, (height * targetWidth) / width];

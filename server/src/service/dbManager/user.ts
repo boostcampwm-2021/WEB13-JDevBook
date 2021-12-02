@@ -1,5 +1,5 @@
 import db from '../../models';
-import { IProfile } from '../../types/interface';
+import { IProfile } from '../../types';
 
 const getUserData = async (username: string) => {
   const [user, created] = await db.models.User.findOrCreate({

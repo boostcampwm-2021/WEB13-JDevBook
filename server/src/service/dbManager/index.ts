@@ -1,5 +1,3 @@
-import db from '../../models';
-
 import { toggleLikePosts, updateLikeNum } from './like';
 import { getPosts, addPost, updatePost, deletePost } from './post';
 import { getComments, getCommentsNum, addComment } from './comment';
@@ -31,48 +29,12 @@ import {
   setAlarmCheck,
   getUncheckedAlarmsNum
 } from './alarm';
-
-import problems from '../../config/problems';
-const group = require('../../config/initgroup.json');
+import { sync, createInitGroup, createInitProblem } from './init';
 
 const dbManager = {
-  sync: async function () {
-    const force: boolean = false;
-    await db
-      .sync({ force: force, logging: false })
-      .then(async () => {
-        if (force) {
-          await this.createInitGroup();
-          await this.createInitProblem();
-        }
-        console.log('Connection has been established successfully.');
-      })
-      .catch((error: any) => {
-        console.error('Unable to connect to the database:', error);
-      });
-  },
-
-  createInitGroup: async function () {
-    try {
-      await db.models.Group.bulkCreate(group, {
-        logging: false,
-        returning: true
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  },
-
-  createInitProblem: async function () {
-    try {
-      await db.models.Problem.bulkCreate(problems, {
-        logging: false,
-        returning: true
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  },
+  sync,
+  createInitGroup,
+  createInitProblem,
 
   getUserData,
   getAllUsers,

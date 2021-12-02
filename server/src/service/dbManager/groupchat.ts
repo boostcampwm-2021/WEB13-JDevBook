@@ -1,5 +1,4 @@
 import db from '../../models';
-import { Op } from 'sequelize';
 
 const setGroupChatList = async (
   sender: string,

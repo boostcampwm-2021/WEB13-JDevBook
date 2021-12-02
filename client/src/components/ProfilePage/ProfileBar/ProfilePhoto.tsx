@@ -26,11 +26,7 @@ const ProfilePhoto = ({ userName }: { userName: string }) => {
   return (
     <ProfilePhotoWrap>
       {userName !== '' ? (
-        <StyledProfilePhoto
-          src={`https://github.com/${userName}.png`}
-          alt="프로필 사진"
-          className="no-drag"
-        />
+        <StyledProfilePhoto src={`https://github.com/${userName}.png`} alt="프로필 사진" className="no-drag" />
       ) : (
         ''
       )}

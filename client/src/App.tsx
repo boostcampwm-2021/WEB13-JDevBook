@@ -10,16 +10,16 @@ const GlobalStyle = createGlobalStyle`
     return css`
       * {
         font-weight: bold;
-        font-family: 'Spoqa Han Sans Neo';
+        font-family: 'Noto Sans KR';
         ::placeholder,
         ::-webkit-input-placeholder {
           font-weight: bold;
-          font-family: 'Spoqa Han Sans Neo';
+          font-family: 'Noto Sans KR';
           color: ${(props) => props.theme.darkgray};
         }
         :-ms-input-placeholder {
           font-weight: bold;
-          font-family: 'Spoqa Han Sans Neo';
+          font-family: 'Noto Sans KR';
           color: ${(props) => props.theme.darkgray};
         }
       }
@@ -28,9 +28,6 @@ const GlobalStyle = createGlobalStyle`
       }
     `;
   }}
-  
-
-
 `;
 
 const App = () => {

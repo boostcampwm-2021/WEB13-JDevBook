@@ -1,8 +1,9 @@
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { groupState } from 'recoil/store';
-import { IGroup } from 'types/group';
+import { groupState } from 'recoil/group';
+
 import fetchApi from 'api/fetch';
+import { IGroup } from 'types/group';
 
 const useResetGroup = () => {
   const resetGroup = useResetRecoilState(groupState);

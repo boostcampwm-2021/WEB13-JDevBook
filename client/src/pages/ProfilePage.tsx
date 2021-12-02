@@ -1,28 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router';
 import styled, { createGlobalStyle, css } from 'styled-components';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { imageViewerState, profileState, userDataStates } from 'recoil/store';
-import palette from 'theme/palette';
+import { currentPageStates } from 'recoil/common';
+import { userDataStates, profileState } from 'recoil/user';
+import { imageViewerState } from 'recoil/post';
 
-import {
-  Gnb,
-  SideBar,
-  InfoSideBar,
-  GroupSideBar,
-  InitUserData,
-  InitSocket,
-  LoadingModal
-} from 'components/common';
+import { Page } from 'types/common';
+
+import { InitUserData, LoadingModal, FakeSideBar, FakeGnb, FakeProfileBar } from 'components/common';
 import { PostWriter, ImageViewer } from 'components/HomePage';
-import {
-  ProfileBar,
-  ProfileCover,
-  InitProfileData,
-  PostList,
-  ProfileInfoBar
-} from 'components/ProfilePage';
+import { ProfileBar, ProfileCover, InitProfileData, PostList, ProfileInfoBar } from 'components/ProfilePage';
 
 const GlobalStyle = createGlobalStyle`
   ${({}) => {
@@ -46,7 +35,6 @@ const PageLayout = styled.div`
 const ContentsContainer = styled.div<{ contentsState: boolean }>`
   width: calc(100vw - 680px);
   min-width: 720px;
-  margin: 0 12px;
 
   display: ${(props) => (props.contentsState ? 'flex' : 'none')};
   flex-direction: column;
@@ -78,14 +66,13 @@ const PostContainer = styled.div`
   padding-left: 12px;
 `;
 
-const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({
-  match
-}) => {
+const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({ match }) => {
   const userData = useRecoilValue(userDataStates);
   const profileData = useRecoilValue(profileState);
   const resetProfileData = useResetRecoilState(profileState);
   const imageViewer = useRecoilValue(imageViewerState);
   const [myProfile, setMyProfile] = useState<boolean>(false);
+  const setCurrentPage = useSetRecoilState(currentPageStates);
 
   useEffect(() => {
     if (userData.name === profileData.nickname) setMyProfile(true);
@@ -93,6 +80,7 @@ const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({
   }, [profileData, userData]);
 
   useEffect(() => {
+    setCurrentPage(Page.PROFILE);
     return () => {
       resetProfileData();
     };
@@ -103,22 +91,18 @@ const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({
       <GlobalStyle />
       <InitUserData />
       <InitProfileData userName={match.params.username} />
-      <InitSocket />
-      <LoadingModal
-        modalState={profileData.idx === 0 || userData.name === ''}
-      />
-      <Gnb />
+      <LoadingModal modalState={profileData.idx === 0 || userData.name === ''} />
+      <FakeGnb />
       <PageLayout>
-        <SideBar isLeft={true}>
-          <InfoSideBar />
-          <GroupSideBar />
-        </SideBar>
+        <FakeSideBar />
         <ContentsContainer contentsState={profileData.idx !== 0}>
           <ProfileCover />
           <ProfileBar />
           <InnerContainer>
             <InfoContainer>
-              <ProfileInfoBar />
+              <Suspense fallback={<FakeProfileBar />}>
+                <ProfileInfoBar />
+              </Suspense>
             </InfoContainer>
             <PostContainer>
               {myProfile ? <PostWriter /> : ''}

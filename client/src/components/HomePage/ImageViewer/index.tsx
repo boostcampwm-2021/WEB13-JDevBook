@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import { MdClose, MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 import { useRecoilState } from 'recoil';
-import { imageViewerState as ivState } from 'recoil/store';
+import { MdClose, MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
+
+import { imageViewerState as ivState } from 'recoil/post';
 
 import { gridImage } from 'images';
 
@@ -68,8 +69,7 @@ const AnimationIcon = styled.div<{ isLeft?: boolean; hidden: boolean }>`
 
   &:hover {
     background-color: ${(props) => props.theme.lightgray};
-    transform: ${({ isLeft }) =>
-      isLeft ? css`translateX(-8px)` : css`translateX(8px)`};
+    transform: ${({ isLeft }) => (isLeft ? css`translateX(-8px)` : css`translateX(8px)`)};
   }
 
   svg {
@@ -109,10 +109,7 @@ const ImageViewer = () => {
   const goNext = useCallback(() => {
     setImageViewerState((prev) => ({
       ...prev,
-      currentIdx:
-        prev.currentIdx !== prev.imageCount - 1
-          ? prev.currentIdx + 1
-          : prev.imageCount - 1
+      currentIdx: prev.currentIdx !== prev.imageCount - 1 ? prev.currentIdx + 1 : prev.imageCount - 1
     }));
   }, [setImageViewerState]);
 

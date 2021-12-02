@@ -1,5 +1,4 @@
 import db from '../../models';
-import './index';
 
 const addAlarm = async function (receiver: string, msg: string) {
   const receiverData = await db.models.User.findOne({

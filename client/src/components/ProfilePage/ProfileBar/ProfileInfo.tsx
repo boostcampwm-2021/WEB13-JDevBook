@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import { useRecoilValue } from 'recoil';
 
-import { modalStateStore, profileState } from 'recoil/store';
+import { modalStateStore } from 'recoil/common';
+import { profileState } from 'recoil/user';
+
 import style from 'theme/style';
 
 import { ProfileEditModal } from 'components/ProfilePage';
@@ -37,9 +39,7 @@ const ProfileInfo = () => {
       {modalState.editProfile ? (
         <ProfileEditModal />
       ) : (
-        <ProfileBio className="no-drag">
-          {profileData.bio || '자기소개를 입력해서 자신을 표현해보세요!'}
-        </ProfileBio>
+        <ProfileBio className="no-drag">{profileData.bio || '자기소개를 입력해서 자신을 표현해보세요!'}</ProfileBio>
       )}
     </ProfileInfoWrap>
   );

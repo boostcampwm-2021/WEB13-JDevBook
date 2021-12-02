@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { rightModalStates, groupListState } from 'recoil/store';
+import { rightModalStates } from 'recoil/common';
+import { groupListState } from 'recoil/group';
+
 import fetchApi from 'api/fetch';
+import { IGroup } from 'types/group';
 
 import GroupCard from 'components/GroupSelectPage/GroupSelectList/GroupCard';
-import { IGroup } from 'types/group';
 
 const GroupSelectListContainer = styled.div<{
   modalState: boolean;
@@ -39,11 +41,7 @@ const GroupSelectList = () => {
   }, []);
 
   return (
-    <GroupSelectListContainer
-      modalState={rightModalState}
-      fisrtFlag={fisrtFlag}
-      onAnimationEnd={firstEnd}
-    >
+    <GroupSelectListContainer modalState={rightModalState} fisrtFlag={fisrtFlag} onAnimationEnd={firstEnd}>
       {groupList.map((group) => (
         <GroupCard key={group.idx} group={group} />
       ))}

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { userDataStates, myJoinedGroupState, groupState } from 'recoil/store';
+import { userDataStates, myJoinedGroupState } from 'recoil/user';
+import { groupState } from 'recoil/group';
+
+import fetchApi from 'api/fetch';
 import style from 'theme/style';
 import useAlertModal from 'hooks/useAlertModal';
-import fetchApi from 'api/fetch';
 
 const GroupNavMiddleWrap = styled.div`
   display: flex;
@@ -19,10 +21,8 @@ const GroupJoinBtn = styled.div<{ joinedState: boolean }>`
   padding: 8px ${style.padding.normal};
 
   border-radius: 8px;
-  background-color: ${(props) =>
-    props.joinedState ? props.theme.gray : props.theme.green};
-  color: ${(props) =>
-    props.joinedState ? props.theme.black : props.theme.white};
+  background-color: ${(props) => (props.joinedState ? props.theme.gray : props.theme.green)};
+  color: ${(props) => (props.joinedState ? props.theme.black : props.theme.inColorBox)};
 
   display: flex;
   justify-content: center;
@@ -55,26 +55,19 @@ const GroupNavMiddle = () => {
         setJoinedState(true);
       } else {
         alertMessage(`${groupData.title} 그룹을 탈퇴했습니다.`, true);
-        setMyJoinedGroup(
-          myJoinedGroup.filter((groupidx) => groupidx !== groupData.idx)
-        );
+        setMyJoinedGroup(myJoinedGroup.filter((groupidx) => groupidx !== groupData.idx));
         setJoinedState(false);
       }
     }
   };
 
   useEffect(() => {
-    if (myJoinedGroup !== null)
-      if (myJoinedGroup.includes(groupData.idx)) setJoinedState(true);
+    if (myJoinedGroup !== null) if (myJoinedGroup.includes(groupData.idx)) setJoinedState(true);
   }, [groupData]);
 
   return (
     <GroupNavMiddleWrap>
-      <GroupJoinBtn
-        joinedState={joinedState}
-        onClick={joinGroup}
-        className="no-drag"
-      >
+      <GroupJoinBtn joinedState={joinedState} onClick={joinGroup} className="no-drag">
         {joinedState ? `그룹 탈퇴` : `그룹 가입`}
       </GroupJoinBtn>
     </GroupNavMiddleWrap>

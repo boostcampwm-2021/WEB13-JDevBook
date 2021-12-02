@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { userDataStates, isLoginfailStates } from 'recoil/store';
+import { userDataStates } from 'recoil/user';
+import { isLoginfailStates } from 'recoil/common';
 
 import {
   GroupPage,
@@ -10,20 +11,22 @@ import {
   LoginPage,
   ProfilePage,
   IsLoginPage,
+  LoadingWhitePage,
   GroupSelectPage
 } from 'pages';
-import { ChatSideBar, AlarmSideBar } from 'components/common';
+
+import { ChatSideBar, AlarmSideBar, LeftSideBar, Gnb } from 'components/common';
+import fetchApi from 'api/fetch';
 
 const Router = () => {
   const [login, setLogin] = useState(false);
-  const setLoginfail = useSetRecoilState(isLoginfailStates);
+  const [loginfail, setLoginfail] = useRecoilState(isLoginfailStates);
   const userdata = useRecoilValue(userDataStates);
   useEffect(() => {
     if (userdata.login === false) {
       // 새로고침해도 default가 false라 상관X, 로그인직후 userdata 변경시 막기용
       (async () => {
-        const isloginRes: Response = await fetch('/api/islogin');
-        const islogin: boolean = await isloginRes.json();
+        const islogin: boolean = await fetchApi.isLogin();
         setLogin(islogin);
         if (islogin === false) setLoginfail(true);
       })();
@@ -32,8 +35,22 @@ const Router = () => {
 
   return (
     <BrowserRouter>
+      <Gnb />
+      <LeftSideBar />
+      <ChatSideBar />
+      <AlarmSideBar />
       <Switch>
-        <Route path="/" exact component={LoginPage} />
+        <Route
+          path="/"
+          exact
+          render={(props) =>
+            loginfail ? (
+              <LoginPage />
+            ) : (
+              <LoadingWhitePage login={login} {...props} />
+            )
+          }
+        />
         <Route
           path="/home"
           exact
@@ -60,8 +77,6 @@ const Router = () => {
         />
         <Route path="/*" component={NotFoundPage} />
       </Switch>
-      <ChatSideBar />
-      <AlarmSideBar />
     </BrowserRouter>
   );
 };

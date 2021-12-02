@@ -1,5 +1,7 @@
 # WEB13-JDevBook [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fboostcampwm-2021%2FWEB13-JDevBook%2Fhit-counter&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
+![JDevBook 배너](https://user-images.githubusercontent.com/87400617/144348628-706b6188-c182-4497-9487-f4f84b77ef5d.gif)
+
 ## 배포주소
 
 - https://www.jdevbook.kro.kr/
@@ -29,6 +31,10 @@
 그룹에서 푼 문제들 성취도를 확인할 수 있습니다.
 프로필 커버 사진, 프로필 사진, 자기소개를 작성할 수 있습니다.
 해당 사용자가 작성한 글들을 확인할 수 있습니다. (비공개는 불가능)
+
+### etc
+
+채팅 알람, 댓글 알람, 다크모드, 반응형 등
 
 ## 🙋🏻‍♂️ 팀원
 
@@ -60,7 +66,7 @@
 
 ### 테스트
 
-![](https://img.shields.io/badge/-Jest-%23C21325?style=flat-square&logo=jest&logoColor=white)
+![](https://img.shields.io/badge/-Cypress-%23181717?style=flat-square&logo=Cypress&logoColor=white)
 
 ### 협업 툴
 

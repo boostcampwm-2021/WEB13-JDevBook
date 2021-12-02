@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
-import { userDataStates, postModalDataStates } from 'recoil/store';
+import { userDataStates } from 'recoil/user';
+import { postModalDataStates } from 'recoil/post';
+
+import style from 'theme/style';
 
 import { ProfilePhoto } from 'components/common';
 
@@ -20,11 +23,13 @@ const PostInfoWrap = styled.div`
   }
 `;
 
-const SecretSelector = styled.div`
-  width: 112px;
+const SecretSelector = styled.div<{ isSecret: boolean }>`
+  width: 100px;
   height: 30px;
+  padding: 0 ${style.padding.small};
 
-  background-color: ${(props) => props.theme.lightgray};
+  background-color: ${(props) => (props.isSecret ? props.theme.green : props.theme.lightgray)};
+  color: ${(props) => (props.isSecret ? props.theme.inColorBox : props.theme.black)};
   border-radius: 5px;
 
   display: flex;
@@ -33,11 +38,11 @@ const SecretSelector = styled.div`
 
   &:hover {
     cursor: pointer;
-    filter: brightness(95%);
+    background-color: ${(props) => (props.isSecret ? props.theme.darkgreen : props.theme.gray)};
   }
 
   &:active {
-    filter: brightness(90%);
+    background-color: ${(props) => props.theme.darkgray};
     font-size: 15px;
   }
 `;
@@ -52,16 +57,16 @@ const PostInfo = () => {
   };
 
   useEffect(() => {
-    postData.secret
-      ? setSecretStr('🔒 나만 보기')
-      : setSecretStr('👨‍👩‍👧‍👧 전체 공개');
+    postData.secret ? setSecretStr(' 🔒 나만 보기') : setSecretStr(' 👨‍👨‍👧‍👧 전체 공개');
   }, [postData.secret]);
 
   return (
     <PostInfoWrap>
       <ProfilePhoto userName={userdata.name} size="44px" />
       <div>{userdata.name}</div>
-      <SecretSelector onClick={secretToggleHandler}>{secretStr}</SecretSelector>
+      <SecretSelector isSecret={postData.secret} onClick={secretToggleHandler}>
+        {secretStr}
+      </SecretSelector>
     </PostInfoWrap>
   );
 };

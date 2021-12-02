@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled, { keyframes } from 'styled-components';
 
-import { isLoginfailStates } from 'recoil/store';
+import { isLoginfailStates } from 'recoil/common';
 import { mainLogo } from 'images';
-import palette from 'theme/palette';
 
 const Content = styled.div`
   display: flex;
@@ -14,6 +13,7 @@ const Content = styled.div`
   align-items: center;
   width: 100vw;
   height: 100vh;
+  background-color: ${(props) => props.theme.lightgray};
 `;
 
 const loadingAnimation = keyframes`
@@ -37,7 +37,7 @@ const LoadingLogo = styled.img`
 
 const LoadingTitle = styled.div`
   font-size: 50px;
-  color: ${palette.green};
+  color: ${(props) => props.theme.green};
 `;
 
 const IsLoginPage = () => {
@@ -46,7 +46,6 @@ const IsLoginPage = () => {
 
   useEffect(() => {
     if (loginfail === true) {
-      alert('비정상적인 접근입니다.');
       history.push('/');
     }
   }, [loginfail]);

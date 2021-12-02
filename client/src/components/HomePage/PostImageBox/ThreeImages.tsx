@@ -4,13 +4,7 @@ import imageUtil from 'utils/imageUtil';
 import { CropCenter, FlexWrap } from 'components/HomePage/PostImageBox/styles';
 import ActiveImageBox from 'components/HomePage/PostImageBox/ActiveImageBox';
 
-const ThreeImagesHorizontal = ({
-  postImages,
-  isProfile
-}: {
-  postImages: PostImageInfo[];
-  isProfile: boolean;
-}) => {
+const ThreeImagesHorizontal = ({ postImages, isProfile }: { postImages: PostImageInfo[]; isProfile: boolean }) => {
   if (postImages.length !== 3) return <div></div>;
 
   const boxLengthHalf = isProfile ? 266 : 340;
@@ -20,24 +14,9 @@ const ThreeImagesHorizontal = ({
   const { url: url2, originalWidth: ow2, originalHeight: oh2 } = postImages[1];
   const { url: url3, originalWidth: ow3, originalHeight: oh3 } = postImages[2];
 
-  const [w1, h1] = imageUtil.getImageFitSizeForCrop(
-    boxLengthFull,
-    boxLengthHalf,
-    ow1,
-    oh1
-  );
-  const [w2, h2] = imageUtil.getImageFitSizeForCrop(
-    boxLengthHalf,
-    boxLengthHalf,
-    ow2,
-    oh2
-  );
-  const [w3, h3] = imageUtil.getImageFitSizeForCrop(
-    boxLengthHalf,
-    boxLengthHalf,
-    ow3,
-    oh3
-  );
+  const [w1, h1] = imageUtil.getImageFitSizeForCrop(boxLengthFull, boxLengthHalf, ow1, oh1);
+  const [w2, h2] = imageUtil.getImageFitSizeForCrop(boxLengthHalf, boxLengthHalf, ow2, oh2);
+  const [w3, h3] = imageUtil.getImageFitSizeForCrop(boxLengthHalf, boxLengthHalf, ow3, oh3);
 
   const urls = [url1, url2, url3];
 
@@ -47,20 +26,10 @@ const ThreeImagesHorizontal = ({
         <ActiveImageBox index={0} width={w1} height={h1} urls={urls} />
       </CropCenter>
       <FlexWrap>
-        <CropCenter
-          width={boxLengthHalf}
-          height={boxLengthHalf}
-          topBorder
-          rightBorder
-        >
+        <CropCenter width={boxLengthHalf} height={boxLengthHalf} topBorder rightBorder>
           <ActiveImageBox index={1} width={w2} height={h2} urls={urls} />
         </CropCenter>
-        <CropCenter
-          width={boxLengthHalf}
-          height={boxLengthHalf}
-          topBorder
-          leftBorder
-        >
+        <CropCenter width={boxLengthHalf} height={boxLengthHalf} topBorder leftBorder>
           <ActiveImageBox index={2} width={w3} height={h3} urls={urls} />
         </CropCenter>
       </FlexWrap>
@@ -68,13 +37,7 @@ const ThreeImagesHorizontal = ({
   );
 };
 
-const ThreeImagesVertical = ({
-  postImages,
-  isProfile
-}: {
-  postImages: PostImageInfo[];
-  isProfile: boolean;
-}) => {
+const ThreeImagesVertical = ({ postImages, isProfile }: { postImages: PostImageInfo[]; isProfile: boolean }) => {
   if (postImages.length !== 3) return <div></div>;
 
   const boxLengthHalf = isProfile ? 266 : 340;
@@ -84,24 +47,9 @@ const ThreeImagesVertical = ({
   const { url: url2, originalWidth: ow2, originalHeight: oh2 } = postImages[1];
   const { url: url3, originalWidth: ow3, originalHeight: oh3 } = postImages[2];
 
-  const [w1, h1] = imageUtil.getImageFitSizeForCrop(
-    boxLengthHalf,
-    boxLengthFull,
-    ow1,
-    oh1
-  );
-  const [w2, h2] = imageUtil.getImageFitSizeForCrop(
-    boxLengthHalf,
-    boxLengthHalf,
-    ow2,
-    oh2
-  );
-  const [w3, h3] = imageUtil.getImageFitSizeForCrop(
-    boxLengthHalf,
-    boxLengthHalf,
-    ow3,
-    oh3
-  );
+  const [w1, h1] = imageUtil.getImageFitSizeForCrop(boxLengthHalf, boxLengthFull, ow1, oh1);
+  const [w2, h2] = imageUtil.getImageFitSizeForCrop(boxLengthHalf, boxLengthHalf, ow2, oh2);
+  const [w3, h3] = imageUtil.getImageFitSizeForCrop(boxLengthHalf, boxLengthHalf, ow3, oh3);
 
   const urls = [url1, url2, url3];
 
@@ -111,20 +59,10 @@ const ThreeImagesVertical = ({
         <ActiveImageBox index={0} width={w1} height={h1} urls={urls} />
       </CropCenter>
       <div>
-        <CropCenter
-          width={boxLengthHalf}
-          height={boxLengthHalf}
-          leftBorder
-          bottomBorder
-        >
+        <CropCenter width={boxLengthHalf} height={boxLengthHalf} leftBorder bottomBorder>
           <ActiveImageBox index={1} width={w2} height={h2} urls={urls} />
         </CropCenter>
-        <CropCenter
-          width={boxLengthHalf}
-          height={boxLengthHalf}
-          leftBorder
-          topBorder
-        >
+        <CropCenter width={boxLengthHalf} height={boxLengthHalf} leftBorder topBorder>
           <ActiveImageBox index={2} width={w3} height={h3} urls={urls} />
         </CropCenter>
       </div>

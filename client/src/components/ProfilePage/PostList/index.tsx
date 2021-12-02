@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { postListStore, profileState } from 'recoil/store';
-
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { postListStore } from 'recoil/post';
+import { profileState } from 'recoil/user';
 
 import fetchApi from 'api/fetch';
 
 import { Post } from 'components/HomePage';
-import { Skeleton } from 'components/common';
-import palette from 'theme/palette';
+import { FakePost } from 'components/common';
 
 const PostListContainer = styled.div`
   width: 532px;
@@ -33,7 +33,8 @@ const NoPost = styled.div`
   align-items: center;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
   margin-top: 24px;
-  background-color: ${palette.white};
+  background-color: ${({ theme }) => theme.white};
+  color: ${({ theme }) => theme.black};
 
   &::after {
     content: '등록된 게시글이 없습니다';
@@ -70,12 +71,11 @@ const PostList = () => {
     try {
       abortControllerMap.current[nickname] = new AbortController();
       setFetching(true);
-      const result = await fetchApi.getPosts(
+      const result = await fetchApi.getPosts(abortControllerMap.current[nickname].signal, {
         lastIdx,
         count,
-        nickname,
-        abortControllerMap.current[nickname].signal
-      );
+        username: nickname
+      });
       if (result.length < count) {
         setHasMore(false);
       }
@@ -90,7 +90,7 @@ const PostList = () => {
     return Array(count)
       .fill(undefined)
       .map((v, i) => {
-        return <Skeleton key={`s${i}`} isProfile />;
+        return <FakePost key={`s${i}`} isProfile />;
       });
   };
 

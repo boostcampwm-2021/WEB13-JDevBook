@@ -1,11 +1,11 @@
-import React from 'react';
 import styled from 'styled-components';
+import { useRecoilValue } from 'recoil';
+
+import { profileState } from 'recoil/user';
 
 import ProfileInfo from 'components/ProfilePage/ProfileBar/ProfileInfo';
 import ProfilePhoto from 'components/ProfilePage/ProfileBar/ProfilePhoto';
 import ProfileEdit from 'components/ProfilePage/ProfileBar/ProfileEdit';
-import { useRecoilValue } from 'recoil';
-import { profileState } from 'recoil/store';
 
 const ProfileBarContainer = styled.div`
   width: 100%;

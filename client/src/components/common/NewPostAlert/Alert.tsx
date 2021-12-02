@@ -18,7 +18,7 @@ const AlertModalWrap = styled.div`
   padding-left: 24px;
   padding-right: 24px;
   height: 36px;
-  z-index: 7;
+  z-index: 4;
   transform: translateX(-50%);
   font-size: 14px;
   cursor: pointer;
@@ -26,8 +26,8 @@ const AlertModalWrap = styled.div`
   box-sizing: border-box;
   border-radius: 16px;
   background-color: ${(props) => props.theme.lightgray};
-  color: black;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 5px;
+  color: ${(props) => props.theme.black};
+  box-shadow: ${(props) => props.theme.shadow.newPostAlert};
   animation: ${EnterAnimation} 0.75s ease-in-out;
 
   display: flex;

@@ -1,4 +1,3 @@
-// 이외에 smallest, smaller, larger, largest 가능
 const style = {
   margin: {
     smallest: '4px',
