@@ -28,6 +28,12 @@ const AlarmTextPreview = styled.div`
   opacity: 0.4;
 `;
 
+const extractText = (alarm: string): string => {
+  const firstColon = alarm.indexOf(':');
+  const secondColon = alarm.indexOf(':', firstColon + 1);
+  return alarm.substring(secondColon + 1);
+};
+
 const AlarmListView = ({ alarmList }: { alarmList: string[] }) => {
   const alarmListView = alarmList
     .map((alarm, idx) => (
@@ -37,7 +43,7 @@ const AlarmListView = ({ alarmList }: { alarmList: string[] }) => {
           {alarm.split(':')[1] === 'post'
             ? `${alarm.split(':')[0]} 님이 내 게시물에 댓글을 달았습니다. `
             : `${alarm.split(':')[0]} 님으로부터 메시지가 도착했습니다. `}
-          <AlarmTextPreview>{alarm.split(':')[2]}</AlarmTextPreview>
+          <AlarmTextPreview>{extractText(alarm)}</AlarmTextPreview>
         </AlarmText>
       </AlarmBox>
     ))

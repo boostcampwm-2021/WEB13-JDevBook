@@ -46,7 +46,7 @@ const IsLoginPage = () => {
 
   useEffect(() => {
     if (loginfail === true) {
-      history.push('/');
+      history.replace('/');
     }
   }, [loginfail]);
 

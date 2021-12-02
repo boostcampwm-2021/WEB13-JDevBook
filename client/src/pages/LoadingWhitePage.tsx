@@ -14,7 +14,7 @@ const LoadingWhitePage = ({ login }: { login: boolean }) => {
 
   useEffect(() => {
     if (check === true && login === true) {
-      history.push('/home');
+      history.replace('/home');
     }
     setCheck(true);
   }, [login]);
