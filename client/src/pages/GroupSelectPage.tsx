@@ -3,8 +3,8 @@ import styled, { createGlobalStyle, css } from 'styled-components';
 import { useSetRecoilState } from 'recoil';
 
 import { currentPageStates } from 'recoil/common';
-
-import { Page } from 'types/common';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler, Page } from 'types/common';
 
 import { FakeSideBar, InitUserData, FakeGnb } from 'components/common';
 import { GroupSelectTitle, GroupSelectList } from 'components/GroupSelectPage';
@@ -45,9 +45,11 @@ const ContentsContainer = styled.div`
 
 const GroupSelectPage = () => {
   const setCurrentPage = useSetRecoilState(currentPageStates);
+  const handleModal = useModalHandler();
 
   useEffect(() => {
     setCurrentPage(Page.GROUP_SELECT);
+    return () => handleModal(ModalHandler.CLOSE_ALL);
   }, []);
 
   return (

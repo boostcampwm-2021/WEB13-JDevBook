@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent, useEffect, useRef } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IoClose } from 'react-icons/io5';
 import { FiUpload } from 'react-icons/fi';
 
@@ -11,6 +11,8 @@ import { isImgUploadingState, postModalDataStates } from 'recoil/post';
 import fetchApi from 'api/fetch';
 import style from 'theme/style';
 import useAlertModal from 'hooks/useAlertModal';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 const ModalAnimation = keyframes`
   0% {
@@ -187,12 +189,13 @@ const CloseOneImg = styled.div<{ imgsrc: string | undefined }>`
 `;
 
 const ImgUploadModal = () => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
-  const [postData, setPostData] = useRecoilState(postModalDataStates);
+  const modalState = useRecoilValue(modalStateStore);
+  const postData = useRecoilValue(postModalDataStates);
   const [isImgUploading, setIsImgUploading] = useRecoilState(isImgUploadingState);
   const [imageViewerState, setImageViewerState] = useRecoilState(ivState);
   const [imgList, setImgList] = useRecoilState(uploadImgList);
   const alertMessage = useAlertModal();
+  const handleModal = useModalHandler();
 
   const inputfile = useRef() as React.MutableRefObject<HTMLInputElement>;
   const imgUploadWrapRef = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -201,10 +204,7 @@ const ImgUploadModal = () => {
 
   const imgUploadModalOff = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    setModalState({
-      ...modalState,
-      post: { ...modalState.post, inPhoto: false }
-    });
+    handleModal(ModalHandler.TOGGLE_IMAGE_UPLOADER);
   };
 
   const openFileModal = (e: React.MouseEvent<HTMLDivElement>) => {

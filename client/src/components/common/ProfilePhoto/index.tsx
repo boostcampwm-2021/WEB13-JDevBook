@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -27,7 +27,7 @@ const StyledProfilePhoto = styled.img<{ size?: string }>`
 `;
 
 const ProfilePhoto = ({ userName, size }: ProfilePhotoProps) => {
-  const profileImgURL = `https://github.com/${userName}.png`;
+  const profileImgURL = useMemo(() => `https://github.com/${userName}.png`, [userName]);
   return (
     <StyledProfilePhoto
       src={userName !== '' ? profileImgURL : defaultProfile}
@@ -52,5 +52,4 @@ const ClickableProfilePhoto = ({ userName, size }: ProfilePhotoProps) => {
     </ClickableProfilePhotoWrap>
   );
 };
-
 export { ProfilePhoto, ClickableProfilePhoto };

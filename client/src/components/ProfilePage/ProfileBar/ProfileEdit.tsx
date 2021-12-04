@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { modalStateStore } from 'recoil/common';
 import { userDataStates, profileState } from 'recoil/user';
-
 import style from 'theme/style';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 const ProfileEditWrap = styled.div<{ myProfile: boolean }>`
   display: ${(props) => (props.myProfile ? 'flex' : 'none')};
@@ -38,13 +38,13 @@ const ProfileEditBtn = styled.div`
 `;
 
 const ProfileEdit = () => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
   const userData = useRecoilValue(userDataStates);
   const profileData = useRecoilValue(profileState);
   const [myProfile, setMyProfile] = useState<boolean>(false);
+  const handleModal = useModalHandler();
 
   const toggleModalHandler = (e: React.MouseEvent) => {
-    setModalState({ ...modalState, editProfile: !modalState.editProfile });
+    handleModal(ModalHandler.TOGGLE_EDIT_PROFILE);
   };
 
   useEffect(() => {

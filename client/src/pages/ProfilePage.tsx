@@ -6,8 +6,8 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { currentPageStates } from 'recoil/common';
 import { userDataStates, profileState } from 'recoil/user';
 import { imageViewerState } from 'recoil/post';
-
-import { Page } from 'types/common';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler, Page } from 'types/common';
 
 import { InitUserData, LoadingModal, FakeSideBar, FakeGnb, FakeProfileBar } from 'components/common';
 import { PostWriter, ImageViewer } from 'components/HomePage';
@@ -73,6 +73,7 @@ const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({ matc
   const imageViewer = useRecoilValue(imageViewerState);
   const [myProfile, setMyProfile] = useState<boolean>(false);
   const setCurrentPage = useSetRecoilState(currentPageStates);
+  const handleModal = useModalHandler();
 
   useEffect(() => {
     if (userData.name === profileData.nickname) setMyProfile(true);
@@ -82,6 +83,7 @@ const ProfilePage: React.FC<RouteComponentProps<{ username: string }>> = ({ matc
   useEffect(() => {
     setCurrentPage(Page.PROFILE);
     return () => {
+      handleModal(ModalHandler.CLOSE_ALL);
       resetProfileData();
     };
   }, []);

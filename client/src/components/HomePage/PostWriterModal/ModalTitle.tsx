@@ -3,8 +3,9 @@ import { useRecoilValue } from 'recoil';
 import { IoClose } from 'react-icons/io5';
 
 import { modalStateStore } from 'recoil/common';
-
-import useClosePostModal from 'hooks/useClosePostModal';
+import useModalHandler from 'hooks/useModalHandler';
+import useResetPostModal from 'hooks/useResetPostModal';
+import { ModalHandler } from 'types/common';
 
 const ModalTitleWrap = styled.div`
   width: 100%;
@@ -49,12 +50,18 @@ const CloseBtn = styled.div`
 `;
 const ModalTitle = () => {
   const modalState = useRecoilValue(modalStateStore);
-  const closeModal = useClosePostModal();
+  const handleModal = useModalHandler();
+  const resetPostModalData = useResetPostModal();
 
   return (
     <ModalTitleWrap>
       <div>{modalState.post.isEnroll ? '게시물 만들기' : '게시물 수정하기'}</div>
-      <CloseBtn onClick={() => closeModal()}>
+      <CloseBtn
+        onClick={() => {
+          handleModal(ModalHandler.CLOSE_ALL);
+          resetPostModalData();
+        }}
+      >
         <IoClose size="28px" />
       </CloseBtn>
     </ModalTitleWrap>

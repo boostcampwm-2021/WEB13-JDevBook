@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { modalStateStore } from 'recoil/common';
 import { profileState } from 'recoil/user';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 import style from 'theme/style';
 import fetchApi from 'api/fetch';
@@ -96,8 +98,9 @@ const StyledBtn = styled.div<{ saveBtn: boolean }>`
 `;
 
 const ProfileEditModal = () => {
+  const modalState = useRecoilValue(modalStateStore);
+  const handleModal = useModalHandler();
   const [profileData, setProfileData] = useRecoilState(profileState);
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
   const [bio, setBio] = useState<string>('');
   const alertMessage = useAlertModal();
 
@@ -118,11 +121,11 @@ const ProfileEditModal = () => {
       return alertMessage('내용을 입력하세요.', true);
     }
     setProfileData({ ...profileData, bio: bio.trim() });
-    setModalState({ ...modalState, editProfile: false });
+    handleModal(ModalHandler.CLOSE_ALL);
   };
 
   const cancelBtnHandler = (e: React.MouseEvent) => {
-    setModalState({ ...modalState, editProfile: false });
+    handleModal(ModalHandler.CLOSE_ALL);
   };
 
   const bioLengthCheck = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {

@@ -1,14 +1,15 @@
-import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { usersocketStates } from 'recoil/socket';
 import { modalStateStore } from 'recoil/common';
 import { isImgUploadingState, postListStore, postModalDataStates, uploadImgList } from 'recoil/post';
+import useModalHandler from 'hooks/useModalHandler';
+import useResetPostModal from 'hooks/useResetPostModal';
+import { ModalHandler } from 'types/common';
 
 import fetchApi from 'api/fetch';
 import { PostAddData, PostUpdateData, PostData } from 'types/post';
-import useClosePostModal from 'hooks/useClosePostModal';
 import useAlertModal from 'hooks/useAlertModal';
 
 import ModalTitle from 'components/HomePage/PostWriterModal/ModalTitle';
@@ -98,7 +99,8 @@ const PostWriterModal = () => {
   const [postList, setPostList] = useRecoilState(postListStore);
   const imgList = useRecoilValue(uploadImgList);
   const socket = useRecoilValue(usersocketStates);
-  const closePostModal = useClosePostModal();
+  const handleModal = useModalHandler();
+  const resetPostModalData = useResetPostModal();
   const alertMessage = useAlertModal();
 
   /**
@@ -155,19 +157,20 @@ const PostWriterModal = () => {
       }
       alertSuccess();
       setPostList(newPostList);
-      closePostModal();
+      closeModal();
     } else {
       alertFail();
     }
   };
 
-  const modalClose = (e: React.MouseEvent) => {
-    closePostModal();
+  const closeModal = () => {
+    handleModal(ModalHandler.CLOSE_ALL);
+    resetPostModalData();
   };
 
   return (
     <>
-      <PostWriterModalOverlay modalState={modalState.post.writer} onClick={modalClose} />
+      <PostWriterModalOverlay modalState={modalState.post.writer} onClick={closeModal} />
       <PostWriterModalInner modalState={modalState.post.writer} className="no-drag">
         <ModalTitle />
         <Line />

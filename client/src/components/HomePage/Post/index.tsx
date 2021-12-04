@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MdMoreHoriz } from 'react-icons/md';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { usersocketStates } from 'recoil/socket';
-import { modalStateStore } from 'recoil/common';
 import { userDataStates } from 'recoil/user';
 
 import { LikeIcon, CommentIcon } from 'images/icons';
@@ -111,12 +110,12 @@ const Divider = styled.div`
 `;
 
 const Post = ({ post, isProfile = false }: { post: PostData; isProfile?: boolean }) => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
   const { idx: myIdx } = useRecoilValue(userDataStates);
   const [likeFlag, setLikeFlag] = useState<boolean>(false);
   const [likeNum, setLikeNum] = useState<number>(0);
   const [commentFlag, setCommentFlag] = useState<boolean>(false);
   const [commentsNum, setCommentsNum] = useState<number>(post.commentnum);
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
   const socket = useRecoilValue(usersocketStates);
 
   const { idx: postIdx, secret, createdAt, contents, picture1, picture2, picture3, BTUseruseridx } = post;
@@ -148,18 +147,11 @@ const Post = ({ post, isProfile = false }: { post: PostData; isProfile?: boolean
   return (
     <PostContainer>
       {postUserIdx === myIdx && (
-        <IconHover
-          onClick={() =>
-            setModalState({
-              ...modalState,
-              post: { ...modalState.post, index: postIdx }
-            })
-          }
-        >
+        <IconHover onClick={() => setModalOpen(true)}>
           <MdMoreHoriz />
         </IconHover>
       )}
-      {modalState.post.index === postIdx && <OptionModal post={post} />}
+      {isModalOpen && <OptionModal post={post} setModalOpen={setModalOpen} />}
       <Header nickname={nickname} profile={profile} createdAt={createdAt} secret={secret} />
       <Body postBody={{ contents, picture1, picture2, picture3 }} isProfile={isProfile} />
       <Footer

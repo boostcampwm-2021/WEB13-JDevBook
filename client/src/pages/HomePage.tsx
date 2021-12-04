@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import styled, { createGlobalStyle, css } from 'styled-components';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentPageStates } from 'recoil/common';
 import { imageViewerState as ivState } from 'recoil/post';
-
-import { Page } from 'types/common';
+import { ModalHandler, Page } from 'types/common';
+import useModalHandler from 'hooks/useModalHandler';
 
 import { PostWriter, PostList, ImageViewer } from 'components/HomePage';
 import { FakeSideBar, InitUserData, FakeGnb } from 'components/common';
@@ -50,13 +50,15 @@ const InnerContainer = styled.div`
 `;
 
 const HomePage = () => {
-  const [imageViewerState, setImageViewerState] = useRecoilState(ivState);
+  const imageViewerState = useRecoilValue(ivState);
   const setCurrentPage = useSetRecoilState(currentPageStates);
+  const handleModal = useModalHandler();
 
   useEffect(() => {
     setCurrentPage(Page.HOME);
 
     return () => {
+      handleModal(ModalHandler.CLOSE_ALL);
       window.scrollTo({ top: 0 });
     };
   }, []);

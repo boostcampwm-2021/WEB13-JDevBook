@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { modalStateStore } from 'recoil/common';
 import { userDataStates } from 'recoil/user';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 import { iconPhoto } from 'images/icons';
 
@@ -94,21 +95,15 @@ const StyledBtn = styled.div`
 `;
 
 const PostWriter = () => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const handleModal = useModalHandler();
   const userdata = useRecoilValue(userDataStates);
 
   const postWriterModalOn = (e: React.MouseEvent<HTMLDivElement>) => {
-    setModalState({
-      ...modalState,
-      post: { ...modalState.post, writer: true }
-    });
+    handleModal(ModalHandler.OPEN_POST_WRITER);
   };
 
   const withImgUploadModalOn = (e: React.MouseEvent<HTMLDivElement>) => {
-    setModalState({
-      ...modalState,
-      post: { ...modalState.post, writer: true, inPhoto: true }
-    });
+    handleModal(ModalHandler.OPEN_IMAGE_UPLOADER);
   };
 
   return (

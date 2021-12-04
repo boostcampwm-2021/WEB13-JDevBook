@@ -1,22 +1,18 @@
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { modalStateStore } from 'recoil/common';
 import { profileState } from 'recoil/user';
-
 import fetchApi from 'api/fetch';
+import useModalHandler from './useModalHandler';
+import { ModalHandler } from 'types/common';
 
 const useResetProfile = () => {
   const resetProfile = useResetRecoilState(profileState);
   const setProfileData = useSetRecoilState(profileState);
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const handleModal = useModalHandler();
 
   const resetProfileData = async (userName: string) => {
     resetProfile();
-    setModalState({
-      ...modalState,
-      editProfile: false,
-      post: { ...modalState.post, writer: false }
-    });
+    handleModal(ModalHandler.CLOSE_ALL);
     const { data: fetchProfileData, error } = await fetchApi.getProfile(userName);
     if (!error) setProfileData(fetchProfileData);
   };

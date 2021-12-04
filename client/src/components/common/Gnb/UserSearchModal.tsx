@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
 import { MdArrowBack } from 'react-icons/md';
 
-import { modalStateStore } from 'recoil/common';
-
 import { SearchedUser } from 'types/GNB';
+import { ModalHandler } from 'types/common';
+import useModalHandler from 'hooks/useModalHandler';
 
 import { UserCard } from 'components/common';
 import UserSearchBar from 'components/common/Gnb/UserSearchBar';
@@ -80,7 +79,7 @@ const SearchModalBody = styled.div`
 `;
 
 const UserSearchModal = () => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const handleModal = useModalHandler();
   const [searchResults, setSearchResults] = useState<{
     isProgress: boolean;
     users: SearchedUser[];
@@ -92,7 +91,7 @@ const UserSearchModal = () => {
     if (!force && modal.current?.contains(e.target)) {
       return;
     }
-    setModalState({ ...modalState, searchUser: false });
+    handleModal(ModalHandler.CLOSE_ALL);
   };
 
   useEffect(() => {

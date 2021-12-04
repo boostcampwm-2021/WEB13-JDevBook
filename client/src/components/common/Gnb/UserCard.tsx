@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
-
-import { modalStateStore } from 'recoil/common';
 
 import { SearchedUser } from 'types/GNB';
 import useResetProfile from 'hooks/useResetProfile';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 import { ProfilePhoto } from 'components/common';
 
@@ -35,12 +34,12 @@ const NavLink = styled(Link)`
 `;
 
 const UserCard = ({ user }: { user: SearchedUser }) => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const handleModal = useModalHandler();
   const resetProfile = useResetProfile();
 
   const handleCardClick = () => {
     resetProfile(user.nickname);
-    setModalState({ ...modalState, searchUser: false });
+    handleModal(ModalHandler.CLOSE_ALL);
   };
 
   return (

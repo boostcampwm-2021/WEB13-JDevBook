@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import styled, { css, keyframes } from 'styled-components';
-import { useRecoilState } from 'recoil';
-
-import { modalStateStore } from 'recoil/common';
 
 import fetchApi from 'api/fetch';
 import { SearchedUser } from 'types/GNB';
 import { IconSearch } from 'images/icons';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 const ExtendSearchBarAnimation = keyframes`
   0% {
@@ -75,7 +74,7 @@ const UserSearchBar = ({
   >;
 }) => {
   const [input, setInput] = useState('');
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const handleModal = useModalHandler();
   const inputBox = useRef<HTMLInputElement>(null);
 
   const onChangeInput = (e: any) => {
@@ -102,7 +101,7 @@ const UserSearchBar = ({
   }, [input]);
 
   return (
-    <UserSearchBarContainer isFake={isFake} onClick={() => setModalState({ ...modalState, searchUser: true })}>
+    <UserSearchBarContainer isFake={isFake} onClick={() => handleModal(ModalHandler.OPEN_USER_SEARCH)}>
       {isFake && <IconSearch />}
       {isFake ? (
         <input type="text" placeholder="사용자 검색" readOnly />

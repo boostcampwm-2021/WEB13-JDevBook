@@ -83,7 +83,7 @@ const PostList = () => {
         lastIdx,
         count
       });
-      if (result.length < count) {
+      if (result.length < count || posts.length + result.length >= 300) {
         setHasMore(false);
       }
       setPosts((prev) => prev.concat(result));

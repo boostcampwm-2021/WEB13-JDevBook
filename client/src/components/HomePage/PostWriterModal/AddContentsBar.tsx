@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { modalStateStore } from 'recoil/common';
 import { iconPhoto } from 'images/icons';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 const AddContentsBarWrap = styled.div`
   width: 95%;
@@ -54,13 +56,11 @@ const ContentsBtn = styled.div<{ modalState: boolean }>`
 `;
 
 const AddContentsBar = () => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
+  const modalState = useRecoilValue(modalStateStore);
+  const handleModal = useModalHandler();
 
   const imgUploadModalToggle = (e: React.MouseEvent<HTMLDivElement>) => {
-    setModalState({
-      ...modalState,
-      post: { ...modalState.post, inPhoto: !modalState.post.inPhoto }
-    });
+    handleModal(ModalHandler.TOGGLE_IMAGE_UPLOADER);
   };
 
   return (

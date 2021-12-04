@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
-import { modalStateStore } from 'recoil/common';
 import { postListStore, postModalDataStates } from 'recoil/post';
 
 import fetchApi from 'api/fetch';
 import { PostData } from 'types/post';
 import useAlertModal from 'hooks/useAlertModal';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler } from 'types/common';
 
 const OptionModalContainer = styled.div`
   width: 240px;
@@ -41,11 +42,16 @@ const DeleteDiv = styled.div`
   color: ${(props) => props.theme.alert};
 `;
 
-const OptionModal = ({ post }: { post: PostData }) => {
-  const [modalState, setModalState] = useRecoilState(modalStateStore);
+const OptionModal = ({
+  post,
+  setModalOpen
+}: {
+  post: PostData;
+  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  const handleModal = useModalHandler();
   const [postList, setPostList] = useRecoilState(postListStore);
   const setPostData = useSetRecoilState(postModalDataStates);
-  const resetModalState = useResetRecoilState(modalStateStore);
   const alertMessage = useAlertModal();
 
   const modal = useRef<HTMLDivElement>(null);
@@ -53,33 +59,19 @@ const OptionModal = ({ post }: { post: PostData }) => {
     if (!force && modal.current?.contains(e.target)) {
       return;
     }
-    resetModalState();
+    setModalOpen(false);
   };
 
   const openPostModal = () => {
     setPostData(post);
     if (post.picture1) {
-      setModalState({
-        ...modalState,
-        post: {
-          ...modalState.post,
-          writer: true,
-          index: -1,
-          isEnroll: false,
-          inPhoto: true
-        }
-      });
+      handleModal(ModalHandler.OPEN_IMAGE_UPLOADER, { post: { isEnroll: false } });
     } else {
-      setModalState({
-        ...modalState,
-        post: { ...modalState.post, writer: true, index: -1, isEnroll: false }
-      });
+      handleModal(ModalHandler.OPEN_POST_WRITER, { post: { isEnroll: false } });
     }
   };
 
-  const deletePost = async () => {
-    const postIdx = modalState.post.index;
-    resetModalState();
+  const deletePost = async (postIdx: number) => {
     await fetchApi.deletePosts(postIdx);
     alertMessage(`게시글이 성공적으로 삭제되었습니다!`);
     setPostList(postList.filter((item) => item.idx !== postIdx));
@@ -96,7 +88,7 @@ const OptionModal = ({ post }: { post: PostData }) => {
   return (
     <OptionModalContainer className="no-drag" ref={modal}>
       <FixDiv onClick={() => openPostModal()}>게시글 수정</FixDiv>
-      <DeleteDiv onClick={() => deletePost()}>게시글 삭제</DeleteDiv>
+      <DeleteDiv onClick={() => deletePost(post.idx)}>게시글 삭제</DeleteDiv>
     </OptionModalContainer>
   );
 };

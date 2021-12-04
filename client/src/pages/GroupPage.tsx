@@ -5,8 +5,8 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentPageStates } from 'recoil/common';
 import { groupState } from 'recoil/group';
-
-import { Page } from 'types/common';
+import useModalHandler from 'hooks/useModalHandler';
+import { ModalHandler, Page } from 'types/common';
 import { defaultGroup } from 'images/groupimg';
 
 import { InitUserData, LoadingModal, FakeSideBar, FakeGnb } from 'components/common';
@@ -56,10 +56,14 @@ const GroupPage: React.FC<RouteComponentProps<{ groupidx: string }>> = ({ match 
   const groupData = useRecoilValue(groupState);
   const resetGroupData = useResetRecoilState(groupState);
   const setCurrentPage = useSetRecoilState(currentPageStates);
+  const handleModal = useModalHandler();
 
   useEffect(() => {
     setCurrentPage(Page.GROUP);
-    return () => resetGroupData();
+    return () => {
+      handleModal(ModalHandler.CLOSE_ALL);
+      resetGroupData();
+    };
   }, []);
 
   return (

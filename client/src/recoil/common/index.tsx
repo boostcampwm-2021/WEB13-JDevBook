@@ -9,7 +9,6 @@ export const modalStateStore = atom({
     post: {
       writer: false,
       inPhoto: false,
-      index: -1,
       isEnroll: true
     },
     editProfile: false

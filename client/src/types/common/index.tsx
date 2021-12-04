@@ -25,3 +25,18 @@ export enum Page {
   GROUP,
   PROFILE
 }
+
+export enum ModalHandler {
+  OPEN_POST_WRITER,
+  OPEN_IMAGE_UPLOADER,
+  OPEN_USER_SEARCH,
+  TOGGLE_EDIT_PROFILE,
+  TOGGLE_IMAGE_UPLOADER,
+  CLOSE_ALL
+}
+
+export interface ModalHandlerOptions {
+  post?: {
+    isEnroll?: boolean;
+  };
+}
